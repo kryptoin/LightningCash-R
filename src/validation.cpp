@@ -1160,7 +1160,7 @@ CAmount GetBlockSubsidy(int nHeight, const Consensus::Params& consensusParams)
 	return 10000000 * COIN * COIN_SCALE;
 
     CAmount nSubsidy;
-    
+
     if (nHeight < nAdjustFork)
 	nSubsidy = 1.25 * COIN * COIN_SCALE;
     else
@@ -1186,18 +1186,18 @@ CAmount GetBeeCost(int nHeight, const Consensus::Params& consensusParams)
     if((nHeight >= consensusParams.totalMoneySupplyHeight) && (nHeight < nHiveRepairFork))
         return consensusParams.minBeeCost;
 
- 
+
 
     CAmount blockReward = GetBlockSubsidy(nHeight, consensusParams);
     CAmount beeCost = (blockReward / consensusParams.beeCostFactor);
     CAmount potentialLifespanRewards;
-	    
+
 	    if (chainActive.Height() >= nAdjustFork)
 		potentialLifespanRewards = (consensusParams.beeLifespanBlocks * GetBlockSubsidy(nHeight, consensusParams)) / consensusParams.hiveBlockSpacingTarget;
 
 	    if ((chainActive.Height() >= nSpeedFork) && (chainActive.Height() < nAdjustFork))
 		potentialLifespanRewards = (consensusParams.beeLifespanBlocks3 * GetBlockSubsidy(nHeight, consensusParams)) / consensusParams.hiveBlockSpacingTarget;
-    
+
 	    if ((chainActive.Height() >= consensusParams.ratioForkBlock) && (chainActive.Height() < nSpeedFork))
 		potentialLifespanRewards = (consensusParams.beeLifespanBlocks2 * GetBlockSubsidy(nHeight, consensusParams)) / consensusParams.hiveBlockSpacingTarget;
 	    if (chainActive.Height() < consensusParams.ratioForkBlock)
@@ -1224,7 +1224,7 @@ CAmount GetBeeCost(int nHeight, const Consensus::Params& consensusParams)
 		CAmount adjustedBeeCost = beeCost;
 		return adjustedBeeCost <= consensusParams.minBeeCost ? consensusParams.minBeeCost : adjustedBeeCost;
 	    }
-	
+
 }
 
 bool IsInitialBlockDownload()
@@ -2369,6 +2369,12 @@ struct PerBlockConnectTrace {
  * This class is single-use, once you call GetBlocksConnected() you have to throw
  * it away and make a new one.
  */
+
+#include <boost/bind.hpp>
+#include <boost/signals2/signal.hpp>
+
+using namespace boost::placeholders;
+
 class ConnectTrace {
 private:
     std::vector<PerBlockConnectTrace> blocksConnected;
@@ -3058,7 +3064,7 @@ static bool CheckBlockHeader(const CBlockHeader& block, CValidationState& state,
     // Skip headers validation until we're close to chaintip
       if (nHeight < SKIP_BLOCKHEADER_POW)
         return true;
-    
+
     if (nHeight >= nSpeedFork) {
 
 	    // LightningCashr: Hive: Check PoW or Hive work depending on blocktype

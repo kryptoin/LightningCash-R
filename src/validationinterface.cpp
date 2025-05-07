@@ -17,7 +17,12 @@
 #include <atomic>
 #include <future>
 
+// #include <boost/signals2/signal.hpp>
+
+#include <boost/bind.hpp>
 #include <boost/signals2/signal.hpp>
+
+using namespace boost::placeholders;
 
 struct MainSignalsInstance {
     boost::signals2::signal<void (const CBlockIndex *, const CBlockIndex *, bool fInitialDownload)> UpdatedBlockTip;
@@ -73,6 +78,9 @@ CMainSignals& GetMainSignals()
 {
     return g_signals;
 }
+
+
+
 
 void RegisterValidationInterface(CValidationInterface* pwalletIn) {
     g_signals.m_internals->UpdatedBlockTip.connect(boost::bind(&CValidationInterface::UpdatedBlockTip, pwalletIn, _1, _2, _3));

@@ -648,7 +648,7 @@ void ClearDatadirCache()
 fs::path GetConfigFile(const std::string& confPath)
 {
     fs::path pathConfigFile(confPath);
-    if (!pathConfigFile.is_complete())
+    if (!pathConfigFile.is_absolute())
         pathConfigFile = GetDataDir(false) / pathConfigFile;
 
     return pathConfigFile;
@@ -687,7 +687,7 @@ void ArgsManager::ReadConfigFile(const std::string& confPath)
 fs::path GetPidFile()
 {
     fs::path pathPidFile(gArgs.GetArg("-pid", BITCOIN_PID_FILENAME));
-    if (!pathPidFile.is_complete()) pathPidFile = GetDataDir() / pathPidFile;
+    if (!pathPidFile.is_absolute()) pathPidFile = GetDataDir() / pathPidFile;
     return pathPidFile;
 }
 
@@ -952,8 +952,8 @@ std::string CopyrightHolders(const std::string& strPrefix)
 {
 
 	// LitecoinCash: Add a row
-    std::string strFirstPrefix = strPrefix;    
-    strFirstPrefix.replace(strFirstPrefix.find("2011-"), sizeof("2011-")-1, "2022-");        
+    std::string strFirstPrefix = strPrefix;
+    strFirstPrefix.replace(strFirstPrefix.find("2011-"), sizeof("2011-")-1, "2022-");
     std::string strCopyrightHolders = strFirstPrefix + strprintf(_(COPYRIGHT_HOLDERS), _(COPYRIGHT_HOLDERS_SUBSTITUTION));
 
    if (strprintf(COPYRIGHT_HOLDERS, COPYRIGHT_HOLDERS_SUBSTITUTION).find("Bitcoin Core") == std::string::npos) {
@@ -961,7 +961,7 @@ std::string CopyrightHolders(const std::string& strPrefix)
         strYear.replace(strYear.find("2011"), sizeof("2011")-1, "2018");
         strCopyrightHolders += "\n" + strYear + "The LightningCashr devs";
     }
-        
+
     // Litecoin: Check for untranslated substitution to make sure Litecion Core copyright is not removed by accident
     if (strprintf(COPYRIGHT_HOLDERS, COPYRIGHT_HOLDERS_SUBSTITUTION).find("Litecoin Core") == std::string::npos)
         strCopyrightHolders += "\n" + strPrefix + "The Litecoin Core developers";
