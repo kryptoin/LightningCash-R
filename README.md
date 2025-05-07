@@ -1,8 +1,8 @@
-# LightningCashr
+# LightningCash-R
 
-## What Is LightningCashr?
+## What Is LightningCash Reborn?
 
-LightningCashr (LNCR) is a CPU-minable cryptocurrency based on a previous project called Lightning-Cash (LNC), which itself was a clone of Litecoin Cash (LCC) which is a fork of Litecoin. It introduces major protocol changes, including:
+LightningCash-R (LNCR) is a CPU-minable cryptocurrency based on a previous project called Lightning-Cash (LNC), which itself was a clone of Litecoin Cash (LCC) which is a fork of Litecoin (LTC). It introduces major protocol changes, including:
 
 * A new Proof-of-Work (PoW) algorithm: YespowerLTNCG
 * An advanced difficulty adjustment system based on DarkGravityWave v3
@@ -98,8 +98,8 @@ LightningCashr (LNCR) is a CPU-minable cryptocurrency based on a previous projec
 
   * Original: [https://github.com/dashpay/dash/blob/master/src/pow.cpp#L82](https://github.com/dashpay/dash/blob/master/src/pow.cpp#L82)
   * Modified: [https://github.com/MerlinMagic2018/LightningCash-R/blob/master/src/pow.cpp#L110](https://github.com/MerlinMagic2018/LightningCash-R/blob/master/src/pow.cpp#L110)
-* LightningCashr Core is the full-node software for the LNCR peer-to-peer network
+* LightningCash-R Core is the full-node software for the LNCR peer-to-peer network
 
 ## Conclusion
 
-LightningCashr is a uniquely engineered cryptocurrency combining cutting-edge difficulty adjustment, dual mining systems (PoW and Hive), and a fair emission schedule. Its robust design targets network stability, accessibility, and long-term sustainability. With active coin burning, community funding, and predictable supply dynamics, LightningCashr aims to be a resilient and inclusive digital currency for the future.
+LightningCash-R is a uniquely engineered cryptocurrency combining cutting-edge difficulty adjustment, dual mining systems (PoW and Hive), and a fair emission schedule. Its robust design targets network stability, accessibility, and long-term sustainability. With active coin burning, community funding, and predictable supply dynamics, LightningCash-R aims to be a resilient and inclusive digital currency for the future.
