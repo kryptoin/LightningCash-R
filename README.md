@@ -1,8 +1,8 @@
-# LightningCash-R
+# LightningCash Reborn
 
-## What Is LightningCash Reborn?
+## What Is LightningCash-R?
 
-LightningCash-R (LNCR) is a CPU-minable cryptocurrency based on a previous project called Lightning-Cash (LNC), which itself was a clone of Litecoin Cash (LCC) which is a fork of Litecoin (LTC). It introduces major protocol changes, including:
+LightningCash-R (LNCR) is a CPU-minable cryptocurrency based on a previous project called LightningCash (LNC), which itself was a clone of Litecoin Cash (LCC) which is a fork of Litecoin (LTC) that is a fork of Bitcoin (BTC). It introduces major protocol changes, including:
 
 * A new Proof-of-Work (PoW) algorithm: YespowerLTNCG
 * An advanced difficulty adjustment system based on DarkGravityWave v3
