@@ -2,7 +2,7 @@
 
 ## What Is LightningCashr?
 
-LightningCashr (LNCR) is a CPU-minable cryptocurrency based on a previous project called Lightning-Cash (LNC), which itself was a fork of Litecoin. It introduces major protocol changes, including:
+LightningCashr (LNCR) is a CPU-minable cryptocurrency based on a previous project called Lightning-Cash (LNC), which itself was a clone of Litecoin Cash (LCC) which is a fork of Litecoin. It introduces major protocol changes, including:
 
 * A new Proof-of-Work (PoW) algorithm: YespowerLTNCG
 * An advanced difficulty adjustment system based on DarkGravityWave v3
