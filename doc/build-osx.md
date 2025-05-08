@@ -1,135 +1,116 @@
-UPDATE ------------>
+LightningCashr Core – macOS (Apple Silicon) Build Guide
+========================================================
 
-Cross compile for OSX from Ubuntu 18.04 :
+This guide is tailored for modern Apple Silicon Macs (M1, M2, M3, M4) using macOS Ventura or newer. It focuses on building headless (non-GUI) LightningCashr Core using Homebrew.
 
-https://github.com/bitcoin/bitcoin/issues/10926#issuecomment-524750259
+---
 
-Mac OS X Build Instructions and Notes
-====================================
-The commands in this guide should be executed in a Terminal application.
-The built-in one is located in `/Applications/Utilities/Terminal.app`.
+System Preparation
+------------------
+1. Install Xcode Command Line Tools (required for compilers and build tools):
 
-Preparation
------------
-Install the OS X command line tools:
+    xcode-select --install
 
-`xcode-select --install`
+2. Install Homebrew from https://brew.sh (if not already installed):
 
-When the popup appears, click `Install`.
+    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 
-Then install [Homebrew](https://brew.sh).
+After installation, add Homebrew to your shell profile if prompted.
+
+---
 
 Dependencies
-----------------------
+------------
+Install required packages using Homebrew:
 
-    brew install automake berkeley-db4 libtool boost miniupnpc openssl pkg-config protobuf python3 qt libevent
+    brew install automake libtool boost openssl@3 pkg-config libevent \\
+    berkeley-db@4 miniupnpc protobuf zeromq python3
 
-See [dependencies.md](dependencies.md) for a complete overview.
+Set environment paths for OpenSSL and Berkeley DB 4.8:
 
-If you want to build the disk image with `make deploy` (.dmg / optional), you need RSVG
+    export CPPFLAGS="-I/opt/homebrew/opt/openssl@3/include -I/opt/homebrew/opt/berkeley-db@4/include"
+    export LDFLAGS="-L/opt/homebrew/opt/openssl@3/lib -L/opt/homebrew/opt/berkeley-db@4/lib"
+    export PKG_CONFIG_PATH="/opt/homebrew/opt/openssl@3/lib/pkgconfig"
 
-    brew install librsvg
+If you installed Homebrew under a non-default location (like Intel-based Macs), adjust paths accordingly (`/usr/local/opt/...`).
 
-If you want to build with ZeroMQ support
+---
 
-    brew install zeromq
+Berkeley DB 4.8 (Wallet Support)
+--------------------------------
+Homebrew provides Berkeley DB 4.8 as `berkeley-db@4`.
 
-NOTE: Building with Qt4 is still supported, however, could result in a broken UI. Building with Qt5 is recommended.
+If you need to build it manually:
 
-Berkeley DB
------------
-It is recommended to use Berkeley DB 4.8. If you have to build it yourself,
-you can use [the installation script included in contrib/](/contrib/install_db4.sh)
-like so
+    ./contrib/install_db4.sh `pwd`
+    export BDB_PREFIX=`pwd`/db4
+    export BDB_CFLAGS="-I$BDB_PREFIX/include"
+    export BDB_LIBS="-L$BDB_PREFIX/lib -ldb_cxx"
 
-```shell
-./contrib/install_db4.sh .
-```
+Only required if building with wallet support.
 
-from the root of the repository.
+---
 
-**Note**: You only need Berkeley DB if the wallet is enabled (see the section *Disable-Wallet mode* below).
+Build LightningCashr Core (Headless)
+------------------------------------
+Clone the source:
 
-Build LightningCashr Core
-------------------------
+    git clone https://github.com/lightningcashr-project/lightningcashr.git
+    cd lightningcashr
 
-1. Clone the lightningcashr source code and cd into `lightningcashr`
+Run the build steps:
 
-        git clone https://github.com/lightningcashr-project/lightningcashr
-        cd lightningcashr
+    ./autogen.sh
+    ./configure --without-gui $BDB_CFLAGS $BDB_LIBS
+    make -j$(sysctl -n hw.ncpu)
 
-2.  Build lightningcashr-core:
+Optional tests:
 
-    Configure and build the headless lightningcashr binaries as well as the GUI (if Qt is found).
+    make check
 
-    You can disable the GUI build by passing `--without-gui` to configure.
+Optional install:
 
-        ./autogen.sh
-        ./configure
-        make
+    sudo make install
 
-3.  It is recommended to build and run the unit tests:
+Alternatively, copy binaries manually:
 
-        make check
+    cp src/lightningcashrd /usr/local/bin/
+    cp src/lightningcashr-cli /usr/local/bin/
 
-4.  You can also create a .dmg that contains the .app bundle (optional):
-
-        make deploy
-
-5.  Installation into user directories (optional):
-
-        make install
-
-    or
-
-        cd ~/lightningcashr/src
-        cp lightningcashrd /usr/local/bin/
-        cp lightningcashr-cli /usr/local/bin/
+---
 
 Running
 -------
+1. Create the configuration file:
 
-LightningCashr Core is now available at `./src/lightningcashrd`
+    mkdir -p "$HOME/Library/Application Support/LightningCashr"
+    echo -e "rpcuser=lightningcashrrpc\\nrpcpassword=$(xxd -l 16 -p /dev/urandom)" > "$HOME/Library/Application Support/LightningCashr/lightningcashr.conf"
+    chmod 600 "$HOME/Library/Application Support/LightningCashr/lightningcashr.conf"
 
-Before running, it's recommended you create an RPC configuration file.
+2. Start the daemon:
 
-    echo -e "rpcuser=lightningcashrrpc\nrpcpassword=$(xxd -l 16 -p /dev/urandom)" > "/Users/${USER}/Library/Application Support/LightningCashr/lightningcashr.conf"
+    lightningcashrd -daemon
 
-    chmod 600 "/Users/${USER}/Library/Application Support/LightningCashr/lightningcashr.conf"
+3. Monitor progress:
 
-The first time you run lightningcashrd, it will start downloading the blockchain. This process could take several hours.
+    tail -f "$HOME/Library/Application Support/LightningCashr/debug.log"
 
-You can monitor the download process by looking at the debug.log file:
+4. Run commands:
 
-    tail -f $HOME/Library/Application\ Support/LightningCashr/debug.log
+    lightningcashr-cli help
+    lightningcashr-cli getblockchaininfo
 
-Other commands:
--------
-
-    ./src/lightningcashrd -daemon # Starts the lightningcashr daemon.
-    ./src/lightningcashr-cli --help # Outputs a list of command-line options.
-    ./src/lightningcashr-cli help # Outputs a list of RPC commands when the daemon is running.
-
-Using Qt Creator as IDE
-------------------------
-You can use Qt Creator as an IDE, for lightningcashr development.
-Download and install the community edition of [Qt Creator](https://www.qt.io/download/).
-Uncheck everything except Qt Creator during the installation process.
-
-1. Make sure you installed everything through Homebrew mentioned above
-2. Do a proper ./configure --enable-debug
-3. In Qt Creator do "New Project" -> Import Project -> Import Existing Project
-4. Enter "lightningcashr-qt" as project name, enter src/qt as location
-5. Leave the file selection as it is
-6. Confirm the "summary page"
-7. In the "Projects" tab select "Manage Kits..."
-8. Select the default "Desktop" kit and select "Clang (x86 64bit in /usr/bin)" as compiler
-9. Select LLDB as debugger (you might need to set the path to your installation)
-10. Start debugging with Qt Creator
+---
 
 Notes
 -----
+- This guide targets Apple Silicon (arm64). Ensure your Homebrew is installed under `/opt/homebrew`.
+- macOS Intel users should substitute `/opt/homebrew` with `/usr/local` where appropriate.
+- To disable the wallet completely: `./configure --disable-wallet --without-gui`
+- ZMQ and UPnP support are included via `zeromq` and `miniupnpc` packages.
 
-* Tested on OS X 10.8 through 10.13 on 64-bit Intel processors only.
+---
 
-* Building with downloaded Qt binaries is not officially supported. See the notes in [#7714](https://github.com/bitcoin/bitcoin/issues/7714)
+Done!
+-----
+You’ve successfully built a headless LightningCashr Core node on your Apple Silicon Mac 🎉
