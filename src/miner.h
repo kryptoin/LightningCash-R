@@ -222,7 +222,7 @@ int64_t UpdateTime(CBlockHeader* pblock, const Consensus::Params& consensusParam
 
 void BeeKeeper(const CChainParams& chainparams);                        // LightningCashr: Hive: Bee management thread
 bool BusyBees(const Consensus::Params& consensusParams, int height);    // LightningCashr: Hive: Attempt to mint the next block
-void CheckBin(int threadID, std::vector<CBeeRange> bin, std::string deterministicRandString, arith_uint256 beeHashTarget); // LitecoinCash: Hive: Mining optimisations: Thread to process a bin of beeranges
+void CheckBin(int threadID, std::vector<CBeeRange> bin, std::string deterministicRandString, arith_uint256 beeHashTarget); // LightningCash Reborn: Hive: Mining optimisations: Thread to process a bin of beeranges
 void AbortWatchThread(int height);                                      // LightningCashr: Hive: Mining optimisations: Thread to watch for abort conditions
 
 #endif // BITCOIN_MINER_H

@@ -951,7 +951,7 @@ int GetNumCores()
 std::string CopyrightHolders(const std::string& strPrefix)
 {
 
-	// LitecoinCash: Add a row
+	// LightningCash Reborn: Add a row
     std::string strFirstPrefix = strPrefix;
     strFirstPrefix.replace(strFirstPrefix.find("2011-"), sizeof("2011-")-1, "2022-");
     std::string strCopyrightHolders = strFirstPrefix + strprintf(_(COPYRIGHT_HOLDERS), _(COPYRIGHT_HOLDERS_SUBSTITUTION));

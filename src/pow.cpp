@@ -316,7 +316,7 @@ unsigned int GetNextWorkRequired(const CBlockIndex* pindexLast, const CBlockHead
         return UintToArith256(params.powLimit2).GetCompact();
 
 
-    // LitecoinCash: If past fork time, use Dark Gravity Wave
+    // LightningCash Reborn: If past fork time, use Dark Gravity Wave
     if (pindexLast->nHeight+1 >= nSpeedFork)
 	return DarkGravityWave2(pindexLast, pblock, params);
     else if (pindexLast->nHeight >= params.lastScryptBlock)

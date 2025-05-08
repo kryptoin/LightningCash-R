@@ -266,7 +266,7 @@ arith_uint256 GetBlockProof(const CBlockIndex& block)
     return bnTargetScaled;
 }
 
-// LitecoinCash: Hive: Use this to compute estimated hashes for GetNetworkHashPS()
+// LightningCash Reborn: Hive: Use this to compute estimated hashes for GetNetworkHashPS()
 arith_uint256 GetNumHashes(const CBlockIndex& block)
 {
     arith_uint256 bnTarget;

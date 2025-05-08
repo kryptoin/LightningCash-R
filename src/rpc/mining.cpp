@@ -126,7 +126,7 @@ UniValue sethiveparams(const JSONRPCRequest& request)
     return NullUniValue;
 }
 
-// LitecoinCash: Hive: Mining optimisations: Get hive mining params
+// LightningCash Reborn: Hive: Mining optimisations: Get hive mining params
 UniValue gethiveparams(const JSONRPCRequest& request)
 {
     if (request.fHelp || request.params.size() != 0)

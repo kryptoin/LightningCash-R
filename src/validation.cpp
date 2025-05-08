@@ -1134,13 +1134,13 @@ bool ReadBlockFromDisk(CBlock& block, const CBlockIndex* pindex, const Consensus
 
 CAmount GetBlockSubsidy(int nHeight, const Consensus::Params& consensusParams)
 {
-    // LitecoinCash: Issue premine on 1st post-fork block
+    // LightningCash Reborn: Issue premine on 1st post-fork block
    /* if (nHeight == consensusParams.lastScryptBlock + 1)
         return consensusParams.premineAmount * COIN * COIN_SCALE;*/
 
     int halvings = nHeight / consensusParams.nSubsidyHalvingInterval;
 
-    // LitecoinCash: Force block reward to zero when right shift is undefined, and don't attempt to issue past total money supply
+    // LightningCash Reborn: Force block reward to zero when right shift is undefined, and don't attempt to issue past total money supply
     if (halvings >= 64)
         return 0;
 
@@ -2051,7 +2051,7 @@ bool CChainState::ConnectBlock(const CBlock& block, CValidationState& state, CBl
                                block.vtx[0]->GetValueOut(), blockReward),
                                REJECT_INVALID, "bad-cb-amount");
 
-    // LitecoinCash: Ensure that lastScryptBlock+1 coinbase TX pays to the premine address --- On sen calisse
+    // LightningCash Reborn: Ensure that lastScryptBlock+1 coinbase TX pays to the premine address --- On sen calisse
     /*if (pindex->nHeight == chainparams.GetConsensus().lastScryptBlock+1) {
         if (block.vtx[0]->vout[0].scriptPubKey.size() == 1) {
             LogPrintf("ConnectBlock(): allowing mine\n");
