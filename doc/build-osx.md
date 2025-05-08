@@ -4,14 +4,6 @@ Cross compile for OSX from Ubuntu 18.04 :
 
 https://github.com/bitcoin/bitcoin/issues/10926#issuecomment-524750259
 
-
-
-
-
-
-
-
-
 Mac OS X Build Instructions and Notes
 ====================================
 The commands in this guide should be executed in a Terminal application.
@@ -39,7 +31,7 @@ If you want to build the disk image with `make deploy` (.dmg / optional), you ne
     brew install librsvg
 
 If you want to build with ZeroMQ support
-    
+
     brew install zeromq
 
 NOTE: Building with Qt4 is still supported, however, could result in a broken UI. Building with Qt5 is recommended.

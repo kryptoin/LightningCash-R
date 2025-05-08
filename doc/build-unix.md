@@ -9,7 +9,7 @@ Note
 Always use absolute paths to configure and compile lightningcashr and the dependencies,
 for example, when specifying the path of the dependency:
 
-	../dist/configure --enable-cxx --disable-shared --with-pic --prefix=$BDB_PREFIX
+    ../dist/configure --enable-cxx --disable-shared --with-pic --prefix=$BDB_PREFIX
 
 Here BDB_PREFIX must be an absolute path - it is defined using $(pwd) which ensures
 the usage of the absolute path.
@@ -57,7 +57,6 @@ Memory Requirements
 C++ compilers are memory-hungry. It is recommended to have at least 1.5 GB of
 memory available when compiling LightningCashr Core. On systems with less, gcc can be
 tuned to conserve memory with additional CXXFLAGS:
-
 
     ./configure CXXFLAGS="--param ggc-min-expand=1 --param ggc-min-heapsize=32768"
 
@@ -150,7 +149,6 @@ Notes
 The release is built with GCC and then "strip lightningcashrd" to strip the debug
 symbols, which reduces the executable size by about 90%.
 
-
 miniupnpc
 ---------
 
@@ -158,10 +156,9 @@ miniupnpc
 http://miniupnp.tuxfamily.org/files/).  UPnP support is compiled in and
 turned off by default.  See the configure options for upnp behavior desired:
 
-	--without-miniupnpc      No UPnP support miniupnp not required
-	--disable-upnp-default   (the default) UPnP support turned off by default at runtime
-	--enable-upnp-default    UPnP support turned on by default at runtime
-
+    --without-miniupnpc      No UPnP support miniupnp not required
+    --disable-upnp-default   (the default) UPnP support turned off by default at runtime
+    --enable-upnp-default    UPnP support turned on by default at runtime
 
 Berkeley DB
 -----------
@@ -181,10 +178,9 @@ Boost
 -----
 If you need to build Boost yourself:
 
-	sudo su
-	./bootstrap.sh
-	./bjam install
-
+    sudo su
+    ./bootstrap.sh
+    ./bjam install
 
 Security
 --------
@@ -194,9 +190,8 @@ This can be disabled with:
 
 Hardening Flags:
 
-	./configure --enable-hardening
-	./configure --disable-hardening
-
+    ./configure --enable-hardening
+    ./configure --disable-hardening
 
 Hardening enables the following features:
 
@@ -212,7 +207,7 @@ Hardening enables the following features:
 
     To test that you have built PIE executable, install scanelf, part of paxutils, and use:
 
-    	scanelf -e ./lightningcashr
+        scanelf -e ./lightningcashr
 
     The output should contain:
 
@@ -230,8 +225,8 @@ Hardening enables the following features:
     `scanelf -e ./lightningcashr`
 
     the output should contain:
-	STK/REL/PTL
-	RW- R-- RW-
+    STK/REL/PTL
+    RW- R-- RW-
 
     The STK RW- means that the stack is readable and writeable but not executable.
 
@@ -253,7 +248,6 @@ A list of additional configure flags can be displayed with:
 
     ./configure --help
 
-
 Setup and Build Example: Arch Linux
 -----------------------------------
 This example lists the steps necessary to setup and build a command line only, non-wallet distribution of the latest changes on Arch Linux:
@@ -271,7 +265,6 @@ or building and depending on a local version of Berkeley DB 4.8. The readily ava
 `--with-incompatible-bdb` according to the [PKGBUILD](https://projects.archlinux.org/svntogit/community.git/tree/bitcoin/trunk/PKGBUILD).
 As mentioned above, when maintaining portability of the wallet between the standard LightningCashr Core distributions and independently built
 node software is desired, Berkeley DB 4.8 must be used.
-
 
 ARM Cross-compilation
 -------------------
@@ -291,7 +284,6 @@ To build executables for ARM:
     cd ..
     ./configure --prefix=$PWD/depends/arm-linux-gnueabihf --enable-glibc-back-compat --enable-reduce-exports LDFLAGS=-static-libstdc++
     make
-
 
 For further documentation on the depends system see [README.md](../depends/README.md) in the depends directory.
 

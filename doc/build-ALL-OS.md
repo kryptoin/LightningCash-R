@@ -1,11 +1,8 @@
 
-
 LightningCashr Build Instructions for any OS
 --------------------------------
 
-
 ---> Compile from Ubuntu 18.04 ---> Necessary steps for ANY OS :
-
 
 sudo apt-get install build-essential libtool autotools-dev automake pkg-config libssl-dev libevent-dev bsdmainutils curl git wget python3
 
@@ -41,7 +38,6 @@ git clone https://github.com/diabaths/LightningCashr-Coin
 
 cd LightningCashr-Coin
 
-
 -------------------------------------------------------------------------
 
 ## Building for 64-bit Windows
@@ -69,16 +65,12 @@ cd ..
 
 ./configure --disable-bench --disable-tests --disable-gui-tests --disable-zmq --prefix=$PWD/depends/x86_64-w64-mingw32
 
-
 make    # You can add -jx where x is the number of core/threads to speed up compilation
 
 Done.
 
 daemon, cli and tx in src folder, GUI ( qt ) in src/qt folder.
 ---------------------------------------------------------------------------
-
-
-
 
 ## Building for 32-bit Windows
 ----------
@@ -130,12 +122,10 @@ sudo apt-get update
 
 sudo apt-get install librsvg2-bin libtiff-tools bsdmainutils cmake imagemagick libcap-dev libz-dev libbz2-dev python-setuptools
 
-
 # Not 100 % sure which one to use...
 
 sudo apt install python-pip
 sudo apt install python3-pip python-pip-whl python3-setuptools python3-wheel
-
 
 pip install setuptools
 
@@ -144,8 +134,6 @@ sudo apt install cmake
 sudo apt install libcap-dev
 
 sudo apt install libbz2-dev
-
-
 
 git clone https://github.com/diabaths/LightningCashr-Coin
 

@@ -426,7 +426,6 @@ AddressBookPage::AddressBookPage(Mode _mode) :
 When using nested cycles, do not name the inner cycle variable the same as in
 upper cycle etc.
 
-
 Threads and synchronization
 ----------------------------
 
@@ -538,7 +537,6 @@ Current subtrees include:
 
 - src/univalue
   - Upstream at https://github.com/jgarzik/univalue ; report important PRs to Core to avoid delay.
-
 
 Git and GitHub tips
 ---------------------
