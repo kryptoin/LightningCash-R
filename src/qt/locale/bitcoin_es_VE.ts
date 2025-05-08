@@ -159,7 +159,7 @@
     </message>
     <message>
         <source>LightningCashr</source>
-        <translation>LightningCashr Coin</translation>
+        <translation>LightningCashr Reborn</translation>
     </message>
     <message>
         <source>Wallet</source>
@@ -438,7 +438,7 @@
     </message>
     <message>
         <source>LightningCashr</source>
-        <translation>LightningCashr Coin</translation>
+        <translation>LightningCashr Reborn</translation>
     </message>
     <message>
         <source>Error: Specified data directory "%1" cannot be created.</source>
@@ -708,8 +708,8 @@
         <translation>Correr en segundo plano como daemon y aceptar comandos</translation>
     </message>
     <message>
-        <source>LightningCashr Coin Core</source>
-        <translation>LightningCashr Coin Core</translation>
+        <source>LightningCashr Reborn Core</source>
+        <translation>LightningCashr Reborn Core</translation>
     </message>
     <message>
         <source>Bind to given address and always listen on it. Use [host]:port notation for IPv6</source>

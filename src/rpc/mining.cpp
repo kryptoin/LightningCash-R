@@ -71,8 +71,8 @@ UniValue GetNetworkHashPS(int lookup, int height) {
     int64_t minTime = pb->GetBlockTime();
     int64_t maxTime = minTime;
 	
-//	const Consensus::Params& consensusParams = Params().GetConsensus();					// LightningCashr Coin: Hive: Take into account hive blocks
-//	int nHiveBlocks = pb0->GetBlockHeader().IsHiveMined(consensusParams) ? 1 : 0;		// LightningCashr Coin: Hive: Take into account hive blocks
+//	const Consensus::Params& consensusParams = Params().GetConsensus();					// LightningCashr Reborn: Hive: Take into account hive blocks
+//	int nHiveBlocks = pb0->GetBlockHeader().IsHiveMined(consensusParams) ? 1 : 0;		// LightningCashr Reborn: Hive: Take into account hive blocks
 	arith_uint256 workDiff = GetNumHashes(*pb);
 	
     for (int i = 0; i < lookup; i++) {
@@ -82,8 +82,8 @@ UniValue GetNetworkHashPS(int lookup, int height) {
         int64_t time = pb->GetBlockTime();
         minTime = std::min(time, minTime);
         maxTime = std::max(time, maxTime);
-//		if (pb0->GetBlockHeader().IsHiveMined(consensusParams))	// LightningCashr Coin: Hive: Take into account hive blocks
-//			nHiveBlocks++; // LightningCashr Coin: Hive: Take into account hive blocks
+//		if (pb0->GetBlockHeader().IsHiveMined(consensusParams))	// LightningCashr Reborn: Hive: Take into account hive blocks
+//			nHiveBlocks++; // LightningCashr Reborn: Hive: Take into account hive blocks
         workDiff += GetNumHashes(*pb);
     }
 
@@ -98,8 +98,8 @@ UniValue GetNetworkHashPS(int lookup, int height) {
 	// hive blocks have the same chainwork as pow blocks.
 	// If this changes in future, this code should be revisited.
 	
-	// return workDiff.getdouble() / timeDiff;										// LightningCashr Coin: Hive
-    return workDiff.getdouble() * (1 - nHiveBlocks / (double)lookup) / timeDiff;	// LightningCashr Coin: Hive: Take into account hive blocks*/
+	// return workDiff.getdouble() / timeDiff;										// LightningCashr Reborn: Hive
+    return workDiff.getdouble() * (1 - nHiveBlocks / (double)lookup) / timeDiff;	// LightningCashr Reborn: Hive: Take into account hive blocks*/
 	return workDiff.getdouble() / timeDiff;
 }
 

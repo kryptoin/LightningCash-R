@@ -367,7 +367,7 @@
     </message>
     <message>
         <source>LightningCashr</source>
-        <translation>LightningCashr Coin</translation>
+        <translation>LightningCashr Reborn</translation>
     </message>
     <message>
         <source>Wallet</source>
@@ -876,7 +876,7 @@
     </message>
     <message>
         <source>LightningCashr</source>
-        <translation>LightningCashr Coin</translation>
+        <translation>LightningCashr Reborn</translation>
     </message>
     <message>
         <source>At least %1 GB of data will be stored in this directory, and it will grow over time.</source>
@@ -2427,7 +2427,7 @@
     </message>
     <message>
         <source>The LightningCashr address to sign the message with</source>
-        <translation>LightningCashr Coin adresa pre podpísanie správy s</translation>
+        <translation>LightningCashr Reborn adresa pre podpísanie správy s</translation>
     </message>
     <message>
         <source>Choose previously used address</source>
@@ -3179,8 +3179,8 @@
         <translation>Nepodarilo sa spustiť HTTP server. Pre viac detailov zobrazte debug log.</translation>
     </message>
     <message>
-        <source>LightningCashr Coin Core</source>
-        <translation>LightningCashr Coin Core</translation>
+        <source>LightningCashr Reborn Core</source>
+        <translation>LightningCashr Reborn Core</translation>
     </message>
     <message>
         <source>The %s developers</source>

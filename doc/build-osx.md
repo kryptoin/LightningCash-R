@@ -1,7 +1,7 @@
-LightningCashr Core – macOS (Apple Silicon) Build Guide
+LightningCash-R Core – macOS (Apple Silicon) Build Guide
 ========================================================
 
-This guide is tailored for modern Apple Silicon Macs (M1, M2, M3, M4) using macOS Ventura or newer. It focuses on building headless (non-GUI) LightningCashr Core using Homebrew.
+This guide is tailored for modern Apple Silicon Macs (M1, M2, M3, M4) using macOS Ventura or newer. It focuses on building headless (non-GUI) LightningCash-R Core using Homebrew.
 
 ---
 
@@ -51,7 +51,7 @@ Only required if building with wallet support.
 
 ---
 
-Build LightningCashr Core (Headless)
+Build LightningCash-R Core (Headless)
 ------------------------------------
 Clone the source:
 
@@ -113,4 +113,4 @@ Notes
 
 Done!
 -----
-You’ve successfully built a headless LightningCashr Core node on your Apple Silicon Mac 🎉
+You’ve successfully built a headless LightningCash-R Core node on your Apple Silicon Mac 🎉

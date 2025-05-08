@@ -1,6 +1,6 @@
 # LightningCash-R Core – Modern Dependencies (2025 Edition)
 
-This document lists the updated and recommended dependencies required to build and run LightningCashr Core, a Bitcoin/Litecoin-derived altcoin. It includes core libraries, GUI components, and optional tools for development and packaging. These dependencies are suitable for modern systems including Windows 11, macOS (M1–M4), and recent Linux distributions.
+This document lists the updated and recommended dependencies required to build and run LightningCash-R Core, a Bitcoin/Litecoin-derived altcoin. It includes core libraries, GUI components, and optional tools for development and packaging. These dependencies are suitable for modern systems including Windows 11, macOS (M1–M4), and recent Linux distributions.
 
 ## Core Dependencies
 

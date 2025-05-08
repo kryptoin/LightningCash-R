@@ -16,8 +16,8 @@ BEGIN
     BEGIN
         BLOCK "040904E4" // U.S. English - multilingual (hex)
         BEGIN
-            VALUE "CompanyName",        "LightningCashr Coin"
-            VALUE "FileDescription",    "lightningcashr-tx (CLI LightningCashr Coin transaction editor utility)"
+            VALUE "CompanyName",        "LightningCashr Reborn"
+            VALUE "FileDescription",    "lightningcashr-tx (CLI LightningCashr Reborn transaction editor utility)"
             VALUE "FileVersion",        VER_FILEVERSION_STR
             VALUE "InternalName",       "lightningcashr-tx"
             VALUE "LegalCopyright",     COPYRIGHT_STR

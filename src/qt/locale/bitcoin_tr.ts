@@ -367,7 +367,7 @@
     </message>
     <message>
         <source>LightningCashr</source>
-        <translation>LightningCashr Coin</translation>
+        <translation>LightningCashr Reborn</translation>
     </message>
     <message>
         <source>Wallet</source>
@@ -560,7 +560,7 @@
     <name>CoinControlDialog</name>
     <message>
         <source>Coin Selection</source>
-        <translation>LightningCashr Coin Seçimi</translation>
+        <translation>LightningCashr Reborn Seçimi</translation>
     </message>
     <message>
         <source>Quantity:</source>
@@ -868,7 +868,7 @@
     </message>
     <message>
         <source>LightningCashr</source>
-        <translation>LightningCashr Coin</translation>
+        <translation>LightningCashr Reborn</translation>
     </message>
     <message>
         <source>Approximately %1 GB of data will be stored in this directory.</source>
@@ -1093,7 +1093,7 @@
     </message>
     <message>
         <source>Connect to the LightningCashr network through a SOCKS5 proxy.</source>
-        <translation>LightningCashr Coin ağına bir SOCKS5 vekil sunucusu aracılığıyla bağlan.</translation>
+        <translation>LightningCashr Reborn ağına bir SOCKS5 vekil sunucusu aracılığıyla bağlan.</translation>
     </message>
     <message>
         <source>&amp;Connect through SOCKS5 proxy (default proxy):</source>
@@ -1129,7 +1129,7 @@
     </message>
     <message>
         <source>Connect to the LightningCashr network through a separate SOCKS5 proxy for Tor hidden services.</source>
-        <translation>LightningCashr Coin ağına gizli Tor servisleri için ayrı bir SOCKS5 vekil sunucusu aracılığıyla bağlan.</translation>
+        <translation>LightningCashr Reborn ağına gizli Tor servisleri için ayrı bir SOCKS5 vekil sunucusu aracılığıyla bağlan.</translation>
     </message>
     <message>
         <source>&amp;Window</source>
@@ -1165,7 +1165,7 @@
     </message>
     <message>
         <source>Choose the default subdivision unit to show in the interface and when sending coins.</source>
-        <translation>LightningCashr Coin gönderildiğinde arayüzde gösterilecek varsayılan alt birimi seçiniz.</translation>
+        <translation>LightningCashr Reborn gönderildiğinde arayüzde gösterilecek varsayılan alt birimi seçiniz.</translation>
     </message>
     <message>
         <source>Whether to show coin control features or not.</source>
@@ -1311,7 +1311,7 @@
     </message>
     <message>
         <source>Cannot start lightningcashr: click-to-pay handler</source>
-        <translation>LightningCashr Coin başlatılamadı: tıkla-ve-öde yöneticisi</translation>
+        <translation>LightningCashr Reborn başlatılamadı: tıkla-ve-öde yöneticisi</translation>
     </message>
     <message>
         <source>URI handling</source>
@@ -2010,7 +2010,7 @@
     <name>SendCoinsDialog</name>
     <message>
         <source>Send Coins</source>
-        <translation>LightningCashr Coin yolla</translation>
+        <translation>LightningCashr Reborn yolla</translation>
     </message>
     <message>
         <source>Coin Control Features</source>
@@ -2198,7 +2198,7 @@
     </message>
     <message>
         <source>Confirm send coins</source>
-        <translation>LightningCashr Coin gönderimini onaylayın</translation>
+        <translation>LightningCashr Reborn gönderimini onaylayın</translation>
     </message>
     <message>
         <source>The recipient address is not valid. Please recheck.</source>
@@ -2997,7 +2997,7 @@
     <name>WalletModel</name>
     <message>
         <source>Send Coins</source>
-        <translation>LightningCashr Coini Gönder</translation>
+        <translation>LightningCashr Reborni Gönder</translation>
     </message>
     <message>
         <source>Increasing transaction fee failed</source>
@@ -3126,8 +3126,8 @@
         <translation>HTTP sunucusu başlatılamadı. Ayrıntılar için debug.log dosyasına bakınız.</translation>
     </message>
     <message>
-        <source>LightningCashr Coin Core</source>
-        <translation>LightningCashr Coin Çekirdeği</translation>
+        <source>LightningCashr Reborn Core</source>
+        <translation>LightningCashr Reborn Çekirdeği</translation>
     </message>
     <message>
         <source>The %s developers</source>

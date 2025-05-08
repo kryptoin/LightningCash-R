@@ -1,7 +1,7 @@
-LightningCashr Core – Windows 11 Build Guide (WSL2)
+LightningCash-R Core – Windows 11 Build Guide (WSL2)
 ===================================================
 
-This updated guide focuses on building LightningCashr Core for Windows 11 using **WSL2 (Windows Subsystem for Linux)**, which offers improved performance and compatibility with newer Linux distributions such as Ubuntu 22.04 or later. GUI wallet support is not included in this guide.
+This updated guide focuses on building LightningCash-R Core for Windows 11 using **WSL2 (Windows Subsystem for Linux)**, which offers improved performance and compatibility with newer Linux distributions such as Ubuntu 22.04 or later. GUI wallet support is not included in this guide.
 
 ---
 
@@ -124,4 +124,4 @@ Additional Tips
 
 Done!
 -----
-You have successfully built LightningCashr Core for Windows using WSL2 on Windows 11 🎉
+You have successfully built LightningCash-R Core for Windows using WSL2 on Windows 11 🎉

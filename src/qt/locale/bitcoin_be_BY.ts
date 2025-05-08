@@ -323,7 +323,7 @@
     </message>
     <message>
         <source>LightningCashr</source>
-        <translation>LightningCashr Coin</translation>
+        <translation>LightningCashr Reborn</translation>
     </message>
     <message>
         <source>Wallet</source>
@@ -676,7 +676,7 @@
     </message>
     <message>
         <source>LightningCashr</source>
-        <translation>LightningCashr Coin</translation>
+        <translation>LightningCashr Reborn</translation>
     </message>
     <message>
         <source>Error</source>
@@ -1266,8 +1266,8 @@
         <translation>Запусціць у фоне як дэман і прымаць каманды</translation>
     </message>
     <message>
-        <source>LightningCashr Coin Core</source>
-        <translation>LightningCashr Coin Core</translation>
+        <source>LightningCashr Reborn Core</source>
+        <translation>LightningCashr Reborn Core</translation>
     </message>
     <message>
         <source>Do you want to rebuild the block database now?</source>

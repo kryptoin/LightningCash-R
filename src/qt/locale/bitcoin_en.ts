@@ -466,7 +466,7 @@
     <message>
         <location line="+517"/>
         <source>LightningCashr</source>
-        <translation>LightningCashr Coin</translation>
+        <translation>LightningCashr Reborn</translation>
     </message>
     <message>
         <location line="-743"/>
@@ -4101,8 +4101,8 @@
     </message>
     <message>
         <location line="-397"/>
-        <source>LightningCashr Coin Core</source>
-        <translation type="unfinished">LightningCashr Coin Core</translation>
+        <source>LightningCashr Reborn Core</source>
+        <translation type="unfinished">LightningCashr Reborn Core</translation>
     </message>
     <message>
         <location line="+1"/>

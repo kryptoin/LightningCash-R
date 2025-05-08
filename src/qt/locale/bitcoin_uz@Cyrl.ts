@@ -171,7 +171,7 @@
     </message>
     <message>
         <source>LightningCashr</source>
-        <translation>LightningCashr Coin</translation>
+        <translation>LightningCashr Reborn</translation>
     </message>
     <message>
         <source>Wallet</source>
@@ -199,7 +199,7 @@
     </message>
     <message>
         <source>Sign messages with your LightningCashr addresses to prove you own them</source>
-        <translation>LightningCashr Coin манзилидан унинг эгаси эканлигингизни исботлаш учун хабарлар ёзинг</translation>
+        <translation>LightningCashr Reborn манзилидан унинг эгаси эканлигингизни исботлаш учун хабарлар ёзинг</translation>
     </message>
     <message>
         <source>Verify messages to ensure they were signed with specified LightningCashr addresses</source>
@@ -235,7 +235,7 @@
     </message>
     <message>
         <source>Open a lightningcashr: URI or payment request</source>
-        <translation>LightningCashr Coin’ни очиш: URI ёки тўлов сўрови</translation>
+        <translation>LightningCashr Reborn’ни очиш: URI ёки тўлов сўрови</translation>
     </message>
     <message>
         <source>&amp;Command-line options</source>
@@ -438,7 +438,7 @@
     </message>
     <message>
         <source>LightningCashr</source>
-        <translation>LightningCashr Coin</translation>
+        <translation>LightningCashr Reborn</translation>
     </message>
     <message>
         <source>Error: Specified data directory "%1" cannot be created.</source>
@@ -679,7 +679,7 @@
     </message>
     <message>
         <source>Enter a LightningCashr address (e.g. %1)</source>
-        <translation>LightningCashr Coin манзилини киритинг (масалан.  %1)</translation>
+        <translation>LightningCashr Reborn манзилини киритинг (масалан.  %1)</translation>
     </message>
     <message>
         <source>%1 m</source>
@@ -1184,8 +1184,8 @@
         <translation>Демон сифатида орқа фонда ишга туширинг ва буйруқларга рози бўлинг</translation>
     </message>
     <message>
-        <source>LightningCashr Coin Core</source>
-        <translation>LightningCashr Coin Core</translation>
+        <source>LightningCashr Reborn Core</source>
+        <translation>LightningCashr Reborn Core</translation>
     </message>
     <message>
         <source>Connection options:</source>

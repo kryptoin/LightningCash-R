@@ -368,7 +368,7 @@ Var vänlig och försök igen.</translation>
     </message>
     <message>
         <source>LightningCashr</source>
-        <translation>LightningCashr Coin</translation>
+        <translation>LightningCashr Reborn</translation>
     </message>
     <message>
         <source>Wallet</source>
@@ -869,7 +869,7 @@ Var vänlig och försök igen.</translation>
     </message>
     <message>
         <source>LightningCashr</source>
-        <translation>LightningCashr Coin</translation>
+        <translation>LightningCashr Reborn</translation>
     </message>
     <message>
         <source>At least %1 GB of data will be stored in this directory, and it will grow over time.</source>
@@ -2258,7 +2258,7 @@ Var vänlig och försök igen.</translation>
     </message>
     <message>
         <source>The LightningCashr address to send the payment to</source>
-        <translation>LightningCashr Coinadress att sända betalning till</translation>
+        <translation>LightningCashr Rebornadress att sända betalning till</translation>
     </message>
     <message>
         <source>Alt+A</source>
@@ -2351,7 +2351,7 @@ Var vänlig och försök igen.</translation>
     </message>
     <message>
         <source>The LightningCashr address to sign the message with</source>
-        <translation>LightningCashr Coinadress att signera meddelandet med</translation>
+        <translation>LightningCashr Rebornadress att signera meddelandet med</translation>
     </message>
     <message>
         <source>Choose previously used address</source>
@@ -2407,7 +2407,7 @@ Var vänlig och försök igen.</translation>
     </message>
     <message>
         <source>The LightningCashr address the message was signed with</source>
-        <translation>LightningCashr Coinadressen som meddelandet signerades med</translation>
+        <translation>LightningCashr Rebornadressen som meddelandet signerades med</translation>
     </message>
     <message>
         <source>Verify the message to ensure it was signed with the specified LightningCashr address</source>
@@ -3087,8 +3087,8 @@ Var vänlig och försök igen.</translation>
         <translation>Kunde inte starta HTTP-server. Se avlusningsloggen för detaljer.</translation>
     </message>
     <message>
-        <source>LightningCashr Coin Core</source>
-        <translation>LightningCashr Coin Core</translation>
+        <source>LightningCashr Reborn Core</source>
+        <translation>LightningCashr Reborn Core</translation>
     </message>
     <message>
         <source>The %s developers</source>

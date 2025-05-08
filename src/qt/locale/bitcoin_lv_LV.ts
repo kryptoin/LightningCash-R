@@ -227,7 +227,7 @@
     </message>
     <message>
         <source>LightningCashr</source>
-        <translation>LightningCashr Coin</translation>
+        <translation>LightningCashr Reborn</translation>
     </message>
     <message>
         <source>Wallet</source>
@@ -466,7 +466,7 @@
     </message>
     <message>
         <source>LightningCashr</source>
-        <translation>LightningCashr Coin</translation>
+        <translation>LightningCashr Reborn</translation>
     </message>
     <message>
         <source>Error</source>
@@ -920,7 +920,7 @@
     </message>
     <message>
         <source>Coin Control Features</source>
-        <translation>LightningCashr Coin Kontroles Funkcijas</translation>
+        <translation>LightningCashr Reborn Kontroles Funkcijas</translation>
     </message>
     <message>
         <source>Inputs...</source>
@@ -1216,8 +1216,8 @@
         <translation>Darbināt fonā kā servisu un pieņemt komandas</translation>
     </message>
     <message>
-        <source>LightningCashr Coin Core</source>
-        <translation>LightningCashr Coin Core</translation>
+        <source>LightningCashr Reborn Core</source>
+        <translation>LightningCashr Reborn Core</translation>
     </message>
     <message>
         <source>&lt;category&gt; can be:</source>

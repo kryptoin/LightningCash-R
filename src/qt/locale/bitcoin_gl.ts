@@ -155,7 +155,7 @@
     </message>
     <message>
         <source>LightningCashr</source>
-        <translation>LightningCashr Coin</translation>
+        <translation>LightningCashr Reborn</translation>
     </message>
     <message>
         <source>Wallet</source>
@@ -406,7 +406,7 @@
     </message>
     <message>
         <source>LightningCashr</source>
-        <translation>LightningCashr Coin</translation>
+        <translation>LightningCashr Reborn</translation>
     </message>
     <message>
         <source>Error</source>
@@ -1020,7 +1020,7 @@
         <translation>Executar no fondo como un demo e aceptar comandos</translation>
     </message>
     <message>
-        <source>LightningCashr Coin Core</source>
+        <source>LightningCashr Reborn Core</source>
         <translation>Core de LightningCashr</translation>
     </message>
     <message>

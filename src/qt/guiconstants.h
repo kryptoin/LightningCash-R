@@ -48,7 +48,7 @@ static const int MAX_URI_LENGTH = 255;
 /* Number of frames in spinner animation */
 #define SPINNER_FRAMES 36
 
-#define QAPP_ORG_NAME "LightningCashr Coin"
+#define QAPP_ORG_NAME "LightningCashr Reborn"
 #define QAPP_ORG_DOMAIN "lightningca.sh"
 #define QAPP_APP_NAME_DEFAULT "LightningCashr-Qt"
 #define QAPP_APP_NAME_TESTNET "LightningCashr-Qt-testnet"

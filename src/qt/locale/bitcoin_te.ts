@@ -388,7 +388,7 @@
 <context>
     <name>bitcoin-core</name>
     <message>
-        <source>LightningCashr Coin Core</source>
+        <source>LightningCashr Reborn Core</source>
         <translation>బిట్కోయిన్ కోర్</translation>
     </message>
     <message>

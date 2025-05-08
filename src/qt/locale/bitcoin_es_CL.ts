@@ -167,7 +167,7 @@
     </message>
     <message>
         <source>LightningCashr</source>
-        <translation>LightningCashr Coin</translation>
+        <translation>LightningCashr Reborn</translation>
     </message>
     <message>
         <source>Wallet</source>
@@ -319,7 +319,7 @@
     </message>
     <message>
         <source>LightningCashr</source>
-        <translation>LightningCashr Coin</translation>
+        <translation>LightningCashr Reborn</translation>
     </message>
     <message>
         <source>Error</source>
@@ -776,8 +776,8 @@
 </translation>
     </message>
     <message>
-        <source>LightningCashr Coin Core</source>
-        <translation>LightningCashr Coin core</translation>
+        <source>LightningCashr Reborn Core</source>
+        <translation>LightningCashr Reborn core</translation>
     </message>
     <message>
         <source>Error loading block database</source>

@@ -367,7 +367,7 @@
     </message>
     <message>
         <source>LightningCashr</source>
-        <translation>LightningCashr Coin</translation>
+        <translation>LightningCashr Reborn</translation>
     </message>
     <message>
         <source>Wallet</source>
@@ -872,7 +872,7 @@
     </message>
     <message>
         <source>LightningCashr</source>
-        <translation>LightningCashr Coin</translation>
+        <translation>LightningCashr Reborn</translation>
     </message>
     <message>
         <source>At least %1 GB of data will be stored in this directory, and it will grow over time.</source>
@@ -1323,7 +1323,7 @@
     </message>
     <message>
         <source>Cannot start lightningcashr: click-to-pay handler</source>
-        <translation>LightningCashr Coin nu poate porni: click-to-pay handler</translation>
+        <translation>LightningCashr Reborn nu poate porni: click-to-pay handler</translation>
     </message>
     <message>
         <source>URI handling</source>
@@ -3170,7 +3170,7 @@
         <translation>Imposibil de pornit serverul HTTP. Pentru detalii vezi logul de depanare.</translation>
     </message>
     <message>
-        <source>LightningCashr Coin Core</source>
+        <source>LightningCashr Reborn Core</source>
         <translation>Nucleul LightningCashr</translation>
     </message>
     <message>

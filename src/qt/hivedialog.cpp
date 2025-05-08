@@ -245,7 +245,7 @@ void HiveDialog::updateData(bool forceGlobalSummaryUpdate) {
         // Set icon and tooltip for tray icon
         QString tooltip, icon;
         if (clientModel && clientModel->getNumConnections() == 0) {
-            tooltip = "LightningCashr Coin is not connected";
+            tooltip = "LightningCashr Reborn is not connected";
             icon = ":/icons/hivestatus_disabled";
         } else if (!model->isHiveEnabled()) {
             tooltip = "The Hive is not enabled on the network";
@@ -436,7 +436,7 @@ void HiveDialog::updateData2(bool forceGlobalSummaryUpdate) {
         // Set icon and tooltip for tray icon
         QString tooltip, icon;
         if (clientModel && clientModel->getNumConnections() == 0) {
-            tooltip = "LightningCashr Coin is not connected";
+            tooltip = "LightningCashr Reborn is not connected";
             icon = ":/icons/hivestatus_disabled";
         } else if (!model->isHiveEnabled()) {
             tooltip = "The Hive is not enabled on the network";
@@ -644,7 +644,7 @@ void HiveDialog::updateData3(bool forceGlobalSummaryUpdate) {
         // Set icon and tooltip for tray icon
         QString tooltip, icon;
         if (clientModel && clientModel->getNumConnections() == 0) {
-            tooltip = "LightningCashr Coin is not connected";
+            tooltip = "LightningCashr Reborn is not connected";
             icon = ":/icons/hivestatus_disabled";
         } else if (!model->isHiveEnabled()) {
             tooltip = "The Hive is not enabled on the network";

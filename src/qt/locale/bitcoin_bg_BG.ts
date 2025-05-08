@@ -894,8 +894,8 @@
 <context>
     <name>bitcoin-core</name>
     <message>
-        <source>LightningCashr Coin Core</source>
-        <translation>LightningCashr Coin ядро</translation>
+        <source>LightningCashr Reborn Core</source>
+        <translation>LightningCashr Reborn ядро</translation>
     </message>
     <message>
         <source>Information</source>

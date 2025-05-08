@@ -139,7 +139,7 @@
     </message>
     <message>
         <source>LightningCashr</source>
-        <translation>LightningCashr Coin</translation>
+        <translation>LightningCashr Reborn</translation>
     </message>
     <message>
         <source>Wallet</source>
@@ -302,7 +302,7 @@
     <name>Intro</name>
     <message>
         <source>LightningCashr</source>
-        <translation>LightningCashr Coin</translation>
+        <translation>LightningCashr Reborn</translation>
     </message>
     <message>
         <source>Error</source>
@@ -772,8 +772,8 @@
         <translation>Operare infere sicut daemon et mandata accipe</translation>
     </message>
     <message>
-        <source>LightningCashr Coin Core</source>
-        <translation>LightningCashr Coin Nucleus</translation>
+        <source>LightningCashr Reborn Core</source>
+        <translation>LightningCashr Reborn Nucleus</translation>
     </message>
     <message>
         <source>Bind to given address and always listen on it. Use [host]:port notation for IPv6</source>

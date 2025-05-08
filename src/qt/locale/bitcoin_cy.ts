@@ -355,7 +355,7 @@
     </message>
     <message>
         <source>LightningCashr</source>
-        <translation>LightningCashr Coin</translation>
+        <translation>LightningCashr Reborn</translation>
     </message>
     <message>
         <source>Wallet</source>
@@ -636,7 +636,7 @@
     </message>
     <message>
         <source>LightningCashr</source>
-        <translation>LightningCashr Coin</translation>
+        <translation>LightningCashr Reborn</translation>
     </message>
     <message>
         <source>Error</source>
@@ -1042,7 +1042,7 @@
         <translation>Opsiynau:</translation>
     </message>
     <message>
-        <source>LightningCashr Coin Core</source>
+        <source>LightningCashr Reborn Core</source>
         <translation>Craidd LightningCashr</translation>
     </message>
     <message>

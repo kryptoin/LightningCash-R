@@ -359,7 +359,7 @@
     </message>
     <message>
         <source>LightningCashr</source>
-        <translation>LightningCashr Coin</translation>
+        <translation>LightningCashr Reborn</translation>
     </message>
     <message>
         <source>Wallet</source>
@@ -824,7 +824,7 @@
     </message>
     <message>
         <source>LightningCashr</source>
-        <translation>LightningCashr Coin</translation>
+        <translation>LightningCashr Reborn</translation>
     </message>
     <message>
         <source>The wallet will also be stored in this directory.</source>
@@ -1918,8 +1918,8 @@
         <translation>Opsies:</translation>
     </message>
     <message>
-        <source>LightningCashr Coin Core</source>
-        <translation>LightningCashr Coin Kern</translation>
+        <source>LightningCashr Reborn Core</source>
+        <translation>LightningCashr Reborn Kern</translation>
     </message>
     <message>
         <source>Connection options:</source>

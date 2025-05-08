@@ -351,7 +351,7 @@
     </message>
     <message>
         <source>LightningCashr</source>
-        <translation>LightningCashr Coin</translation>
+        <translation>LightningCashr Reborn</translation>
     </message>
     <message>
         <source>Wallet</source>
@@ -596,7 +596,7 @@
     </message>
     <message>
         <source>LightningCashr</source>
-        <translation>LightningCashr Coin</translation>
+        <translation>LightningCashr Reborn</translation>
     </message>
     <message>
         <source>Error</source>
@@ -649,7 +649,7 @@
     </message>
     <message>
         <source>Enter a LightningCashr address (e.g. %1)</source>
-        <translation>LightningCashr Coin Adresse eingeben (z.B. %1)</translation>
+        <translation>LightningCashr Reborn Adresse eingeben (z.B. %1)</translation>
     </message>
     <message>
         <source>N/A</source>

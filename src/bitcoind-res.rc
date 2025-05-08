@@ -16,8 +16,8 @@ BEGIN
     BEGIN
         BLOCK "040904E4" // U.S. English - multilingual (hex)
         BEGIN
-            VALUE "CompanyName",        "LightningCashr Coin"
-            VALUE "FileDescription",    "lightningcashrd (LightningCashr Coin node with a JSON-RPC server)"
+            VALUE "CompanyName",        "LightningCashr Reborn"
+            VALUE "FileDescription",    "lightningcashrd (LightningCashr Reborn node with a JSON-RPC server)"
             VALUE "FileVersion",        VER_FILEVERSION_STR
             VALUE "InternalName",       "lightningcashrd"
             VALUE "LegalCopyright",     COPYRIGHT_STR

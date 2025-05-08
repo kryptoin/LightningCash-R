@@ -231,7 +231,7 @@
     </message>
     <message>
         <source>LightningCashr</source>
-        <translation>LightningCashr Coin</translation>
+        <translation>LightningCashr Reborn</translation>
     </message>
     <message>
         <source>Wallet</source>
@@ -402,7 +402,7 @@
     </message>
     <message>
         <source>LightningCashr</source>
-        <translation>LightningCashr Coin</translation>
+        <translation>LightningCashr Reborn</translation>
     </message>
     <message>
         <source>Error</source>
@@ -808,7 +808,7 @@
         <translation>Opsionet:</translation>
     </message>
     <message>
-        <source>LightningCashr Coin Core</source>
+        <source>LightningCashr Reborn Core</source>
         <translation>Berthama LightningCashr</translation>
     </message>
     <message>

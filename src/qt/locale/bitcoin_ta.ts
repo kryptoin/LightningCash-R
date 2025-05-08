@@ -91,7 +91,7 @@
     </message>
     <message>
         <source>LightningCashr</source>
-        <translation>LightningCashr Coin</translation>
+        <translation>LightningCashr Reborn</translation>
     </message>
     <message>
         <source>Wallet</source>
@@ -226,7 +226,7 @@
     </message>
     <message>
         <source>LightningCashr</source>
-        <translation>LightningCashr Coin</translation>
+        <translation>LightningCashr Reborn</translation>
     </message>
     <message>
         <source>Error</source>
@@ -708,8 +708,8 @@
 <context>
     <name>bitcoin-core</name>
     <message>
-        <source>LightningCashr Coin Core</source>
-        <translation>LightningCashr Coin மையம்</translation>
+        <source>LightningCashr Reborn Core</source>
+        <translation>LightningCashr Reborn மையம்</translation>
     </message>
     <message>
         <source>(default: %u)</source>

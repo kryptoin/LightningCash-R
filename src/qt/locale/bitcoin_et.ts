@@ -315,7 +315,7 @@
     </message>
     <message>
         <source>LightningCashr</source>
-        <translation>LightningCashr Coin</translation>
+        <translation>LightningCashr Reborn</translation>
     </message>
     <message>
         <source>Wallet</source>
@@ -684,7 +684,7 @@
     </message>
     <message>
         <source>LightningCashr</source>
-        <translation>LightningCashr Coin</translation>
+        <translation>LightningCashr Reborn</translation>
     </message>
     <message>
         <source>Error</source>
@@ -761,7 +761,7 @@
     </message>
     <message>
         <source>Automatically open the LightningCashr client port on the router. This only works when your router supports UPnP and it is enabled.</source>
-        <translation>LightningCashr Coini kliendi pordi automaatne avamine ruuteris. Toimib, kui sinu ruuter aktsepteerib UPnP ühendust.</translation>
+        <translation>LightningCashr Reborni kliendi pordi automaatne avamine ruuteris. Toimib, kui sinu ruuter aktsepteerib UPnP ühendust.</translation>
     </message>
     <message>
         <source>Map port using &amp;UPnP</source>
@@ -1446,7 +1446,7 @@
     </message>
     <message>
         <source>The LightningCashr address to sign the message with</source>
-        <translation>LightningCashr Coin aadress millega sõnum allkirjastada</translation>
+        <translation>LightningCashr Reborn aadress millega sõnum allkirjastada</translation>
     </message>
     <message>
         <source>Choose previously used address</source>
@@ -1498,7 +1498,7 @@
     </message>
     <message>
         <source>The LightningCashr address the message was signed with</source>
-        <translation>LightningCashr Coin aadress millega sõnum on allkirjastatud</translation>
+        <translation>LightningCashr Reborn aadress millega sõnum on allkirjastatud</translation>
     </message>
     <message>
         <source>Verify the message to ensure it was signed with the specified LightningCashr address</source>
@@ -1970,8 +1970,8 @@
         <translation>Tööta taustal ning aktsepteeri käsklusi</translation>
     </message>
     <message>
-        <source>LightningCashr Coin Core</source>
-        <translation>LightningCashr Coini tuumik</translation>
+        <source>LightningCashr Reborn Core</source>
+        <translation>LightningCashr Reborni tuumik</translation>
     </message>
     <message>
         <source>Bind to given address and always listen on it. Use [host]:port notation for IPv6</source>

@@ -1,4 +1,4 @@
-LightningCashr Core version 0.16.0 is now available from:
+LightningCash-R Core version 0.16.0 is now available from:
 
   <https://download.lightningca.sh/lightningcashr-0.16.0/>
 
@@ -40,10 +40,10 @@ wallets that were created with older versions are not affected by this.
 Compatibility
 ==============
 
-LightningCashr Core is extensively tested on multiple operating systems using
+LightningCash-R Core is extensively tested on multiple operating systems using
 the Linux kernel, macOS 10.8+, and Windows Vista and later. Windows XP is not supported.
 
-LightningCashr Core should also work on most other Unix-like systems but is not
+LightningCash-R Core should also work on most other Unix-like systems but is not
 frequently tested on them.
 
 Notable changes
@@ -54,7 +54,7 @@ Wallet changes
 
 ### Segwit Wallet
 
-LightningCashr Core 0.16.0 introduces full support for segwit in the wallet and user interfaces. A new `-addresstype` argument has been added, which supports `legacy`, `p2sh-segwit` (default), and `bech32` addresses. It controls what kind of addresses are produced by `getnewaddress`, `getaccountaddress`, and `createmultisigaddress`. A `-changetype` argument has also been added, with the same options, and by default equal to `-addresstype`, to control which kind of change is used.
+LightningCash-R Core 0.16.0 introduces full support for segwit in the wallet and user interfaces. A new `-addresstype` argument has been added, which supports `legacy`, `p2sh-segwit` (default), and `bech32` addresses. It controls what kind of addresses are produced by `getnewaddress`, `getaccountaddress`, and `createmultisigaddress`. A `-changetype` argument has also been added, with the same options, and by default equal to `-addresstype`, to control which kind of change is used.
 
 A new `address_type` parameter has been added to the `getnewaddress` and `addmultisigaddress` RPCs to specify which type of address to generate.
 A `change_type` argument has been added to the `fundrawtransaction` RPC to override the `-changetype` argument for specific transactions.
@@ -84,7 +84,7 @@ to new wallets; wallets made with previous versions will not be upgraded to be H
 
 ### Wallets directory configuration (`-walletdir`)
 
-LightningCashr Core now has more flexibility in where the wallets directory can be
+LightningCash-R Core now has more flexibility in where the wallets directory can be
 located. Previously wallet database files were stored at the top level of the
 lightningcashr data directory. The behavior is now:
 
@@ -104,7 +104,7 @@ becomes unavailable during operation, funds may be lost.
 
 Build: Minimum GCC bumped to 4.8.x
 ------------------------------------
-The minimum version of the GCC compiler required to compile LightningCashr Core is now 4.8. No effort will be
+The minimum version of the GCC compiler required to compile LightningCash-R Core is now 4.8. No effort will be
 made to support older versions of GCC. See discussion in issue #11732 for more information.
 The minimum version for the Clang compiler is still 3.3. Other minimum dependency versions can be found in `doc/dependencies.md` in the repository.
 

@@ -323,7 +323,7 @@
     </message>
     <message>
         <source>LightningCashr</source>
-        <translation>LightningCashr Coin Core</translation>
+        <translation>LightningCashr Reborn Core</translation>
     </message>
     <message>
         <source>Wallet</source>
@@ -482,7 +482,7 @@
     </message>
     <message>
         <source>LightningCashr</source>
-        <translation>LightningCashr Coin Core</translation>
+        <translation>LightningCashr Reborn Core</translation>
     </message>
     <message>
         <source>Error</source>
@@ -924,8 +924,8 @@
 <context>
     <name>bitcoin-core</name>
     <message>
-        <source>LightningCashr Coin Core</source>
-        <translation>LightningCashr Coin Core</translation>
+        <source>LightningCashr Reborn Core</source>
+        <translation>LightningCashr Reborn Core</translation>
     </message>
     <message>
         <source>Whitelisted peers cannot be DoS banned and their transactions are always relayed, even if they are already in the mempool, useful e.g. for a gateway</source>

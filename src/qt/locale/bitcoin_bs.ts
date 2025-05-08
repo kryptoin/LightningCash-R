@@ -15,7 +15,7 @@
     <name>BitcoinGUI</name>
     <message>
         <source>LightningCashr</source>
-        <translation>LightningCashr Coin</translation>
+        <translation>LightningCashr Reborn</translation>
     </message>
     </context>
 <context>
@@ -34,7 +34,7 @@
     <name>Intro</name>
     <message>
         <source>LightningCashr</source>
-        <translation>LightningCashr Coin</translation>
+        <translation>LightningCashr Reborn</translation>
     </message>
     </context>
 <context>
@@ -160,8 +160,8 @@
 <context>
     <name>bitcoin-core</name>
     <message>
-        <source>LightningCashr Coin Core</source>
-        <translation>LightningCashr Coin Jezrga</translation>
+        <source>LightningCashr Reborn Core</source>
+        <translation>LightningCashr Reborn Jezrga</translation>
     </message>
     </context>
 </TS>

@@ -363,7 +363,7 @@
     </message>
     <message>
         <source>LightningCashr</source>
-        <translation>LightningCashr Coin</translation>
+        <translation>LightningCashr Reborn</translation>
     </message>
     <message>
         <source>Wallet</source>
@@ -869,7 +869,7 @@ Esta sincronização inicial é muito exigente e pode expor problemas de hardwar
     </message>
     <message>
         <source>LightningCashr</source>
-        <translation>LightningCashr Coin</translation>
+        <translation>LightningCashr Reborn</translation>
     </message>
     <message>
         <source>At least %1 GB of data will be stored in this directory, and it will grow over time.</source>
@@ -3159,8 +3159,8 @@ Esta sincronização inicial é muito exigente e pode expor problemas de hardwar
         <translation>Não foi possível iniciar o servidor HTTP. Veja o log para detaihes.</translation>
     </message>
     <message>
-        <source>LightningCashr Coin Core</source>
-        <translation>LightningCashr Coin Core</translation>
+        <source>LightningCashr Reborn Core</source>
+        <translation>LightningCashr Reborn Core</translation>
     </message>
     <message>
         <source>The %s developers</source>

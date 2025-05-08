@@ -117,7 +117,7 @@ void WalletFrame::gotoOverviewPage()
         i.value()->gotoOverviewPage();
 }
 
-// LightningCashr Coin: Hive page
+// LightningCashr Reborn: Hive page
 void WalletFrame::gotoHivePage()
 {
     QMap<QString, WalletView*>::const_iterator i;

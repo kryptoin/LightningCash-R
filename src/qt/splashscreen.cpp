@@ -42,7 +42,7 @@ SplashScreen::SplashScreen(Qt::WindowFlags f, const NetworkStyle *networkStyle) 
 #endif
 
     // define text to place
-    QString titleText       = tr("LightningCashr Coin");  // LightningCashr: Show the pretty name, not package name
+    QString titleText       = tr("LightningCashr Reborn");  // LightningCashr: Show the pretty name, not package name
     QString versionText     = QString("Version %1").arg(QString::fromStdString(FormatFullVersion()));
     QString copyrightText   = QString::fromUtf8(CopyrightHolders(strprintf("\xc2\xA9 %u-%u ", 2011, COPYRIGHT_YEAR)).c_str());
     QString titleAddText    = networkStyle->getTitleAddText();

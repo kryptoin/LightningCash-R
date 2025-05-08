@@ -2040,7 +2040,7 @@
         <translation>حدد مجلد المعلومات</translation>
     </message>
     <message>
-        <source>LightningCashr Coin Core</source>
+        <source>LightningCashr Reborn Core</source>
         <translation>جوهر LightningCashr</translation>
     </message>
     <message>

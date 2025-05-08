@@ -364,7 +364,7 @@ Alihkan fail data ke dalam tab semasa</translation>
     </message>
     <message>
         <source>LightningCashr</source>
-        <translation>LightningCashr Coin</translation>
+        <translation>LightningCashr Reborn</translation>
     </message>
     <message>
         <source>Wallet</source>
@@ -439,7 +439,7 @@ Alihkan fail data ke dalam tab semasa</translation>
     <name>Intro</name>
     <message>
         <source>LightningCashr</source>
-        <translation>LightningCashr Coin</translation>
+        <translation>LightningCashr Reborn</translation>
     </message>
     </context>
 <context>

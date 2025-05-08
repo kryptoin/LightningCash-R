@@ -287,7 +287,7 @@
     </message>
     <message>
         <source>Send coins to a LightningCashr address</source>
-        <translation>LightningCashr Coin adresine madeni para gönderin</translation>
+        <translation>LightningCashr Reborn adresine madeni para gönderin</translation>
     </message>
     <message>
         <source>Backup wallet to another location</source>
@@ -303,7 +303,7 @@
     </message>
     <message>
         <source>LightningCashr</source>
-        <translation>LightningCashr Coin</translation>
+        <translation>LightningCashr Reborn</translation>
     </message>
     <message>
         <source>Wallet</source>
@@ -515,7 +515,7 @@
     </message>
     <message>
         <source>LightningCashr</source>
-        <translation>LightningCashr Coin
+        <translation>LightningCashr Reborn
 </translation>
     </message>
     <message>
@@ -661,7 +661,7 @@
     <name>QObject</name>
     <message>
         <source>Enter a LightningCashr address (e.g. %1)</source>
-        <translation>LightningCashr Coin adresinizi girin (örneğin %1)</translation>
+        <translation>LightningCashr Reborn adresinizi girin (örneğin %1)</translation>
     </message>
     <message>
         <source>N/A</source>
@@ -1342,8 +1342,8 @@
         <translation>JSON-RPC komutları ile komut satırını onaylayın</translation>
     </message>
     <message>
-        <source>LightningCashr Coin Core</source>
-        <translation>LightningCashr Coin Çekirdeği</translation>
+        <source>LightningCashr Reborn Core</source>
+        <translation>LightningCashr Reborn Çekirdeği</translation>
     </message>
     <message>
         <source>&lt;category&gt; can be:</source>

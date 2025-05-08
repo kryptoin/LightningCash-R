@@ -184,7 +184,7 @@
     </message>
     <message>
         <source>Send coins to a LightningCashr address</source>
-        <translation>LightningCashr Coin ठेगानामा सिक्का पठाउनुहोस्</translation>
+        <translation>LightningCashr Reborn ठेगानामा सिक्का पठाउनुहोस्</translation>
     </message>
     <message>
         <source>Backup wallet to another location</source>
@@ -361,7 +361,7 @@
     </message>
     <message>
         <source>A message that was attached to the lightningcashr: URI which will be stored with the transaction for your reference. Note: This message will not be sent over the LightningCashr network.</source>
-        <translation>LightningCashr Coinमा संलग्न गरिएको सन्देश: तपाईंको मध्यस्थको लागि कारोबारको साथमा भण्डारण गरिने URI । नोट: यो सन्देश LightningCashr नेटवर्क मार्फत पठाइने छैन ।</translation>
+        <translation>LightningCashr Rebornमा संलग्न गरिएको सन्देश: तपाईंको मध्यस्थको लागि कारोबारको साथमा भण्डारण गरिने URI । नोट: यो सन्देश LightningCashr नेटवर्क मार्फत पठाइने छैन ।</translation>
     </message>
     </context>
 <context>

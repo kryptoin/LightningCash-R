@@ -344,7 +344,7 @@ Exportar los datos en la pestaña actual a un archivo</translation>
     </message>
     <message>
         <source>LightningCashr</source>
-        <translation>LightningCashr Coin</translation>
+        <translation>LightningCashr Reborn</translation>
     </message>
     <message>
         <source>Wallet</source>
@@ -739,7 +739,7 @@ Exportar los datos en la pestaña actual a un archivo</translation>
     </message>
     <message>
         <source>LightningCashr</source>
-        <translation>LightningCashr Coin</translation>
+        <translation>LightningCashr Reborn</translation>
     </message>
     <message>
         <source>The wallet will also be stored in this directory.</source>
@@ -1907,8 +1907,8 @@ Exportar los datos en la pestaña actual a un archivo</translation>
 <context>
     <name>bitcoin-core</name>
     <message>
-        <source>LightningCashr Coin Core</source>
-        <translation>LightningCashr Coin Core</translation>
+        <source>LightningCashr Reborn Core</source>
+        <translation>LightningCashr Reborn Core</translation>
     </message>
     <message>
         <source>Information</source>

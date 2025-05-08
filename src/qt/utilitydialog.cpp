@@ -49,7 +49,7 @@ HelpMessageDialog::HelpMessageDialog(QWidget *parent, bool about) :
 
     if (about)
     {
-        setWindowTitle(tr("About LightningCashr Coin"));  // LightningCashr: Don't use package name here; we want coin name with a space in window titles.
+        setWindowTitle(tr("About LightningCashr Reborn"));  // LightningCashr: Don't use package name here; we want coin name with a space in window titles.
 
         /// HTML-format the license message from the core
         QString licenseInfo = QString::fromStdString(LicenseInfo());

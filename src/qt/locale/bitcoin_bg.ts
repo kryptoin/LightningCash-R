@@ -1095,7 +1095,7 @@
     </message>
     <message>
         <source>Cannot start lightningcashr: click-to-pay handler</source>
-        <translation>LightningCashr Coin не можe да се стартира: click-to-pay handler</translation>
+        <translation>LightningCashr Reborn не можe да се стартира: click-to-pay handler</translation>
     </message>
     <message>
         <source>URI handling</source>
@@ -2366,8 +2366,8 @@
         <translation>Въведете Ваш публичен адрес</translation>
     </message>
     <message>
-        <source>LightningCashr Coin Core</source>
-        <translation>LightningCashr Coin ядро</translation>
+        <source>LightningCashr Reborn Core</source>
+        <translation>LightningCashr Reborn ядро</translation>
     </message>
     <message>
         <source>&lt;category&gt; can be:</source>

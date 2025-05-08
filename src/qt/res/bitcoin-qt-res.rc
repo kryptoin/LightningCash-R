@@ -19,8 +19,8 @@ BEGIN
     BEGIN
         BLOCK "040904E4" // U.S. English - multilingual (hex)
         BEGIN
-            VALUE "CompanyName",        "LightningCashr Coin"
-            VALUE "FileDescription",    PACKAGE_NAME " (GUI node for LightningCashr Coin)"
+            VALUE "CompanyName",        "LightningCashr Reborn"
+            VALUE "FileDescription",    PACKAGE_NAME " (GUI node for LightningCashr Reborn)"
             VALUE "FileVersion",        VER_FILEVERSION_STR
             VALUE "InternalName",       "lightningcashr-qt"
             VALUE "LegalCopyright",     COPYRIGHT_STR

@@ -590,7 +590,7 @@
         <translation>Опции:</translation>
     </message>
     <message>
-        <source>LightningCashr Coin Core</source>
+        <source>LightningCashr Reborn Core</source>
         <translation>Биткоин Core</translation>
     </message>
     <message>

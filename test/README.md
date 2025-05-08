@@ -1,4 +1,4 @@
-LightningCashr Core Testing Guide (Ubuntu-Focused, Updated 2025)
+LightningCash-R Core Testing Guide (Ubuntu-Focused, Updated 2025)
 ================================================================
 
 This directory contains integration tests for `lightningcashrd` and its utilities. These tests evaluate the full behavior of the system, including RPC and P2P functionality. Unit tests are located separately in:
