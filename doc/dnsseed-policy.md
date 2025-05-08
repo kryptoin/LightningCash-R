@@ -1,54 +1,55 @@
-Expectations for DNS Seed operators
-====================================
+# Expectations for DNS Seed Operators
 
-LightningCashr Core attempts to minimize the level of trust in DNS seeds,
-but DNS seeds still pose a small amount of risk for the network.
-As such, DNS seeds must be run by entities which have some minimum
-level of trust within the LightningCashr community.
+As **LightningCash-R Core** is a growing project, DNS seeds are a crucial component for the early development and stability of the network. Given that this project is still in a rebuilding phase and there are only a few DNS seed hosts available, this policy seeks to provide basic guidelines for DNS seed operators, ensuring that they maintain security, reliability, and transparency.
 
-Other implementations of LightningCashr software may also use the same
-seeds and may be more exposed. In light of this exposure, this
-document establishes some basic expectations for operating dnsseeds.
+Although **DNS seeds** are designed to minimize trust, they still introduce a small level of risk. Therefore, DNS seeds must be operated by entities or individuals who hold a certain level of trust within the **LightningCash-R** community.
 
-0. A DNS seed operating organization or person is expected to follow good
-host security practices, maintain control of applicable infrastructure,
-and not sell or transfer control of the DNS seed. Any hosting services
-contracted by the operator are equally expected to uphold these expectations.
+Other implementations of **LightningCash-R** software may use the same seeds and may be more exposed. In light of this exposure, this document establishes the following basic expectations for DNS seed operators.
 
-1. The DNS seed results must consist exclusively of fairly selected and
-functioning LightningCashr nodes from the public network to the best of the
-operator's understanding and capability.
+## DNS Seed Policy Guidelines
 
-2. For the avoidance of doubt, the results may be randomized but must not
-single-out any group of hosts to receive different results unless due to an
-urgent technical necessity and disclosed.
+### 1. Trustworthy Operation
 
-3. The results may not be served with a DNS TTL of less than one minute.
+The DNS seed operator is expected to follow best security practices and maintain control over the DNS infrastructure. The operator should not sell or transfer control of the DNS seed to any third party. If any hosting services are used, they must also uphold these expectations.
 
-4. Any logging of DNS queries should be only that which is necessary
-for the operation of the service or urgent health of the LightningCashr
-network and must not be retained longer than necessary nor disclosed
-to any third party.
+### 2. Fair Selection of Nodes
 
-5. Information gathered as a result of the operators node-spidering
-(not from DNS queries) may be freely published or retained, but only
-if this data was not made more complete by biasing node connectivity
-(a violation of expectation (1)).
+The DNS seed operator must ensure that the DNS seed results consist solely of **fairly selected**, **functioning** **LightningCash-R** nodes from the public network. The selection process should be transparent and aim to avoid any biases in node selection.
 
-6. Operators are encouraged, but not required, to publicly document the
-details of their operating practices.
+### 3. Randomization of Results
 
-7. A reachable email contact address must be published for inquiries
-related to the DNS seed operation.
+DNS seed results should be randomized to avoid preferential treatment of any specific node or group. However, it is acceptable to make exceptions for urgent technical necessities. If such an exception occurs, it should be disclosed publicly.
 
-If these expectations cannot be satisfied the operator should
-discontinue providing services and contact the active LightningCashr
-Core development team as well as posting on
-[lightningcashr-dev](https://groups.google.com/forum/#!forum/lightningcashr-dev).
+### 4. DNS TTL (Time-to-Live)
 
-Behavior outside of these expectations may be reasonable in some
-situations but should be discussed in public in advance.
+The DNS seed should not serve DNS responses with a TTL of less than **one minute** to prevent clients from caching outdated seed information.
 
-See also
-----------
-- [lightningcashr-seeder](https://github.com/pooler/lightningcashr-seeder) is a reference implementation of a DNS seed.
+### 5. Logging of DNS Queries
+
+Any logging of DNS queries should be limited to what is necessary for the operation of the service or for addressing the urgent health of the **LightningCash-R** network. Logs should not be retained longer than necessary, and operators must not disclose query logs to third parties.
+
+### 6. Node Connectivity Data
+
+Information obtained from the operator's node-spidering (i.e., discovery of nodes through network scanning) may be freely published or retained. However, the operator must ensure that such data was not influenced by biased node connectivity (e.g., by prioritizing or ignoring certain nodes, which violates expectation (2)).
+
+### 7. Public Documentation
+
+Operators are **encouraged**, but not required, to publicly document their operating practices. This ensures transparency and helps foster trust within the **LightningCash-R** community.
+
+### 8. Contact Information
+
+A **reachable email contact address** must be made publicly available for inquiries related to the operation of the DNS seed. This ensures that the community can easily reach out for support, questions, or concerns.
+
+---
+
+### Discontinuation of Service
+
+If a DNS seed operator is unable to meet these expectations, they should cease operating the service and notify the active **LightningCash-R Core** development team. Additionally, they should post on the [LightningCash-R-dev forum](https://groups.google.com/forum/#!forum/LightningCash-R-dev) to inform the community about the cessation of service.
+
+### Discussion of Exceptions
+
+In some cases, behavior outside these expectations may be acceptable. However, if the operator deviates from these guidelines, they should **discuss** it publicly in advance to ensure transparency and maintain community trust.
+
+---
+
+_Last updated: May 2025_
