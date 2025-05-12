@@ -1009,7 +1009,9 @@ static void RelayAddress(const CAddress& addr, bool fReachable, CConnman* connma
                                   .Write((GetTime() + hashAddr) / (24 * 60 * 60));
     FastRandomContext insecure_rand;
 
-    std::array<std::pair<uint64_t, CNode*>, 2> best{{{0, nullptr}, {0, nullptr}}};
+    //std::array<std::pair<uint64_t, CNode*>, 2> best{{{0, nullptr}, {0, nullptr}}};
+    std::vector<std::pair<uint64_t, CNode*>> best = {{0, nullptr}, {0, nullptr}};
+
     assert(nRelayNodes <= best.size());
 
     auto sortfunc = [&best, &hasher, nRelayNodes](CNode* pnode) {
