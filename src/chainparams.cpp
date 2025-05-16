@@ -47,19 +47,6 @@ static CBlock CreateGenesisBlock(const char *pszTimestamp,
   return genesis;
 }
 
-/**
- * Build the genesis block. Note that the output of its generation
- * transaction cannot be spent since it did not originally exist in the
- * database.
- *
- * CBlock(hash=000000000019d6, ver=1, hashPrevBlock=00000000000000,
- * hashMerkleRoot=4a5e1e, nTime=1231006505, nBits=1d00ffff, nNonce=2083236893,
- * vtx=1) CTransaction(hash=4a5e1e, ver=1, vin.size=1, vout.size=1, nLockTime=0)
- *     CTxIn(COutPoint(000000, -1), coinbase
- * 04ffff001d0104455468652054696d65732030332f4a616e2f32303039204368616e63656c6c6f72206f6e206272696e6b206f66207365636f6e64206261696c6f757420666f722062616e6b73)
- *     CTxOut(nValue=50.00000000, scriptPubKey=0x5F1DF16B2B704C8A578D0B)
- *   vMerkleTree: 4a5e1e
- */
 static CBlock CreateGenesisBlock(uint32_t nTime, uint32_t nNonce,
                                  uint32_t nBits, int32_t nVersion,
                                  const CAmount &genesisReward) {
@@ -82,14 +69,6 @@ void CChainParams::UpdateVersionBitsParameters(Consensus::DeploymentPos d,
 
 /**
  * Main network
- */
-
-/**
- * What makes a good checkpoint block?
- * + Is surrounded by blocks with reasonable timestamps
- *   (no blocks before with a timestamp after, none after with
- *    timestamp before)
- * + Contains no strange transactions
  */
 
 class CMainParams : public CChainParams {
@@ -240,20 +219,46 @@ public:
 
     checkpointData = {{
     {       0, uint256S("0x35f373b6fed4342ef20327917f756dc5fe76b4f2c111ac0a1c52ba408764709b") },
-    {  500000, uint256S("0xcebe0c610eac8b86ab5b286fb1b24706deea13b5636fe75242822455f54b7c3c") },
-    { 1000000, uint256S("0xa2e15c385d143fc34784fa46039c770d99bfc876534ad05b804d7a0955635035") },
+    {  150000, uint256S("0x646cfd76c07fd272e3ab5db99247e598f25706550410c2f768ec9ca7620ca727") },
+    {  300000, uint256S("0x3a378354f86831aef4885a88bd639661b5402bb1fd8741c3b517d44cde74a304") },
+    {  450000, uint256S("0x3518b8cc106edea45d371627aaf531c56ee5f5a12efdf7f27a69fd7a3c601447") },
+    {  600000, uint256S("0x706ab513002e4e7f3eb537bd5f7d6d94517251c1105ce41fa9c9bd146c39f927") },
+    {  750000, uint256S("0x316bed2f42f6501fe2c53ca7374377850c3695c569b0bc5295bee53c906d8b30") },
+    {  900000, uint256S("0x3a44b9f3b4a77effc3e45c9a9ce03d91096c6a2576eba33305878fc24b3969a0") },
+    { 1050000, uint256S("0xbd0bb9c7a5b3ae16d5a38b33387ff1319b44fd92d3489e7767657dc274b5d01a") },
+    { 1200000, uint256S("0x7d92f3a01148371039144d7646d1d20815cbeb8d0e53f54a34cab2e3aed2c297") },
+    { 1350000, uint256S("0x263f92b061493185921a0210b1e038e2e6425a49ae11ec97e1a6ef6046efeb55") },
     { 1500000, uint256S("0xd79caac0c866519136261e06afcea5e117e9aec34ab2aa06676b3a1e4d6b4ec2") },
-    { 2000000, uint256S("0xe9364e7a5ef3dc80b59f05cc719540fe30665f008a9b0dea158f22f73895f3d4") },
-    { 2500000, uint256S("0x399831272e0afbaae0fb02d0c755977e204d90a6dd54e643e04b34c9ff8a7888") },
+    { 1650000, uint256S("0xd52262587401a888e9fe27471c3a9354f4a1fb288f6f1d89fd88d11a75121fa0") },
+    { 1800000, uint256S("0x1e62d1d0145c5a5cd8c68b0e2ba37cd21142deba2ee6a74848c3b628376ac16c") },
+    { 1950000, uint256S("0xc356eaf8fdacc7e23dc17e094407534f97016e0a05dc576dade6d0be2ef13c8a") },
+    { 2100000, uint256S("0x5991a015527ffb75c1a886178d29d82440da43fec4db2f066f8094e4e579bc00") },
+    { 2250000, uint256S("0xbf8a4af1fd68803179dd8906d4854913b1a7868e2b801b1aa1b4688a442bd1e7") },
+    { 2400000, uint256S("0x3652141e932f933f78a442a76da7ecf0f0cf7895fa4e69c52083b714939f30a0") },
+    { 2550000, uint256S("0x6d052dadc8fff0bc325a212b1db60626741c24004c3314fc779897b4d788a78b") },
+    { 2700000, uint256S("0xc6d05f512f300afc662b06d72e0370cd3fa04711d85c7bb30995466bc86d3808") },
+    { 2850000, uint256S("0x1227191994ac01e81d9a0f01ccd6bfc7229e0c15cf4a70a2f8c566c1bbaaff19") },
     { 3000000, uint256S("0xe16710beaeeecac96f9c35c30db7d19d47fc89d85878b36574bb064d0bb28b8c") },
-    { 3500000, uint256S("0x324f917f1d7d10300cb90c4d6117f60e3f5ae4ebf16be316a05892c228428dad") },
-    { 4000000, uint256S("0x6a43527a702e38fc2357263c65b1ed7b92986b413ef204f901fedc4b25b0e778") },
+    { 3150000, uint256S("0xd3362b43a8a4e51c85bf05df4163742a5ca91395f85ec893de69934e7cee8df7") },
+    { 3300000, uint256S("0xe9eec45e2f0dc20caf63d9154f0a8a227a29ae9480dc576d6b41ed7f33df6a5f") },
+    { 3450000, uint256S("0x917d0a9b29d215ad9a0c9fc19eaf956650005736268f2c11d4faf985846a24eb") },
+    { 3600000, uint256S("0x9cd664e7bf8d5a5ad3eb0dd5905a8037fc7e4094b3538321359d8e97fd2e73fb") },
+    { 3750000, uint256S("0x664751c0b375bca1254ef8f904a888170aef7a65d8b832a32b2c4755dced6532") },
+    { 3900000, uint256S("0x7f6210082239e4fdadc4ca095faec45d57cb00e5140fe8fd7e65bc0178a849bd") },
+    { 4050000, uint256S("0x5dfbd070fa57ab0ec2a7913910485bf3f7edb80319ec21c42876181bc657b4cb") },
+    { 4200000, uint256S("0x7af0ddf8f005c4d1c539f27fee4c81781563c81d7e9bc5aaf4290766cfa5b787") },
+    { 4350000, uint256S("0x2eb7597331b6024b0ce0e90f883457ce2cd223c5cb882f66be6300faf4f96f09") },
     { 4500000, uint256S("0xe6809cecbd8db11ffb5d2a1710d761edfaa81073b0261f4ec4a297bd491f1a61") },
+    { 4650000, uint256S("0x50e03355dd197fc6d0b1dfb6f2bc674469a0d50d8f4dcd4b6f560525728fe7ec") },
+    { 4800000, uint256S("0xa71f3af979df1c1c93e9b57e5be95ac58a5c2c6110e23d2ff31883c2ed007ea3") },
+    { 4950000, uint256S("0xfe12ae6984c6778a901e1a47c13fd2b87efe7a06470adf54465269b6e9a70ee1") },
 }};
 
-    chainTxData = ChainTxData{
-        1694548330, 0,
-        0.0};
+    chainTxData = ChainTxData{ // 4976264 blocks
+        1747437599, // Timestamp (UNIX time)
+        5231440,    // Total transactions
+        0.0799374375 // Estimated transactions per second
+    };
   }
 };
 
