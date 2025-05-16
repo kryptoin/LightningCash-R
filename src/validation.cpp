@@ -3372,7 +3372,7 @@ static bool ContextualCheckBlock(const CBlock &block, CValidationState &state,
                            "block has insufficient work for a shallow reorg");
         }
 
-        if (block.GetBlockTime() - pindexPrev->GetBlockTime() < 60) {
+        if (block.GetBlockTime() - pindexPrev->GetBlockTime() < 5) {
           return state.DoS(
               100, false, REJECT_INVALID, "rapid-reorg", false,
               "block comes from a suspiciously fast reorg attempt");
@@ -3382,6 +3382,11 @@ static bool ContextualCheckBlock(const CBlock &block, CValidationState &state,
   }
 
   return true;
+}
+
+static bool IsReorgProtectionEnabled() {
+  return !IsInitialBlockDownload() && !fImporting && !fReindex &&
+         !ShutdownRequested();
 }
 
 static CDiskBlockPos SaveBlockToDisk(const CBlock &block, int nHeight,
@@ -3441,25 +3446,22 @@ bool CChainState::AcceptBlockHeader(const CBlockHeader &block,
         block.nBits, pindexPrev->nChainWork,
         IsHiveMinedHeader(block, chainparams.GetConsensus()));
 
-    if (nHeight <= pindexPrev->nHeight) {
-
+    if (pindexPrev && nHeight <= pindexPrev->nHeight &&
+        IsReorgProtectionEnabled()) {
       int reorgDepth = pindexPrev->nHeight - nHeight + 1;
 
       if (reorgDepth <= 3) {
-
         if (tempIndex.nChainWork < pindexPrev->nChainWork * 1.1) {
           return state.Invalid(
               error("%s: Shallow reorg rejected: insufficient work", __func__),
               REJECT_INVALID, "insufficient-work");
         }
 
-        if (block.nTime - pindexPrev->GetBlockTime() < 60) {
+        if (block.nTime - pindexPrev->GetBlockTime() < 5) {
           return state.Invalid(
               error("%s: Shallow reorg rejected: suspiciously fast", __func__),
               REJECT_INVALID, "rapid-reorg");
         }
-
-        sleep(10);
       }
     }
 
@@ -3525,23 +3527,33 @@ bool CChainState::AcceptBlock(const std::shared_ptr<const CBlock> &pblock,
   }
 
   CBlockIndex *pindexPrev = pindex->pprev;
-  if (pindexPrev && (pindex->nHeight - pindexPrev->nHeight <= 3)) {
 
-    if (pindex->nChainWork < pindexPrev->nChainWork * 1.1) {
-      return state.Invalid(
-          error("%s: Shallow reorg rejected due to insufficient work: %s",
-                __func__, block.GetHash().ToString()),
-          REJECT_INVALID, "insufficient-work");
+  int nHeight = pindexPrev ? pindexPrev->nHeight + 1 : 0;
+
+  CBlockIndex tempIndex;
+  tempIndex.pprev = pindexPrev;
+  tempIndex.nHeight = nHeight;
+  tempIndex.nBits = block.nBits; // <-- Needed for GetBlockProof
+  tempIndex.nChainWork =
+      (pindexPrev ? pindexPrev->nChainWork : 0) + GetBlockProof(tempIndex);
+
+  if (pindexPrev && nHeight <= pindexPrev->nHeight &&
+      IsReorgProtectionEnabled()) {
+    int reorgDepth = pindexPrev->nHeight - nHeight + 1;
+
+    if (reorgDepth <= 3) {
+      if (tempIndex.nChainWork < pindexPrev->nChainWork * 1.1) {
+        return state.Invalid(
+            error("%s: Shallow reorg rejected: insufficient work", __func__),
+            REJECT_INVALID, "insufficient-work");
+      }
+
+      if (block.nTime - pindexPrev->GetBlockTime() < 5) {
+        return state.Invalid(
+            error("%s: Shallow reorg rejected: suspiciously fast", __func__),
+            REJECT_INVALID, "rapid-reorg");
+      }
     }
-
-    if (block.nTime - pindexPrev->GetBlockTime() < 60) {
-      return state.Invalid(
-          error("%s: Shallow reorg rejected due to rapid reorg: %s", __func__,
-                block.GetHash().ToString()),
-          REJECT_INVALID, "rapid-reorg");
-    }
-
-    sleep(10);
   }
 
   bool fAlreadyHave = pindex->nStatus & BLOCK_HAVE_DATA;
