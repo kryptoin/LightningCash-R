@@ -13,8 +13,8 @@
 #include <amount.h>
 #include <coins.h>
 #include <fs.h>
-#include <protocol.h> // For CMessageHeader::MessageStartChars
 #include <policy/feerate.h>
+#include <protocol.h>
 #include <script/script_error.h>
 #include <sync.h>
 #include <util.h>

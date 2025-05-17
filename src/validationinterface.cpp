@@ -1,5 +1,6 @@
 // Copyright (c) 2009-2010 Satoshi Nakamoto
 // Copyright (c) 2009-2017 The Bitcoin Core developers
+// Copyright (c) 2025 The LightningCash-R Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -16,8 +17,6 @@
 #include <list>
 #include <atomic>
 #include <future>
-
-// #include <boost/signals2/signal.hpp>
 
 #include <boost/bind.hpp>
 #include <boost/signals2/signal.hpp>
@@ -36,9 +35,6 @@ struct MainSignalsInstance {
     boost::signals2::signal<void (const CBlock&, const CValidationState&)> BlockChecked;
     boost::signals2::signal<void (const CBlockIndex *, const std::shared_ptr<const CBlock>&)> NewPoWValidBlock;
 
-    // We are not allowed to assume the scheduler only runs in one thread,
-    // but must ensure all callbacks happen in-order, so we end up creating
-    // our own queue here :(
     SingleThreadedSchedulerClient m_schedulerClient;
 
     explicit MainSignalsInstance(CScheduler *pscheduler) : m_schedulerClient(pscheduler) {}
@@ -78,9 +74,6 @@ CMainSignals& GetMainSignals()
 {
     return g_signals;
 }
-
-
-
 
 void RegisterValidationInterface(CValidationInterface* pwalletIn) {
     g_signals.m_internals->UpdatedBlockTip.connect(boost::bind(&CValidationInterface::UpdatedBlockTip, pwalletIn, _1, _2, _3));
