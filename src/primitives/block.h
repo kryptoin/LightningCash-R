@@ -1,11 +1,13 @@
 // Copyright (c) 2009-2010 Satoshi Nakamoto
 // Copyright (c) 2009-2017 The Bitcoin Core developers
+// Copyright (c) 2025 The LightningCash-R Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
 #ifndef BITCOIN_PRIMITIVES_BLOCK_H
 #define BITCOIN_PRIMITIVES_BLOCK_H
 
+#include <consensus/consensus.h> // At the top of block.h if needed
 #include <primitives/transaction.h>
 #include <serialize.h>
 #include <uint256.h>
@@ -17,147 +19,153 @@
  * in the block is a special one that creates a new coin owned by the creator
  * of the block.
  */
-class CBlockHeader
-{
+class CBlockHeader {
 public:
-    // header
-    int32_t nVersion;
-    uint256 hashPrevBlock;
-    uint256 hashMerkleRoot;
-    uint32_t nTime;
-    uint32_t nBits;
-    uint32_t nNonce;
+  // header
+  int32_t nVersion;
+  uint256 hashPrevBlock;
+  uint256 hashMerkleRoot;
+  uint32_t nTime;
+  uint32_t nBits;
+  uint32_t nNonce;
 
-    CBlockHeader()
-    {
-        SetNull();
-    }
+  CBlockHeader() { SetNull(); }
 
-    ADD_SERIALIZE_METHODS;
+  ADD_SERIALIZE_METHODS;
 
-    template <typename Stream, typename Operation>
-    inline void SerializationOp(Stream& s, Operation ser_action) {
-        READWRITE(this->nVersion);
-        READWRITE(hashPrevBlock);
-        READWRITE(hashMerkleRoot);
-        READWRITE(nTime);
-        READWRITE(nBits);
-        READWRITE(nNonce);
-    }
+  template <typename Stream, typename Operation>
+  inline void SerializationOp(Stream &s, Operation ser_action) {
+    READWRITE(this->nVersion);
+    READWRITE(hashPrevBlock);
+    READWRITE(hashMerkleRoot);
+    READWRITE(nTime);
+    READWRITE(nBits);
+    READWRITE(nNonce);
+  }
 
-    void SetNull()
-    {
-        nVersion = 0;
-        hashPrevBlock.SetNull();
-        hashMerkleRoot.SetNull();
-        nTime = 0;
-        nBits = 0;
-        nNonce = 0;
-    }
+  void SetNull() {
+    nVersion = 0;
+    hashPrevBlock.SetNull();
+    hashMerkleRoot.SetNull();
+    nTime = 0;
+    nBits = 0;
+    nNonce = 0;
+  }
 
-    bool IsNull() const
-    {
-        return (nBits == 0);
-    }
+  bool IsNull() const { return (nBits == 0); }
 
-    uint256 GetHash() const;
+  uint256 GetHash() const;
 
-    uint256 GetPoWHash() const;
+  uint256 GetPoWHash() const;
 
-    uint256 GetHashYespower() const;
+  uint256 GetHashYespower() const;
 
-    int64_t GetBlockTime() const
-    {
-        return (int64_t)nTime;
-    }
+  int64_t GetBlockTime() const { return (int64_t)nTime; }
 
-    // LightningCashr: Hive: Check if this block is hivemined
-    bool IsHiveMined(const Consensus::Params& consensusParams) const {
-        return (nNonce == consensusParams.hiveNonceMarker);
-    }
+  // LightningCashr: Hive: Check if this block is hivemined
+  bool IsHiveMined(const Consensus::Params &consensusParams) const {
+    return (nNonce == consensusParams.hiveNonceMarker);
+  }
 };
 
-class CBlock : public CBlockHeader
-{
+class CBlock : public CBlockHeader {
 public:
-    // network and disk
-    std::vector<CTransactionRef> vtx;
+  std::vector<unsigned char> nHiveNonce;
+  std::vector<unsigned char> vchHiveProof;
 
-    // memory only
-    mutable bool fChecked;
+  // network and disk
+  std::vector<CTransactionRef> vtx;
 
-    CBlock()
-    {
-        SetNull();
+  // memory only
+  mutable bool fChecked;
+
+  CBlock() { SetNull(); }
+
+  CBlock(const CBlockHeader &header) {
+    SetNull();
+    *((CBlockHeader *)this) = header;
+  }
+
+  ADD_SERIALIZE_METHODS;
+
+  template <typename Stream, typename Operation>
+  inline void SerializationOp(Stream &s, Operation ser_action) {
+    READWRITE(*(CBlockHeader *)this);
+
+    if (!(s.GetType() & SER_GETHASH)) {
+      // Attempt to read Hive fields if version supports it
+      if (ser_action.ForRead()) {
+        if (nVersion >= HIVE_BLOCK_VERSION) {
+          try {
+            READWRITE(nHiveNonce);
+            READWRITE(vchHiveProof);
+          } catch (...) {
+            // Fallback for legacy blocks that don’t have these fields
+            nHiveNonce.clear();
+            vchHiveProof.clear();
+          }
+        } else {
+          nHiveNonce.clear();
+          vchHiveProof.clear();
+        }
+      } else {
+        // Writing
+        if (nVersion >= HIVE_BLOCK_VERSION) {
+          READWRITE(nHiveNonce);
+          READWRITE(vchHiveProof);
+        }
+      }
+
+      // Always read/write transactions
+      READWRITE(vtx);
     }
+  }
 
-    CBlock(const CBlockHeader &header)
-    {
-        SetNull();
-        *((CBlockHeader*)this) = header;
-    }
+  void SetNull() {
+    CBlockHeader::SetNull();
+    vtx.clear();
+    fChecked = false;
+  }
 
-    ADD_SERIALIZE_METHODS;
+  CBlockHeader GetBlockHeader() const {
+    CBlockHeader block;
+    block.nVersion = nVersion;
+    block.hashPrevBlock = hashPrevBlock;
+    block.hashMerkleRoot = hashMerkleRoot;
+    block.nTime = nTime;
+    block.nBits = nBits;
+    block.nNonce = nNonce;
+    return block;
+  }
 
-    template <typename Stream, typename Operation>
-    inline void SerializationOp(Stream& s, Operation ser_action) {
-        READWRITE(*(CBlockHeader*)this);
-        READWRITE(vtx);
-    }
-
-    void SetNull()
-    {
-        CBlockHeader::SetNull();
-        vtx.clear();
-        fChecked = false;
-    }
-
-    CBlockHeader GetBlockHeader() const
-    {
-        CBlockHeader block;
-        block.nVersion       = nVersion;
-        block.hashPrevBlock  = hashPrevBlock;
-        block.hashMerkleRoot = hashMerkleRoot;
-        block.nTime          = nTime;
-        block.nBits          = nBits;
-        block.nNonce         = nNonce;
-        return block;
-    }
-
-    std::string ToString() const;
+  std::string ToString() const;
 };
 
 /** Describes a place in the block chain to another node such that if the
  * other node doesn't have the same branch, it can find a recent common trunk.
  * The further back it is, the further before the fork it may be.
  */
-struct CBlockLocator
-{
-    std::vector<uint256> vHave;
+struct CBlockLocator {
+  std::vector<uint256> vHave;
 
-    CBlockLocator() {}
+  CBlockLocator() {}
 
-    explicit CBlockLocator(const std::vector<uint256>& vHaveIn) : vHave(vHaveIn) {}
+  explicit CBlockLocator(const std::vector<uint256> &vHaveIn)
+      : vHave(vHaveIn) {}
 
-    ADD_SERIALIZE_METHODS;
+  ADD_SERIALIZE_METHODS;
 
-    template <typename Stream, typename Operation>
-    inline void SerializationOp(Stream& s, Operation ser_action) {
-        int nVersion = s.GetVersion();
-        if (!(s.GetType() & SER_GETHASH))
-            READWRITE(nVersion);
-        READWRITE(vHave);
-    }
+  template <typename Stream, typename Operation>
+  inline void SerializationOp(Stream &s, Operation ser_action) {
+    int nVersion = s.GetVersion();
+    if (!(s.GetType() & SER_GETHASH))
+      READWRITE(nVersion);
+    READWRITE(vHave);
+  }
 
-    void SetNull()
-    {
-        vHave.clear();
-    }
+  void SetNull() { vHave.clear(); }
 
-    bool IsNull() const
-    {
-        return vHave.empty();
-    }
+  bool IsNull() const { return vHave.empty(); }
 };
 
 #endif // BITCOIN_PRIMITIVES_BLOCK_H

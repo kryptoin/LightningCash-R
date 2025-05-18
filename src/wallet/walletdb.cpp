@@ -1,5 +1,6 @@
 // Copyright (c) 2009-2010 Satoshi Nakamoto
 // Copyright (c) 2009-2017 The Bitcoin Core developers
+// Copyright (c) 2025 The LightningCash-R Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -19,6 +20,13 @@
 #include <atomic>
 
 #include <boost/thread.hpp>
+
+bool CWallet::SignHiveProof(const CBeeCreationTransactionInfo& bct, const std::string& deterministicRandString, std::vector<unsigned char>& vchSig) const {
+    // TEMP stub - replace with actual signing logic
+    vchSig.clear();
+    vchSig.push_back(0x01); // dummy data
+    return true;
+}
 
 extern bool fWalletUnlockHiveMiningOnly;   // LightningCashr: Hive: Support unlock for hive mining only
 

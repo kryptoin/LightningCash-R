@@ -9,14 +9,16 @@
 #ifndef BITCOIN_MINER_H
 #define BITCOIN_MINER_H
 
-#include <primitives/block.h>
-#include <txmempool.h>
-
+#include "wallet/wallet.h"
 #include <atomic>
+
 #include <boost/multi_index/ordered_index.hpp>
 #include <boost/multi_index_container.hpp>
+
 #include <memory>
+#include <primitives/block.h>
 #include <stdint.h>
+#include <txmempool.h>
 
 class CBlockIndex;
 class CChainParams;
@@ -171,8 +173,47 @@ private:
 
 // --- Hive Mining Functions ---
 
+#define MAX_HIVE_NONCE_SIZE 32
+
+std::vector<CBeeCreationTransactionInfo>
+GetMatureBees(const Consensus::Params &consensusParams, CWallet *pwallet,
+              int heightTip, int &totalBeesOut);
+
+std::vector<std::vector<CBeeRange>>
+BinBees(const std::vector<CBeeCreationTransactionInfo> &matureBcts,
+        int totalBees, int threadCount);
+
+struct SolutionState {
+  std::atomic<bool> found;
+  std::atomic<bool> earlyAbort;
+  CBeeCreationTransactionInfo solvingBee;
+  CBeeRange solvingRange;
+
+  SolutionState()
+      : found(false), earlyAbort(false), solvingBee(), solvingRange() {}
+};
+
+void CheckBinsForSolution(const std::vector<std::vector<CBeeRange>> &beeBins,
+                          const std::string &deterministicRandString,
+                          const arith_uint256 &beeHashTarget, int threadCount,
+                          SolutionState &solution);
+
+bool GenerateAndSubmitBlock(CWallet *pwallet, const SolutionState &solution,
+                            const Consensus::Params &consensusParams,
+                            const std::string &deterministicRandString,
+                            int heightTip, bool verbose);
+
+bool CheckHiveConditions(const Consensus::Params &consensusParams,
+                         const CBlockIndex *pindexPrev);
+
 void GenerateLNCR(bool fGenerate, int nThreads,
                   const CChainParams &chainparams);
+
+void RunBeeThreads(const std::vector<std::vector<CBeeRange>> &beeBins,
+                   const std::string &deterministicRandString,
+                   const arith_uint256 &beeHashTarget, int height,
+                   int totalBees, int threadCount, SolutionState &solution);
+
 CBlockTemplate *CreateNewBlock(const CChainParams &chainparams,
                                const CScript &scriptPubKeyIn);
 double EstimateMinerHashesPerSecond();
@@ -196,9 +237,4 @@ void AbortWatchThread(int height); // Early-abort monitor thread
 // Shared atomic state (defined in miner.cpp)
 #include <cstdint>
 
-extern std::atomic<bool> solutionFound;
-extern std::atomic<bool> earlyAbort;
-extern uint32_t solvingBee;
-extern CBeeRange solvingRange;
-
-#endif // BITCOIN_MINER_H
+#endif // LIGHTNINGCASH-R_MINER_H

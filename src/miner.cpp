@@ -45,22 +45,26 @@
 #include <sync.h>          // LightningCashr: Hive
 #include <wallet/wallet.h> // LightningCashr: Hive
 
-template <typename T>
-T clamp(T val, T minVal, T maxVal) {
-    return std::max(minVal, std::min(val, maxVal));
+bool CheckHiveConditions(const Consensus::Params& params, const CBlockIndex* pindex) {
+    // TEMP stub - real logic to be added later
+    return true;
+}
+
+template <typename T> T clamp(T val, T minVal, T maxVal) {
+  return std::max(minVal, std::min(val, maxVal));
 }
 
 static CCriticalSection cs_solution_vars;
+std::atomic<bool> solutionFound(
+    false); // LightningCashr: Hive: Mining optimisations: Thread-safe
+            // atomic flag to signal solution found (saves a slow mutex)
 std::atomic<bool>
-    solutionFound(false); // LightningCashr: Hive: Mining optimisations: Thread-safe
-                   // atomic flag to signal solution found (saves a slow mutex)
-std::atomic<bool>
-    earlyAbort(false); // LightningCashr: Hive: Mining optimisations: Thread-safe
-                // atomic flag to signal early abort needed
-CBeeRange solvingRange; // LightningCashr: Hive: Mining optimisations: The
-                        // solving range (protected by mutex)
-uint32_t solvingBee = 0; // LightningCashr: Hive: Mining optimisations: The solving
-                     // bee (protected by mutex)
+    earlyAbort(false);   // LightningCashr: Hive: Mining optimisations:
+                         // Thread-safe atomic flag to signal early abort needed
+CBeeRange solvingRange;  // LightningCashr: Hive: Mining optimisations: The
+                         // solving range (protected by mutex)
+uint32_t solvingBee = 0; // LightningCashr: Hive: Mining optimisations: The
+                         // solving bee (protected by mutex)
 
 uint64_t nLastBlockTx = 0;
 uint64_t nLastBlockWeight = 0;
@@ -611,289 +615,53 @@ bool BusyBees(const Consensus::Params &consensusParams, int height) {
   try {
     bool verbose = LogAcceptCategory(BCLog::HIVE);
     CBlockIndex *pindexPrev = chainActive.Tip();
-    if (!pindexPrev)
-      throw std::runtime_error("pindexPrev is null");
 
-    if (!IsHiveEnabled(pindexPrev, consensusParams)) {
-      LogPrint(BCLog::HIVE,
-               "BusyBees: Skipping hive check: Hive not enabled\n");
+    if (!CheckHiveConditions(consensusParams, pindexPrev))
       return false;
-    }
-
-    if (!g_connman || g_connman->GetNodeCount(CConnman::CONNECTIONS_ALL) == 0) {
-      LogPrint(BCLog::HIVE, "BusyBees: Skipping hive check (not connected)\n");
-      return false;
-    }
-
-    if (IsInitialBlockDownload()) {
-      LogPrint(BCLog::HIVE, "BusyBees: Skipping hive check (initial sync)\n");
-      return false;
-    }
-
-    if (IsHive12Enabled(pindexPrev->nHeight)) {
-      int hiveBlocksAtTip = 0;
-      CBlockIndex *pindexTemp = pindexPrev;
-      while (pindexTemp->GetBlockHeader().IsHiveMined(consensusParams)) {
-        if (!pindexTemp->pprev)
-          break;
-        pindexTemp = pindexTemp->pprev;
-        hiveBlocksAtTip++;
-      }
-      if (hiveBlocksAtTip >= consensusParams.maxConsecutiveHiveBlocks)
-        return false;
-    } else {
-      if (pindexPrev->GetBlockHeader().IsHiveMined(consensusParams))
-        return false;
-    }
 
     JSONRPCRequest request;
     CWallet *const pwallet = GetWalletForJSONRPCRequest(request);
-    if (!EnsureWalletIsAvailable(pwallet, true)) {
-      LogPrint(BCLog::HIVE, "BusyBees: Wallet unavailable\n");
-      return false;
-    }
-    if (pwallet->IsLocked()) {
-      LogPrint(BCLog::HIVE, "BusyBees: Wallet is locked\n");
+    if (!EnsureWalletIsAvailable(pwallet, true) || pwallet->IsLocked()) {
+      LogPrint(BCLog::HIVE, "BusyBees: Wallet unavailable or locked\n");
       return false;
     }
 
     LogPrintf(
         "********************* Hive: Bees at work *********************\n");
+
     std::string deterministicRandString =
         GetDeterministicRandString(pindexPrev);
     arith_uint256 beeHashTarget;
     beeHashTarget.SetCompact(
         GetNextHiveWorkRequired(pindexPrev, consensusParams));
 
-    if (verbose) {
-      LogPrintf("BusyBees: deterministicRandString = %s\n",
-                deterministicRandString);
-      LogPrintf("BusyBees: beeHashTarget           = %s\n",
-                beeHashTarget.ToString());
-    }
-
-    // --- Get BCTs ---
-    std::vector<CBeeCreationTransactionInfo> bcts;
     int heightTip = chainActive.Tip()->nHeight;
-    if (heightTip >= nSpeedFork) {
-      bcts = pwallet->GetBCTs(false, false, consensusParams);
-    } else if (consensusParams.variableBeecost) {
-      if ((heightTip - 1) >= consensusParams.variableForkBlock &&
-          (heightTip - 1) >= consensusParams.remvariableForkBlock) {
-        bcts = pwallet->GetBCTs3(false, false, consensusParams);
-      } else if ((heightTip - 1) >= consensusParams.variableForkBlock &&
-                 (heightTip - 1) < consensusParams.remvariableForkBlock) {
-        bcts = pwallet->GetBCTs2(false, false, consensusParams);
-      } else {
-        bcts = pwallet->GetBCTs(false, false, consensusParams);
-      }
-    }
-
-    // --- Filter Mature Bees ---
     int totalBees = 0;
-    std::vector<CBeeCreationTransactionInfo> matureBcts;
-    for (const auto &bct : bcts) {
-      if (bct.beeStatus == "mature") {
-        totalBees += bct.beeCount;
-        matureBcts.push_back(bct);
-      }
-    }
+    auto matureBcts =
+        GetMatureBees(consensusParams, pwallet, heightTip, totalBees);
+
     if (totalBees == 0) {
       LogPrint(BCLog::HIVE, "BusyBees: No mature bees found\n");
       return false;
     }
 
-    // --- Binning ---
-    int coreCount = GetNumVirtualCores();
     int threadCount = gArgs.GetArg("-hivecheckthreads", DEFAULT_HIVE_THREADS);
-    threadCount = (threadCount == -2) ? std::max(1, coreCount - 1)
-                                      : clamp(threadCount, 1, coreCount);
-    int beesPerBin = std::ceil((float)totalBees / threadCount);
+    threadCount = (threadCount == -2)
+                      ? std::max(1, GetNumVirtualCores() - 1)
+                      : clamp(threadCount, 1, GetNumVirtualCores());
 
-    if (verbose)
-      LogPrintf("BusyBees: Binning %i bees into %i bins (%i per bin)\n",
-                totalBees, threadCount, beesPerBin);
+    auto beeBins = BinBees(matureBcts, totalBees, threadCount);
 
-    std::vector<std::vector<CBeeRange>> beeBins;
-    size_t beeOffset = 0;
-    auto it = matureBcts.begin();
-    while (it != matureBcts.end()) {
-      std::vector<CBeeRange> bin;
-      int beesInBin = 0;
-      while (it != matureBcts.end()) {
-        int spaceLeft = beesPerBin - beesInBin;
-        if (it->beeCount - beeOffset <= spaceLeft) {
-          bin.push_back({it->txid, it->honeyAddress, it->communityContrib,
-                         (int)beeOffset, it->beeCount - (int)beeOffset});
-          beesInBin += it->beeCount - beeOffset;
-          beeOffset = 0;
-          ++it;
-        } else {
-          bin.push_back({it->txid, it->honeyAddress, it->communityContrib,
-                         (int)beeOffset, spaceLeft});
-          beeOffset += spaceLeft;
-          break;
-        }
-      }
-      beeBins.push_back(bin);
-    }
+    SolutionState
+        solution; // Wraps solutionFound, solvingBee, solvingRange, earlyAbort
+    RunBeeThreads(beeBins, deterministicRandString, beeHashTarget, height,
+                  totalBees, threadCount, solution);
 
-    // --- Run Check Threads ---
-    solutionFound.store(false);
-    earlyAbort.store(false);
-    std::vector<boost::thread> binThreads;
-    int64_t checkTime = GetTimeMillis();
-    int binID = 0;
-    for (const auto &bin : beeBins) {
-      if (verbose)
-        LogPrintf("BusyBees: Bin #%d\n", binID);
-      binThreads.emplace_back(CheckBin, binID++, bin, deterministicRandString,
-                              beeHashTarget);
-    }
-
-    boost::thread *earlyAbortThread = nullptr;
-    bool useEarlyAbort =
-        gArgs.GetBoolArg("-hiveearlyout", DEFAULT_HIVE_EARLY_OUT);
-    if (useEarlyAbort) {
-      if (verbose)
-        LogPrintf("BusyBees: Starting early-abort thread\n");
-      earlyAbortThread = new boost::thread(AbortWatchThread, height);
-    }
-
-    for (auto &t : binThreads)
-      t.join();
-    checkTime = GetTimeMillis() - checkTime;
-
-    if (useEarlyAbort) {
-      if (earlyAbort.load()) {
-        LogPrintf("BusyBees: Chain state changed (aborted after %ims)\n",
-                  checkTime);
-        earlyAbortThread->join();
-        delete earlyAbortThread;
-        return false;
-      } else {
-        earlyAbort.store(true);
-        earlyAbortThread->join();
-        delete earlyAbortThread;
-      }
-    }
-
-    if (!solutionFound.load()) {
-      LogPrintf("BusyBees: No valid bee found (%i bees, %i threads, %ims)\n",
-                totalBees, threadCount, checkTime);
+    if (!solution.found.load())
       return false;
-    }
 
-    // --- Create Proof and Submit Block ---
-    LogPrintf("BusyBees: Bee meets hash target (check time = %ims). "
-              "Solution with bee #%i from BCT %s. Honey address is %s.\n",
-              checkTime, solvingBee, solvingRange.txid,
-              solvingRange.honeyAddress);
-
-    std::vector<unsigned char> messageProofVec;
-    std::vector<unsigned char> txidVec(solvingRange.txid.begin(),
-                                       solvingRange.txid.end());
-    CScript hiveProofScript;
-    uint32_t bctHeight;
-
-    {
-      LOCK2(cs_main, pwallet->cs_wallet);
-
-      CTxDestination dest = DecodeDestination(solvingRange.honeyAddress);
-      if (!IsValidDestination(dest)) {
-        LogPrintf("BusyBees: Invalid honey address destination\n");
-        return false;
-      }
-
-      const CKeyID *keyID = boost::get<CKeyID>(&dest);
-      if (!keyID) {
-        LogPrintf(
-            "BusyBees: Wallet doesn't have private key for honey address\n");
-        return false;
-      }
-
-      CKey key;
-      if (!pwallet->GetKey(*keyID, key)) {
-        LogPrintf("BusyBees: Private key unavailable\n");
-        return false;
-      }
-
-      CHashWriter ss(SER_GETHASH, 0);
-      ss << deterministicRandString;
-      uint256 mhash = ss.GetHash();
-
-      if (!key.SignCompact(mhash, messageProofVec)) {
-        LogPrintf("BusyBees: Failed to sign bee proof\n");
-        return false;
-      }
-
-      if (verbose) {
-        LogPrintf("BusyBees: messageSig = %s\n",
-                  HexStr(messageProofVec.begin(), messageProofVec.end()));
-      }
-
-      COutPoint out(uint256S(solvingRange.txid), 0);
-      Coin coin;
-      if (!pcoinsTip || !pcoinsTip->GetCoin(out, coin)) {
-        LogPrintf("BusyBees: Couldn't retrieve BCT UTXO\n");
-        return false;
-      }
-      bctHeight = coin.nHeight;
-    }
-
-    // --- Create hiveProofScript ---
-    unsigned char beeNonceEncoded[4];
-    WriteLE32(beeNonceEncoded, solvingBee);
-    std::vector<unsigned char> beeNonceVec(beeNonceEncoded,
-                                           beeNonceEncoded + 4);
-
-    unsigned char bctHeightEncoded[4];
-    WriteLE32(bctHeightEncoded, bctHeight);
-    std::vector<unsigned char> bctHeightVec(bctHeightEncoded,
-                                            bctHeightEncoded + 4);
-
-    opcodetype communityContribFlag =
-        solvingRange.communityContrib ? OP_TRUE : OP_FALSE;
-
-    hiveProofScript << OP_RETURN << OP_BEE << beeNonceVec << bctHeightVec
-                    << communityContribFlag << txidVec << messageProofVec;
-
-    CScript honeyScript =
-        GetScriptForDestination(DecodeDestination(solvingRange.honeyAddress));
-
-    std::unique_ptr<CBlockTemplate> pblocktemplate(
-        BlockAssembler(Params()).CreateNewBlock(honeyScript, true,
-                                                &hiveProofScript));
-    if (!pblocktemplate.get()) {
-      LogPrintf("BusyBees: Failed to create new block\n");
-      return false;
-    }
-
-    CBlock *pblock = &pblocktemplate->block;
-    pblock->hashMerkleRoot = BlockMerkleRoot(*pblock);
-
-    {
-      LOCK(cs_main);
-      if (pblock->hashPrevBlock != chainActive.Tip()->GetBlockHash()) {
-        LogPrintf("BusyBees: Stale block (chain tip changed)\n");
-        return false;
-      }
-    }
-
-    if (verbose) {
-      LogPrintf("BusyBees: Block created:\n");
-      LogPrintf("%s", pblock->ToString());
-    }
-
-    std::shared_ptr<const CBlock> shared_pblock =
-        std::make_shared<const CBlock>(*pblock);
-    if (!ProcessNewBlock(Params(), shared_pblock, true, nullptr)) {
-      LogPrintf("BusyBees: Block rejected\n");
-      return false;
-    }
-
-    LogPrintf("BusyBees: ** Block mined and accepted\n");
-    return true;
+    return GenerateAndSubmitBlock(pwallet, solution, consensusParams,
+                                  deterministicRandString, heightTip, verbose);
 
   } catch (const std::exception &e) {
     LogPrintf("BusyBees: Exception caught: %s\n", e.what());
@@ -902,6 +670,270 @@ bool BusyBees(const Consensus::Params &consensusParams, int height) {
     LogPrintf("BusyBees: Unknown exception caught\n");
     return false;
   }
+}
+
+static bool CheckHiveConditions(const Consensus::Params &consensusParams,
+                                CBlockIndex *pindexPrev) {
+  if (!pindexPrev)
+    throw std::runtime_error("pindexPrev is null");
+
+  if (!IsHiveEnabled(pindexPrev, consensusParams)) {
+    LogPrint(BCLog::HIVE, "BusyBees: Skipping hive check: Hive not enabled\n");
+    return false;
+  }
+
+  if (!g_connman || g_connman->GetNodeCount(CConnman::CONNECTIONS_ALL) == 0) {
+    LogPrint(BCLog::HIVE, "BusyBees: Skipping hive check (not connected)\n");
+    return false;
+  }
+
+  if (IsInitialBlockDownload()) {
+    LogPrint(BCLog::HIVE, "BusyBees: Skipping hive check (initial sync)\n");
+    return false;
+  }
+
+  if (IsHive12Enabled(pindexPrev->nHeight)) {
+    int hiveBlocksAtTip = 0;
+    CBlockIndex *pindexTemp = pindexPrev;
+    while (pindexTemp->GetBlockHeader().IsHiveMined(consensusParams)) {
+      if (!pindexTemp->pprev)
+        break;
+      pindexTemp = pindexTemp->pprev;
+      hiveBlocksAtTip++;
+    }
+    if (hiveBlocksAtTip >= consensusParams.maxConsecutiveHiveBlocks)
+      return false;
+  } else {
+    if (pindexPrev->GetBlockHeader().IsHiveMined(consensusParams))
+      return false;
+  }
+
+  return true;
+}
+
+std::vector<CBeeCreationTransactionInfo>
+GetMatureBees(const Consensus::Params &consensusParams, CWallet *pwallet,
+              int heightTip, int &totalBeesOut) {
+  std::vector<CBeeCreationTransactionInfo> bcts;
+
+  if (heightTip >= nSpeedFork) {
+    bcts = pwallet->GetBCTs(false, false, consensusParams);
+  } else if (consensusParams.variableBeecost) {
+    if ((heightTip - 1) >= consensusParams.variableForkBlock &&
+        (heightTip - 1) >= consensusParams.remvariableForkBlock) {
+      bcts = pwallet->GetBCTs3(false, false, consensusParams);
+    } else if ((heightTip - 1) >= consensusParams.variableForkBlock &&
+               (heightTip - 1) < consensusParams.remvariableForkBlock) {
+      bcts = pwallet->GetBCTs2(false, false, consensusParams);
+    } else {
+      bcts = pwallet->GetBCTs(false, false, consensusParams);
+    }
+  }
+
+  std::vector<CBeeCreationTransactionInfo> matureBcts;
+  totalBeesOut = 0;
+  for (const auto &bct : bcts) {
+    if (bct.beeStatus == "mature") {
+      totalBeesOut += bct.beeCount;
+      matureBcts.push_back(bct);
+    }
+  }
+
+  return matureBcts;
+}
+
+std::vector<std::vector<CBeeRange>>
+BinBees(const std::vector<CBeeCreationTransactionInfo> &matureBcts,
+        int totalBees, int threadCount) {
+  std::vector<std::vector<CBeeRange>> beeBins;
+
+  int beesPerBin = std::ceil((float)totalBees / threadCount);
+  size_t beeOffset = 0;
+  auto it = matureBcts.begin();
+
+  while (it != matureBcts.end()) {
+    std::vector<CBeeRange> bin;
+    int beesInBin = 0;
+
+    while (it != matureBcts.end()) {
+      int spaceLeft = beesPerBin - beesInBin;
+      int available = it->beeCount - static_cast<int>(beeOffset);
+
+      if (available <= spaceLeft) {
+        bin.push_back(CBeeRange{it->txid, it->honeyAddress,
+                                it->communityContrib,
+                                static_cast<int>(beeOffset), available});
+        beesInBin += available;
+        beeOffset = 0;
+        ++it;
+      } else {
+        bin.push_back(CBeeRange{it->txid, it->honeyAddress,
+                                it->communityContrib,
+                                static_cast<int>(beeOffset), spaceLeft});
+        beeOffset += spaceLeft;
+        beesInBin += spaceLeft;
+        break; // this bin is full
+      }
+    }
+
+    if (!bin.empty())
+      beeBins.push_back(bin);
+  }
+
+  return beeBins;
+}
+
+void RunBeeThreads(const std::vector<std::vector<CBeeRange>> &beeBins,
+                   const std::string &deterministicRandString,
+                   const arith_uint256 &beeHashTarget, int height,
+                   int totalBees, int threadCount, SolutionState &solution) {
+  bool verbose = LogAcceptCategory(BCLog::HIVE);
+
+  std::atomic<bool> earlyAbort{false};
+  std::vector<boost::thread> binThreads;
+  std::unique_ptr<boost::thread> earlyAbortThread;
+
+  int64_t startTime = GetTimeMillis();
+
+  for (size_t i = 0; i < beeBins.size(); ++i) {
+    if (verbose)
+      LogPrintf("BusyBees: Starting Bin #%zu\n", i);
+    try {
+      binThreads.emplace_back(CheckBin, static_cast<int>(i), beeBins[i],
+                              deterministicRandString, beeHashTarget);
+    } catch (const std::exception &e) {
+      LogPrintf("BusyBees: Failed to start bin thread: %s\n", e.what());
+    }
+  }
+
+  bool useEarlyAbort =
+      gArgs.GetBoolArg("-hiveearlyout", DEFAULT_HIVE_EARLY_OUT);
+
+  if (useEarlyAbort) {
+    try {
+      earlyAbortThread =
+          boost::make_unique<boost::thread>(AbortWatchThread, height);
+    } catch (const std::exception &e) {
+      LogPrintf("BusyBees: Failed to start early-abort thread: %s\n", e.what());
+    }
+  }
+
+  for (auto &t : binThreads) {
+    try {
+      t.join();
+    } catch (const std::exception &e) {
+      LogPrintf("BusyBees: Exception in bin thread join: %s\n", e.what());
+    }
+  }
+
+  if (earlyAbortThread) {
+    earlyAbort.store(true);
+    try {
+      earlyAbortThread->join();
+    } catch (const std::exception &e) {
+      LogPrintf("BusyBees: Failed to join early-abort thread: %s\n", e.what());
+    }
+  }
+
+  int64_t totalTime = GetTimeMillis() - startTime;
+
+  if (!solution.found.load()) {
+    LogPrintf("BusyBees: No valid bee found (%zu bins, %i threads, %ims)\n",
+              beeBins.size(), threadCount, totalTime);
+  } else {
+    LogPrintf("BusyBees: Solution found in %ims\n", totalTime);
+  }
+}
+
+bool GenerateAndSubmitBlock(CWallet *pwallet, const SolutionState &solution,
+                            const Consensus::Params &consensusParams,
+                            const std::string &deterministicRandString,
+                            int heightTip, bool verbose) {
+  if (solution.earlyAbort.load()) {
+    LogPrint(BCLog::HIVE, "BusyBees: Early abort detected\n");
+    return false;
+  }
+
+  LogPrint(BCLog::HIVE, "BusyBees: Solution found, preparing block...\n");
+
+  LOCK(pwallet->cs_wallet);
+  EnsureWalletIsUnlocked(pwallet);
+
+  // Get new address and script
+  std::shared_ptr<CReserveScript> coinbaseScript;
+  pwallet->GetScriptForMining(coinbaseScript);
+
+  if (!coinbaseScript || coinbaseScript->reserveScript.empty()) {
+    LogPrintf("BusyBees: No coinbase script available\n");
+    return false;
+  }
+
+  CTxDestination dest;
+  if (!ExtractDestination(coinbaseScript->reserveScript, dest)) {
+    LogPrintf("BusyBees: Failed to extract destination from coinbase script\n");
+    return false;
+  }
+
+  if (!IsValidDestination(dest)) {
+    LogPrintf("BusyBees: Invalid primary address\n");
+    return false;
+  }
+
+  CScript scriptPubKey = GetScriptForDestination(dest);
+  // std::shared_ptr<CReserveScript> coinbaseScript;
+  pwallet->GetScriptForMining(coinbaseScript);
+  if (!coinbaseScript || coinbaseScript->reserveScript.empty()) {
+    LogPrintf("BusyBees: No coinbase script available\n");
+    return false;
+  }
+
+  // Create coinbase transaction (reward)
+  std::vector<unsigned char> vchHiveNonce;
+  // solution.solvingBee.txOut.scriptPubKey.ToRawBytes(vchHiveNonce);
+  vchHiveNonce.assign(solution.solvingBee.txOut.scriptPubKey.begin(),
+                      solution.solvingBee.txOut.scriptPubKey.end());
+  if (vchHiveNonce.size() > MAX_HIVE_NONCE_SIZE)
+    vchHiveNonce.resize(MAX_HIVE_NONCE_SIZE);
+
+  // Sign the proof
+  std::vector<unsigned char> vchProofSig;
+  if (!pwallet->SignHiveProof(solution.solvingBee, deterministicRandString,
+                              vchProofSig)) {
+    LogPrintf("BusyBees: Failed to sign hive proof\n");
+    return false;
+  }
+
+  std::unique_ptr<CBlockTemplate> pblocktemplate =
+      BlockAssembler(Params()).CreateNewBlock(coinbaseScript->reserveScript,
+                                              true);
+
+  if (!pblocktemplate) {
+    LogPrintf("BusyBees: Failed to create block template\n");
+    return false;
+  }
+
+  CBlock *pblock = &pblocktemplate->block;
+  pblock->nHiveNonce = vchHiveNonce;
+  pblock->vchHiveProof = vchProofSig;
+
+  // Set timestamp and recalculate merkle root
+  UpdateTime(pblock, consensusParams, chainActive.Tip());
+  pblock->hashMerkleRoot = BlockMerkleRoot(*pblock);
+
+  LogPrintf("BusyBees: Proof-of-Hive hash: %s\n", pblock->GetHash().ToString());
+
+  // Submit the block
+  std::shared_ptr<const CBlock> pblockShared =
+      std::make_shared<const CBlock>(*pblock);
+  bool result = ProcessNewBlock(Params(), pblockShared, true, nullptr);
+
+  if (result && verbose) {
+    LogPrintf("BusyBees: Block accepted\n");
+  } else {
+    LogPrintf("BusyBees: Block rejected\n");
+  }
+
+  return result;
 }
 
 struct MinerInfo {

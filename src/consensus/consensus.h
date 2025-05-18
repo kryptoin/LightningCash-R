@@ -1,5 +1,6 @@
 // Copyright (c) 2009-2010 Satoshi Nakamoto
 // Copyright (c) 2009-2017 The Bitcoin Core developers
+// Copyright (c) 2025 The LightningCash-R Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -17,6 +18,8 @@ static const unsigned int MAX_BLOCK_WEIGHT = 4000000;
 static const int64_t MAX_BLOCK_SIGOPS_COST = 80000;
 /** Coinbase transaction outputs can only be spent after this number of new blocks (network rule) */
 static const int COINBASE_MATURITY = 125;
+
+static const int HIVE_BLOCK_VERSION = 5; // or whatever version Hive uses
 
 static const int WITNESS_SCALE_FACTOR = 4;
 
