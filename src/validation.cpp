@@ -46,6 +46,7 @@
 #include <boost/algorithm/string/replace.hpp>
 #include <boost/algorithm/string/join.hpp>
 #include <boost/thread.hpp>
+#include <boost/bind.hpp>
 
 #include <miner.h>  // LightningCashr: Hive
 #include <merkleblock.h> // LightningCashr: Hive for merkle transaction check in block

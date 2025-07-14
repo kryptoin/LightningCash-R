@@ -694,6 +694,7 @@ UniValue createbees(const JSONRPCRequest& request)
 		throw JSONRPCError(RPC_WALLET_BCT_FAIL, strError);
     }
 
+    return NullUniValue;
 }
 
 // LightningCashr: Hive: Get network hive info

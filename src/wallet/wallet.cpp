@@ -2418,8 +2418,119 @@ static void ApproximateBestSubset(const std::vector<CInputCoin>& vValue, const C
     }
 }
 
+// bool CWallet::SelectCoinsMinConf(const CAmount& nTargetValue, const int nConfMine, const int nConfTheirs, const uint64_t nMaxAncestors, std::vector<COutput> vCoins,
+//                                  std::set<CInputCoin>& setCoinsRet, CAmount& nValueRet) const
+// {
+//     setCoinsRet.clear();
+//     nValueRet = 0;
+
+//     // List of values less than target
+//     boost::optional<CInputCoin> coinLowestLarger;
+//     std::vector<CInputCoin> vValue;
+//     CAmount nTotalLower = 0;
+
+//     // Use a modern C++ random number generator for shuffling
+//     std::random_device rd;
+//     std::mt19937 g(rd());
+//     std::shuffle(vCoins.begin(), vCoins.end(), g);
+
+//     for (const COutput &output : vCoins)
+//     {
+//         if (!output.fSpendable)
+//             continue;
+
+//         const CWalletTx *pcoin = output.tx;
+
+//         if (output.nDepth < (pcoin->IsFromMe(ISMINE_ALL) ? nConfMine : nConfTheirs))
+//             continue;
+
+//         if (!mempool.TransactionWithinChainLimit(pcoin->GetHash(), nMaxAncestors))
+//             continue;
+
+//         int i = output.i;
+
+//         CInputCoin coin = CInputCoin(pcoin, i);
+
+//         if (coin.txout.nValue == nTargetValue)
+//         {
+//             setCoinsRet.insert(coin);
+//             nValueRet += coin.txout.nValue;
+//             return true;
+//         }
+//         else if (coin.txout.nValue < nTargetValue + MIN_CHANGE)
+//         {
+//             vValue.push_back(coin);
+//             nTotalLower += coin.txout.nValue;
+//         }
+//         else if (!coinLowestLarger || coin.txout.nValue < coinLowestLarger->txout.nValue)
+//         {
+//             coinLowestLarger = coin;
+//         }
+//     }
+
+//     if (nTotalLower == nTargetValue)
+//     {
+//         for (const auto& input : vValue)
+//         {
+//             setCoinsRet.insert(input);
+//             nValueRet += input.txout.nValue;
+//         }
+//         return true;
+//     }
+
+//     if (nTotalLower < nTargetValue)
+//     {
+//         if (!coinLowestLarger)
+//             return false;
+//         setCoinsRet.insert(coinLowestLarger.get());
+//         nValueRet += coinLowestLarger->txout.nValue;
+//         return true;
+//     }
+
+//     // Solve subset sum by stochastic approximation
+//     std::sort(vValue.begin(), vValue.end(), CompareValueOnly());
+//     std::reverse(vValue.begin(), vValue.end());
+//     std::vector<char> vfBest;
+//     CAmount nBest;
+
+//     ApproximateBestSubset(vValue, nTotalLower, nTargetValue, vfBest, nBest);
+//     if (nBest != nTargetValue && nTotalLower >= nTargetValue + MIN_CHANGE)
+//         ApproximateBestSubset(vValue, nTotalLower, nTargetValue + MIN_CHANGE, vfBest, nBest);
+
+//     // If we have a bigger coin and (either the stochastic approximation didn't find a good solution,
+//     //                                   or the next bigger coin is closer), return the bigger coin
+//     if (coinLowestLarger &&
+//         ((nBest != nTargetValue && nBest < nTargetValue + MIN_CHANGE) || coinLowestLarger->txout.nValue <= nBest))
+//     {
+//         setCoinsRet.insert(coinLowestLarger.get());
+//         nValueRet += coinLowestLarger->txout.nValue;
+//     }
+//     else {
+//         for (unsigned int i = 0; i < vValue.size(); i++)
+//             if (vfBest[i])
+//             {
+//                 setCoinsRet.insert(vValue[i]);
+//                 nValueRet += vValue[i].txout.nValue;
+//             }
+
+//         if (LogAcceptCategory(BCLog::SELECTCOINS)) {
+//             LogPrint(BCLog::SELECTCOINS, "SelectCoins() best subset: ");
+//             for (unsigned int i = 0; i < vValue.size(); i++) {
+//                 if (vfBest[i]) {
+//                     LogPrint(BCLog::SELECTCOINS, "%s ", FormatMoney(vValue[i].txout.nValue));
+//                 }
+//             }
+//             LogPrint(BCLog::SELECTCOINS, "total %s\n", FormatMoney(nBest));
+//         }
+//     }
+
+//     return true;
+// }
+
+#include <random>
+
 bool CWallet::SelectCoinsMinConf(const CAmount& nTargetValue, const int nConfMine, const int nConfTheirs, const uint64_t nMaxAncestors, std::vector<COutput> vCoins,
-                                 std::set<CInputCoin>& setCoinsRet, CAmount& nValueRet) const
+                                  std::set<CInputCoin>& setCoinsRet, CAmount& nValueRet) const
 {
     setCoinsRet.clear();
     nValueRet = 0;
@@ -2429,7 +2540,11 @@ bool CWallet::SelectCoinsMinConf(const CAmount& nTargetValue, const int nConfMin
     std::vector<CInputCoin> vValue;
     CAmount nTotalLower = 0;
 
-    random_shuffle(vCoins.begin(), vCoins.end(), GetRandInt);
+    // Shuffle coins to mitigate privacy leaks
+    // Use a modern C++ random number generator for shuffling
+    std::random_device rd;
+    std::mt19937 g(rd());
+    std::shuffle(vCoins.begin(), vCoins.end(), g);
 
     for (const COutput &output : vCoins)
     {
@@ -2495,7 +2610,7 @@ bool CWallet::SelectCoinsMinConf(const CAmount& nTargetValue, const int nConfMin
         ApproximateBestSubset(vValue, nTotalLower, nTargetValue + MIN_CHANGE, vfBest, nBest);
 
     // If we have a bigger coin and (either the stochastic approximation didn't find a good solution,
-    //                                   or the next bigger coin is closer), return the bigger coin
+    //                               or the next bigger coin is closer), return the bigger coin
     if (coinLowestLarger &&
         ((nBest != nTargetValue && nBest < nTargetValue + MIN_CHANGE) || coinLowestLarger->txout.nValue <= nBest))
     {
