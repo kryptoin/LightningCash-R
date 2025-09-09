@@ -1,4 +1,4 @@
-// Copyright (c) 2011-2017 The Bitcoin Core developers
+// Copyright (c) 2011-2025 The Bitcoin Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -508,7 +508,8 @@ void CoinControlDialog::updateLabels(WalletModel *model, QDialog* dialog)
                 nBytes -= 34;
 
         // Fee
-        nPayFee = GetMinimumFee(nBytes, *coinControl(), ::mempool, ::feeEstimator, nullptr /* FeeCalculation */);
+        nPayFee = GetMinimumFee(nBytes, *coinControl(), ::mempool, ::feeEstimator, nullptr
+);
 
         if (nPayAmount > 0)
         {

@@ -1,4 +1,4 @@
-// Copyright (c) 2011-2017 The Bitcoin Core developers
+// Copyright (c) 2011-2025 The Bitcoin Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -119,7 +119,6 @@ QString BitcoinUnits::format(int unit, const CAmount& nIn, bool fPlus, Separator
     return quotient_str + QString(".") + remainder_str;
 }
 
-
 // NOTE: Using formatWithUnit in an HTML context risks wrapping
 // quantities at the thousands separator. More subtly, it also results
 // in a standard space rather than a thin space, due to a bug in Qt's
@@ -139,7 +138,6 @@ QString BitcoinUnits::formatHtmlWithUnit(int unit, const CAmount& amount, bool p
     str.replace(QChar(THIN_SP_CP), QString(THIN_SP_HTML));
     return QString("<span style='white-space: nowrap;'>%1</span>").arg(str);
 }
-
 
 bool BitcoinUnits::parse(int unit, const QString &value, CAmount *val_out)
 {

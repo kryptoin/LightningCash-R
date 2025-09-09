@@ -1,5 +1,5 @@
 // Copyright (c) 2009-2010 Satoshi Nakamoto
-// Copyright (c) 2009-2017 The Bitcoin Core developers
+// Copyright (c) 2009-2025 The Bitcoin Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -48,7 +48,6 @@ std::atomic<bool> earlyAbort;               // LightningCashr: Hive: Mining opti
 CBeeRange solvingRange;                     // LightningCashr: Hive: Mining optimisations: The solving range (protected by mutex)
 uint32_t solvingBee;                        // LightningCashr: Hive: Mining optimisations: The solving bee (protected by mutex)
 
-
 //////////////////////////////////////////////////////////////////////////////
 //
 // BitcoinMiner
@@ -73,10 +72,6 @@ int64_t UpdateTime(CBlockHeader* pblock, const Consensus::Params& consensusParam
 
     // Updating time can change work required on testnet:
     // LightningCashr: Hive: Don't do this
-    /*
-    if (consensusParams.fPowAllowMinDifficultyBlocks)
-        pblock->nBits = GetNextWorkRequired(pindexPrev, pblock, consensusParams);
-    */
 
     return nNewTime - nOldTime;
 }
@@ -635,7 +630,6 @@ void CheckBin(int threadID, std::vector<CBeeRange> bin, std::string deterministi
     //LogPrintf("THREAD #%i: Out of tasks\n", threadID);
 }
 
-
 // LightningCashr: Hive: Attempt to mint the next block
 bool BusyBees(const Consensus::Params& consensusParams, int height) {
     bool verbose = LogAcceptCategory(BCLog::HIVE);
@@ -660,10 +654,6 @@ bool BusyBees(const Consensus::Params& consensusParams, int height) {
         LogPrint(BCLog::HIVE, "BusyBees: Skipping hive check (in initial block download)\n");
         return false;
     }
-/*    if (pindexPrev->GetBlockHeader().IsHiveMined(consensusParams)) {
-        LogPrint(BCLog::HIVE, "BusyBees: Skipping hive check (last block was hive mined)\n");
-        //LogPrintf("BusyBees: Skipping hive check (last block was hive mined)\n");
-        return false;*/
 
     // LightningCashr: Hive 1.1: Check that there aren't too many consecutive Hive blocks
     if (IsHive12Enabled(pindexPrev->nHeight)) {
@@ -711,7 +701,7 @@ bool BusyBees(const Consensus::Params& consensusParams, int height) {
 
     // Find bin size
 
-    
+
     std::vector<CBeeCreationTransactionInfo> bcts;
 
     if ((chainActive.Tip()->nHeight) >= nSpeedFork) {
@@ -720,7 +710,6 @@ bool BusyBees(const Consensus::Params& consensusParams, int height) {
     	bcts = pwallet->GetBCTs(false, false, consensusParams);
 
     }
-
 
     if ((consensusParams.variableBeecost) && (((chainActive.Tip()->nHeight) - 1) >= (consensusParams.variableForkBlock)) && (((chainActive.Tip()->nHeight) - 1) >= (consensusParams.remvariableForkBlock)) && ((chainActive.Tip()->nHeight) < nSpeedFork)) {
 	//LogPrintf("OK \n");
@@ -1101,16 +1090,6 @@ void static LNCRMiner(MinerInfo* miner, const CChainParams& chainparams)
 
     try {
         while (true) {
-          /*  if (chainparams.MiningRequiresPeers()) {
-                // Busy-wait for the network to come online so we don't waste time mining
-                // on an obsolete chain. In regtest mode we expect to fly solo.
-                do {
-                    bool fvNodesEmpty = g_connman->GetNodeCount(CConnman::CONNECTIONS_ALL) <= 0;
-                    if (!fvNodesEmpty && !IsInitialBlockDownload())
-                        break;
-                    MilliSleep(1000);
-                } while (true);
-            }*/
 
       //      if(coinbaseScript != nullptr
       //          && gArgs.GetBoolArg("-rotatecoinbase", false)
@@ -1167,7 +1146,7 @@ void static LNCRMiner(MinerInfo* miner, const CChainParams& chainparams)
 
             while (true) {
                 // Check if something found
-                
+
                 if (ScanHash (miner, pblock, nNonce, &hash))
                 {
                     if (UintToArith256(hash) <= hashTarget)
@@ -1186,7 +1165,7 @@ void static LNCRMiner(MinerInfo* miner, const CChainParams& chainparams)
                         // In regression test mode, stop mining after a block is found.
                         if (chainparams.MineBlocksOnDemand())
                             throw boost::thread_interrupted();
-                        
+
                         break;
                     }
                 }
@@ -1232,7 +1211,7 @@ void static LNCRMiner(MinerInfo* miner, const CChainParams& chainparams)
 void GenerateLNCR(bool fGenerate, int nThreads, const CChainParams& chainparams)
 {
     static boost::thread_group* minerThreads = nullptr;
-    
+
     if (nThreads < 0)
         nThreads = GetNumCores();
 

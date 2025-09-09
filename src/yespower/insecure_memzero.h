@@ -1,1 +1,2 @@
-#define insecure_memzero(buf, len) /* empty */
+#define insecure_memzero(buf, len)
+

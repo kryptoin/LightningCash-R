@@ -1,5 +1,5 @@
 // Copyright (c) 2009-2010 Satoshi Nakamoto
-// Copyright (c) 2009-2017 The Bitcoin Core developers
+// Copyright (c) 2009-2025 The Bitcoin Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -39,7 +39,7 @@
 #include <script/ismine.h>  // LightningCashr: Hive
 
 std::vector<CWalletRef> vpwallets;
-/** Transaction fee set by the user */
+
 CFeeRate payTxFee(DEFAULT_TRANSACTION_FEE);
 unsigned int nTxConfirmTarget = DEFAULT_TX_CONFIRM_TARGET;
 bool bSpendZeroConfChange = DEFAULT_SPEND_ZEROCONF_CHANGE;
@@ -50,26 +50,13 @@ OutputType g_change_type = OUTPUT_TYPE_NONE;
 const char * DEFAULT_WALLET_DAT = "wallet.dat";
 const uint32_t BIP32_HARDENED_KEY_LIMIT = 0x80000000;
 
-/**
- * Fees smaller than this (in satoshi) are considered zero fee (for transaction creation)
- * Override with -mintxfee
- */
 CFeeRate CWallet::minTxFee = CFeeRate(DEFAULT_TRANSACTION_MINFEE);
-/**
- * If fee estimation does not have enough data to provide estimates, use this fee instead.
- * Has no effect if not using fee estimation
- * Override with -fallbackfee
- */
+
 CFeeRate CWallet::fallbackFee = CFeeRate(DEFAULT_FALLBACK_FEE);
 
 CFeeRate CWallet::m_discard_rate = CFeeRate(DEFAULT_DISCARD_FEE);
 
 const uint256 CMerkleTx::ABANDON_HASH(uint256S("0000000000000000000000000000000000000000000000000000000000000001"));
-
-/** @defgroup mapWallet
- *
- * @{
- */
 
 struct CompareValueOnly
 {
@@ -307,10 +294,6 @@ bool CWallet::LoadCryptedKey(const CPubKey &vchPubKey, const std::vector<unsigne
     return CCryptoKeyStore::AddCryptedKey(vchPubKey, vchCryptedSecret);
 }
 
-/**
- * Update wallet first key creation time. This should be called whenever keys
- * are added to the wallet, with the oldest key creation time.
- */
 void CWallet::UpdateTimeFirstKey(int64_t nCreateTime)
 {
     AssertLockHeld(cs_wallet);
@@ -332,9 +315,7 @@ bool CWallet::AddCScript(const CScript& redeemScript)
 
 bool CWallet::LoadCScript(const CScript& redeemScript)
 {
-    /* A sanity check was added in pull #3843 to avoid adding redeemScripts
-     * that never can be redeemed. However, old wallets may still contain
-     * these. Do not add them to the wallet and warn. */
+
     if (redeemScript.size() > MAX_SCRIPT_ELEMENT_SIZE)
     {
         std::string strAddr = EncodeDestination(CScriptID(redeemScript));
@@ -563,10 +544,6 @@ void CWallet::SyncMetaData(std::pair<TxSpends::iterator, TxSpends::iterator> ran
     }
 }
 
-/**
- * Outpoint is spent if any non-conflicted transaction
- * spends it:
- */
 bool CWallet::IsSpent(const uint256& hash, unsigned int n) const
 {
     const COutPoint outpoint(hash, n);
@@ -594,7 +571,6 @@ void CWallet::AddToSpends(const COutPoint& outpoint, const uint256& wtxid)
     range = mapTxSpends.equal_range(outpoint);
     SyncMetaData(range);
 }
-
 
 void CWallet::AddToSpends(const uint256& wtxid)
 {
@@ -1004,19 +980,6 @@ bool CWallet::LoadToWallet(const CWalletTx& wtxIn)
     return true;
 }
 
-/**
- * Add a transaction to the wallet, or update it.  pIndex and posInBlock should
- * be set when the transaction was known to be included in a block.  When
- * pIndex == nullptr, then wallet state is not updated in AddToWallet, but
- * notifications happen and cached balances are marked dirty.
- *
- * If fUpdate is true, existing transactions will be updated.
- * TODO: One exception to this is that the abandoned state is cleared under the
- * assumption that any further notification of a transaction that was considered
- * abandoned is an indication that it is not safe to be considered abandoned.
- * Abandoned state should probably be more carefully tracked via different
- * posInBlock signals or by checking mempool presence when necessary.
- */
 bool CWallet::AddToWalletIfInvolvingMe(const CTransactionRef& ptx, const CBlockIndex* pIndex, int posInBlock, bool fUpdate)
 {
     const CTransaction& tx = *ptx;
@@ -1040,11 +1003,6 @@ bool CWallet::AddToWalletIfInvolvingMe(const CTransactionRef& ptx, const CBlockI
         if (fExisted && !fUpdate) return false;
         if (fExisted || IsMine(tx) || IsFromMe(tx))
         {
-            /* Check if any keys in the wallet keypool that were supposed to be unused
-             * have appeared in a new transaction. If so, remove those keys from the keypool.
-             * This can happen when restoring an old wallet backup that does not contain
-             * the mostly recently created transactions from newer versions of the wallet.
-             */
 
             // loop though all outputs
             for (const CTxOut& txout: tx.vout) {
@@ -1270,8 +1228,6 @@ void CWallet::BlockDisconnected(const std::shared_ptr<const CBlock>& pblock) {
     }
 }
 
-
-
 void CWallet::BlockUntilSyncedToCurrentChain() {
     AssertLockNotHeld(cs_main);
     AssertLockNotHeld(cs_wallet);
@@ -1295,7 +1251,6 @@ void CWallet::BlockUntilSyncedToCurrentChain() {
     // at least with the time we entered this function).
     SyncWithValidationInterfaceQueue();
 }
-
 
 isminetype CWallet::IsMine(const CTxIn &txin) const
 {
@@ -1601,14 +1556,6 @@ void CWalletTx::GetAmounts(std::list<COutputEntry>& listReceived,
 
 }
 
-/**
- * Scan active chain for relevant transactions after importing keys. This should
- * be called whenever new keys are added to the wallet, with the oldest key
- * creation time.
- *
- * @return Earliest timestamp that could be successfully scanned from. Timestamp
- * returned will be higher than startTime if relevant blocks could not be read.
- */
 int64_t CWallet::RescanFromTime(int64_t startTime, const WalletRescanReserver& reserver, bool update)
 {
     // Find starting block. May be null if nCreateTime is greater than the
@@ -1630,22 +1577,6 @@ int64_t CWallet::RescanFromTime(int64_t startTime, const WalletRescanReserver& r
     return startTime;
 }
 
-/**
- * Scan the block chain (starting in pindexStart) for transactions
- * from or to us. If fUpdate is true, found transactions that already
- * exist in the wallet will be updated.
- *
- * Returns null if scan was successful. Otherwise, if a complete rescan was not
- * possible (due to pruning or corruption), returns pointer to the most recent
- * block that could not be scanned.
- *
- * If pindexStop is not a nullptr, the scan will stop at the block-index
- * defined by pindexStop
- *
- * Caller needs to make sure pindexStop (and the optional pindexStart) are on
- * the main chain after to the addition of any new keys you want to detect
- * transactions for.
- */
 CBlockIndex* CWallet::ScanForWalletTransactions(CBlockIndex* pindexStart, CBlockIndex* pindexStop, const WalletRescanReserver &reserver, bool fUpdate)
 {
     int64_t nNow = GetTime();
@@ -1758,7 +1689,7 @@ bool CWalletTx::RelayWalletTransaction(CConnman* connman)
     if (!IsCoinBase() && !isAbandoned() && GetDepthInMainChain() == 0)
     {
         CValidationState state;
-        /* GetDepthInMainChain already catches known conflicts. */
+
         if (InMempool() || AcceptToMemoryPool(maxTxFee, state)) {
             LogPrintf("Relaying wtx %s\n", GetHash().ToString());
             if (connman) {
@@ -2039,16 +1970,7 @@ void CWallet::ResendWalletTransactions(int64_t nBestBlockTime, CConnman* connman
         LogPrintf("%s: rebroadcast %u unconfirmed transactions\n", __func__, relayed.size());
 }
 
-/** @} */ // end of mapWallet
-
-
-
-
-/** @defgroup Actions
- *
- * @{
- */
-
+ // end of mapWallet
 
 CAmount CWallet::GetBalance() const
 {
@@ -2346,7 +2268,10 @@ std::map<CTxDestination, std::vector<COutput>> CWallet::ListCoins() const
                 CTxDestination address;
                 if (ExtractDestination(FindNonChangeParentOutput(*it->second.tx, output.n).scriptPubKey, address)) {
                     result[address].emplace_back(
-                        &it->second, output.n, depth, true /* spendable */, true /* solvable */, false /* safe */);
+                        &it->second, output.n, depth, true
+, true
+, false
+);
                 }
             }
         }
@@ -2822,8 +2747,8 @@ std::vector<CBeeCreationTransactionInfo> CWallet::GetBCTs(bool includeDead, bool
 
     if (chainActive.Height() == 0)  // Don't continue if chainActive is invalid; we may be reindexing
         return bcts;
-	
-    
+
+
     int maxDepth;
     if (chainActive.Height() >= nAdjustFork)
 	maxDepth = consensusParams.beeGestationBlocks + consensusParams.beeLifespanBlocks;
@@ -2831,7 +2756,7 @@ std::vector<CBeeCreationTransactionInfo> CWallet::GetBCTs(bool includeDead, bool
 	maxDepth = consensusParams.beeGestationBlocks + consensusParams.beeLifespanBlocks3;  //gogogaga
     else
 	maxDepth = consensusParams.beeGestationBlocks + consensusParams.beeLifespanBlocks;
-    
+
     //int maxDepth = consensusParams.beeGestationBlocks + consensusParams.beeLifespanBlocks;
 
     CScript scriptPubKeyBCF = GetScriptForDestination(DecodeDestination(consensusParams.beeCreationAddress));
@@ -2963,7 +2888,7 @@ std::vector<CBeeCreationTransactionInfo> CWallet::GetBCTs2(bool includeDead, boo
 
     int maxDepth = consensusParams.beeGestationBlocks + consensusParams.beeLifespanBlocks;
     int wititi = consensusParams.beeLifespanBlocks;
-    
+
     int maxDepth2;
     int wititi2;
     if (chainActive.Height() >= nAdjustFork) {
@@ -2974,19 +2899,10 @@ std::vector<CBeeCreationTransactionInfo> CWallet::GetBCTs2(bool includeDead, boo
  	maxDepth2 = consensusParams.beeGestationBlocks + consensusParams.beeLifespanBlocks2;
         wititi2 = consensusParams.beeLifespanBlocks2;	
     }
-    
-/*    if (chainActive.Height() >= consensusParams.ratioForkBlock) {
-	maxDepth = consensusParams.beeGestationBlocks + consensusParams.beeLifespanBlocks2;
-	wititi = consensusParams.beeLifespanBlocks2; // 336 on testnet
-    }
-    else {
-	maxDepth = consensusParams.beeGestationBlocks + consensusParams.beeLifespanBlocks;
-        wititi = consensusParams.beeLifespanBlocks; // 336 on testnet
-    } */
-    
-        
 
-   
+
+
+
     CScript scriptPubKeyBCF = GetScriptForDestination(DecodeDestination(consensusParams.beeCreationAddress));
 //    CScript scriptPubKeyCF = GetScriptForDestination(DecodeDestination(consensusParams.hiveCommunityAddress));
 
@@ -2997,14 +2913,11 @@ std::vector<CBeeCreationTransactionInfo> CWallet::GetBCTs2(bool includeDead, boo
     else
 	scriptPubKeyCF = GetScriptForDestination(DecodeDestination(consensusParams.hiveCommunityAddress));   
 
-
 	    for (const std::pair<uint256, CWalletTx>& pairWtx : mapWallet) {
 		const CWalletTx& wtx = pairWtx.second;
 
 	    int totito = switchHmem;
             int torpinouche = switchLmem;
-    	    
-
 
 		// Skip unconfirmed transactions and orphans
 		if (wtx.GetDepthInMainChain() < 1)
@@ -3036,102 +2949,94 @@ std::vector<CBeeCreationTransactionInfo> CWallet::GetBCTs2(bool includeDead, boo
 		// Check lifespan & maturity
 		int depth = wtx.GetDepthInMainChain();
 
-
                 int cocorico = (chainActive.Height() - depth); // this will give the block height for the current checked BCT
-                
+
                 if (cocorico < consensusParams.ratioForkBlock) {
 
-			
-			int blocksLeft = maxDepth - depth; // 17280 - depth...
-			
 
-                        
+			int blocksLeft = maxDepth - depth; // 17280 - depth...
+
+
 			//int TheHeight = chainActive.Height();
 			int ciboire = mapBlockIndex[wtx.hashBlock]->GetBlockTime();
-                        
+
                         bool isMature;
                         std::string status;
-                        
+
                         // count immature bees
 			if ((blocksLeft > wititi) && (blocksLeft <= maxDepth)){
-			    
-			    
+
+
 			    if (((torpinouche > totito) && ((ciboire > totito) && (ciboire < torpinouche))) || ((totito > torpinouche) && ((ciboire > totito) || (ciboire < torpinouche)))) {
                                     beeCost = 0.0008*(GetBlockSubsidy(cocorico, consensusParams));
-                                   
+
                             }
-                            
+
                             else{
                                     beeCost = 0.0004*(GetBlockSubsidy(cocorico, consensusParams));
-                                    
+
                             }
-
-
 
 			isMature = false;
 			status = "immature";
                         }
-                        
+
                         // count dead bees
 			if (blocksLeft < 1) {
-			    
-                            
+
+
 			    blocksLeft = 0;
 			    status = "expired";
 			    isMature = true;    // We still want to calc rewards
                             int cocorico2 = (chainActive.Height() - depth);
-                            
+
                             int ciboire3 = mapBlockIndex[wtx.hashBlock]->GetBlockTime();
-                            
+
                             if (((torpinouche > totito) && ((ciboire3 > totito) && (ciboire3 < torpinouche))) || ((totito > torpinouche) && ((ciboire3 > totito) || (ciboire3 < torpinouche)))){
                                     beeCost = 0.0008*(GetBlockSubsidy(cocorico2, consensusParams));
-                                    
+
                             }
-                            
+
                             else{
                                     beeCost = 0.0004*(GetBlockSubsidy(cocorico2, consensusParams));
-                                   
+
                             }
                             if (!includeDead)   // Skip dead bees unless explicitly including them  ------->   always include them...
 				continue;
 			}
-                        
+
                         // count mature bees
                         if ((blocksLeft <= wititi) && (blocksLeft >= 1)) {
                             status = "mature";
                             isMature = true;
-                            
+
                             //int TheHeight2 = chainActive.Height();
                             int ciboire2 = mapBlockIndex[wtx.hashBlock]->GetBlockTime();
                             int cocorico3 = (chainActive.Height() - depth);
-                            
-                           
-                            
+
+
+
                             if (((torpinouche > totito) && ((ciboire2 > totito) && (ciboire2 < torpinouche))) || ((totito > torpinouche) && ((ciboire2 > totito) || (ciboire2 < torpinouche)))) {
                                     beeCost = 0.0008*(GetBlockSubsidy(cocorico3, consensusParams));
-                                    
+
                             }
-                            
+
                             else{
                                     beeCost = 0.0004*(GetBlockSubsidy(cocorico3, consensusParams));
-                                   
+
                             }
 
                             // get the bee cost according to GI  AT A GIVEN TIME....
                         }
-			
-			
+
+
 			bool communityContrib = false;
 			if (wtx.tx->vout.size() > 1 && wtx.tx->vout[1].scriptPubKey == scriptPubKeyCF) {
 			    beeFeePaid += wtx.tx->vout[1].nValue;            // Add any community fund contribution back to the total paid
 			    communityContrib = true;
 			}
-                       
+
 			int beeCount = beeFeePaid / beeCost;
-			
-
-
-
 
 			// If mature, check for coinbase transactions from blocks minted by a bee from this BCT
 			std::string bctTxid = wtx.GetHash().GetHex();
@@ -3159,10 +3064,9 @@ std::vector<CBeeCreationTransactionInfo> CWallet::GetBCTs2(bool includeDead, boo
 
 				blocksFound++;
 				rewardsPaid += wtx2.tx->vout[1].nValue;
-				
+
 			    }
 			}
-
 
 			int64_t time = 0;
 			if (mapBlockIndex[wtx.hashBlock])
@@ -3183,100 +3087,93 @@ std::vector<CBeeCreationTransactionInfo> CWallet::GetBCTs2(bool includeDead, boo
 
 			bcts.push_back(bct);
 		}	
-                
+
                 if (cocorico >= consensusParams.ratioForkBlock) {
 
-			
-			int blocksLeft = maxDepth2 - depth; // 25344 - depth...
-			
 
-                        
+			int blocksLeft = maxDepth2 - depth; // 25344 - depth...
+
+
 			//int TheHeight = chainActive.Height();
 			int ciboire = mapBlockIndex[wtx.hashBlock]->GetBlockTime();
-                        
+
                         bool isMature;
                         std::string status;
-                        
+
                         // count immature bees
 			if ((blocksLeft > wititi2) && (blocksLeft <= maxDepth2)){
-			    
-			    
+
+
 			    if (((torpinouche > totito) && ((ciboire > totito) && (ciboire < torpinouche))) || ((totito > torpinouche) && ((ciboire > totito) || (ciboire < torpinouche)))) {
                                     beeCost = 0.0008*(GetBlockSubsidy(cocorico, consensusParams));
-                                   
+
                             }
-                            
+
                             else{
                                     beeCost = 0.0004*(GetBlockSubsidy(cocorico, consensusParams));
-                                    
+
                             }
-
-
 
 			isMature = false;
 			status = "immature";
                         }
-                        
+
                         // count dead bees
 			if (blocksLeft < 1) {
-			    
-                            
+
+
 			    blocksLeft = 0;
 			    status = "expired";
 			    isMature = true;    // We still want to calc rewards
                             int cocorico2 = (chainActive.Height() - depth);
-                            
+
                             int ciboire3 = mapBlockIndex[wtx.hashBlock]->GetBlockTime();
-                            
+
                             if (((torpinouche > totito) && ((ciboire3 > totito) && (ciboire3 < torpinouche))) || ((totito > torpinouche) && ((ciboire3 > totito) || (ciboire3 < torpinouche)))){
                                     beeCost = 0.0008*(GetBlockSubsidy(cocorico2, consensusParams));
-                                    
+
                             }
-                            
+
                             else{
                                     beeCost = 0.0004*(GetBlockSubsidy(cocorico2, consensusParams));
-                                   
+
                             }
                             if (!includeDead)   // Skip dead bees unless explicitly including them  ------->   always include them...
 				continue;
 			}
-                        
+
                         // count mature bees
                         if ((blocksLeft <= wititi2) && (blocksLeft >= 1)) {
                             status = "mature";
                             isMature = true;
-                            
+
                             //int TheHeight2 = chainActive.Height();
                             int ciboire2 = mapBlockIndex[wtx.hashBlock]->GetBlockTime();
                             int cocorico3 = (chainActive.Height() - depth);
-                            
-                           
-                            
+
+
+
                             if (((torpinouche > totito) && ((ciboire2 > totito) && (ciboire2 < torpinouche))) || ((totito > torpinouche) && ((ciboire2 > totito) || (ciboire2 < torpinouche)))) {
                                     beeCost = 0.0008*(GetBlockSubsidy(cocorico3, consensusParams));
-                                    
+
                             }
-                            
+
                             else{
                                     beeCost = 0.0004*(GetBlockSubsidy(cocorico3, consensusParams));
-                                   
+
                             }
 
                             // get the bee cost according to GI  AT A GIVEN TIME....
                         }
-			
-			
+
+
 			bool communityContrib = false;
 			if (wtx.tx->vout.size() > 1 && wtx.tx->vout[1].scriptPubKey == scriptPubKeyCF) {
 			    beeFeePaid += wtx.tx->vout[1].nValue;            // Add any community fund contribution back to the total paid
 			    communityContrib = true;
 			}
-                       
+
 			int beeCount = beeFeePaid / beeCost;
-			
-
-
-
 
 			// If mature, check for coinbase transactions from blocks minted by a bee from this BCT
 			std::string bctTxid = wtx.GetHash().GetHex();
@@ -3304,10 +3201,9 @@ std::vector<CBeeCreationTransactionInfo> CWallet::GetBCTs2(bool includeDead, boo
 
 				blocksFound++;
 				rewardsPaid += wtx2.tx->vout[1].nValue;
-				
+
 			    }
 			}
-
 
 			int64_t time = 0;
 			if (mapBlockIndex[wtx.hashBlock])
@@ -3328,9 +3224,9 @@ std::vector<CBeeCreationTransactionInfo> CWallet::GetBCTs2(bool includeDead, boo
 
 			bcts.push_back(bct);
 		}	
-	    
+
 	}
-    
+
     return bcts;
 }
 
@@ -3343,7 +3239,7 @@ std::vector<CBeeCreationTransactionInfo> CWallet::GetBCTs3(bool includeDead, boo
 
     int maxDepth = consensusParams.beeGestationBlocks + consensusParams.beeLifespanBlocks;
     int wititi = consensusParams.beeLifespanBlocks;
-    
+
     int maxDepth2;
     int wititi2;
     if (chainActive.Height() >= nAdjustFork) {
@@ -3354,19 +3250,10 @@ std::vector<CBeeCreationTransactionInfo> CWallet::GetBCTs3(bool includeDead, boo
  	maxDepth2 = consensusParams.beeGestationBlocks + consensusParams.beeLifespanBlocks2;
         wititi2 = consensusParams.beeLifespanBlocks2;	
     }
-    
-/*    if (chainActive.Height() >= consensusParams.ratioForkBlock) {
-	maxDepth = consensusParams.beeGestationBlocks + consensusParams.beeLifespanBlocks2;
-	wititi = consensusParams.beeLifespanBlocks2; // 336 on testnet
-    }
-    else {
-	maxDepth = consensusParams.beeGestationBlocks + consensusParams.beeLifespanBlocks;
-        wititi = consensusParams.beeLifespanBlocks; // 336 on testnet
-    } */
-    
-        
 
-   
+
+
+
     CScript scriptPubKeyBCF = GetScriptForDestination(DecodeDestination(consensusParams.beeCreationAddress));
 //    CScript scriptPubKeyCF = GetScriptForDestination(DecodeDestination(consensusParams.hiveCommunityAddress));
 
@@ -3377,14 +3264,11 @@ std::vector<CBeeCreationTransactionInfo> CWallet::GetBCTs3(bool includeDead, boo
     else
 	scriptPubKeyCF = GetScriptForDestination(DecodeDestination(consensusParams.hiveCommunityAddress));    
 
-
 	    for (const std::pair<uint256, CWalletTx>& pairWtx : mapWallet) {
 		const CWalletTx& wtx = pairWtx.second;
 
 	    //int totito = switchHmem;
             //int torpinouche = switchLmem;
-    	    
-
 
 		// Skip unconfirmed transactions and orphans
 		if (wtx.GetDepthInMainChain() < 1)
@@ -3416,102 +3300,94 @@ std::vector<CBeeCreationTransactionInfo> CWallet::GetBCTs3(bool includeDead, boo
 		// Check lifespan & maturity
 		int depth = wtx.GetDepthInMainChain();
 
-
                 int cocorico = (chainActive.Height() - depth); // this will give the block height for the current checked BCT
-                
+
                 if (cocorico < consensusParams.ratioForkBlock) {
 
-			
-			int blocksLeft = maxDepth - depth; // 17280 - depth...
-			
 
-                        
+			int blocksLeft = maxDepth - depth; // 17280 - depth...
+
+
 			//int TheHeight = chainActive.Height();
 			//int ciboire = mapBlockIndex[wtx.hashBlock]->GetBlockTime();
-                        
+
                         bool isMature;
                         std::string status;
-                        
+
                         // count immature bees
 			if ((blocksLeft > wititi) && (blocksLeft <= maxDepth)){
-			    
-			    
+
+
 			    //if (((torpinouche > totito) && ((ciboire > totito) && (ciboire < torpinouche))) || ((totito > torpinouche) && ((ciboire > totito) || (ciboire < torpinouche)))) {
                             //        beeCost = 0.0008*(GetBlockSubsidy(cocorico, consensusParams));
-                                   
+
                             //}
-                            
+
                             //else{
                                     beeCost = 0.0004*(GetBlockSubsidy(cocorico, consensusParams));
-                                    
+
                             //}
-
-
 
 			isMature = false;
 			status = "immature";
                         }
-                        
+
                         // count dead bees
 			if (blocksLeft < 1) {
-			    
-                            
+
+
 			    blocksLeft = 0;
 			    status = "expired";
 			    isMature = true;    // We still want to calc rewards
                             int cocorico2 = (chainActive.Height() - depth);
-                            
+
                             //int ciboire3 = mapBlockIndex[wtx.hashBlock]->GetBlockTime();
-                            
+
                             //if (((torpinouche > totito) && ((ciboire3 > totito) && (ciboire3 < torpinouche))) || ((totito > torpinouche) && ((ciboire3 > totito) || (ciboire3 < torpinouche)))){
                             //        beeCost = 0.0008*(GetBlockSubsidy(cocorico2, consensusParams));
-                                    
+
                             //}
-                            
+
                             //else{
                                     beeCost = 0.0004*(GetBlockSubsidy(cocorico2, consensusParams));
-                                   
+
                             //}
                             if (!includeDead)   // Skip dead bees unless explicitly including them  ------->   always include them...
 				continue;
 			}
-                        
+
                         // count mature bees
                         if ((blocksLeft <= wititi) && (blocksLeft >= 1)) {
                             status = "mature";
                             isMature = true;
-                            
+
                             //int TheHeight2 = chainActive.Height();
                             //int ciboire2 = mapBlockIndex[wtx.hashBlock]->GetBlockTime();
                             int cocorico3 = (chainActive.Height() - depth);
-                            
-                           
-                            
+
+
+
                             //if (((torpinouche > totito) && ((ciboire2 > totito) && (ciboire2 < torpinouche))) || ((totito > torpinouche) && ((ciboire2 > totito) || (ciboire2 < torpinouche)))) {
                             //        beeCost = 0.0008*(GetBlockSubsidy(cocorico3, consensusParams));
-                                    
+
                             //}
-                            
+
                             //else{
                                     beeCost = 0.0004*(GetBlockSubsidy(cocorico3, consensusParams));
-                                   
+
                             //}
 
                             // get the bee cost according to GI  AT A GIVEN TIME....
                         }
-			
-			
+
+
 			bool communityContrib = false;
 			if (wtx.tx->vout.size() > 1 && wtx.tx->vout[1].scriptPubKey == scriptPubKeyCF) {
 			    beeFeePaid += wtx.tx->vout[1].nValue;            // Add any community fund contribution back to the total paid
 			    communityContrib = true;
 			}
-                       
+
 			int beeCount = beeFeePaid / beeCost;
-			
-
-
-
 
 			// If mature, check for coinbase transactions from blocks minted by a bee from this BCT
 			std::string bctTxid = wtx.GetHash().GetHex();
@@ -3539,10 +3415,9 @@ std::vector<CBeeCreationTransactionInfo> CWallet::GetBCTs3(bool includeDead, boo
 
 				blocksFound++;
 				rewardsPaid += wtx2.tx->vout[1].nValue;
-				
+
 			    }
 			}
-
 
 			int64_t time = 0;
 			if (mapBlockIndex[wtx.hashBlock])
@@ -3563,100 +3438,93 @@ std::vector<CBeeCreationTransactionInfo> CWallet::GetBCTs3(bool includeDead, boo
 
 			bcts.push_back(bct);
 		}	
-                
+
                 if (cocorico >= consensusParams.ratioForkBlock) {
 
-			
-			int blocksLeft = maxDepth2 - depth; // 25344 - depth...
-			
 
-                        
+			int blocksLeft = maxDepth2 - depth; // 25344 - depth...
+
+
 			//int TheHeight = chainActive.Height();
 			//int ciboire = mapBlockIndex[wtx.hashBlock]->GetBlockTime();
-                        
+
                         bool isMature;
                         std::string status;
-                        
+
                         // count immature bees
 			if ((blocksLeft > wititi2) && (blocksLeft <= maxDepth2)){
-			    
-			    
+
+
 			    //if (((torpinouche > totito) && ((ciboire > totito) && (ciboire < torpinouche))) || ((totito > torpinouche) && ((ciboire > totito) || (ciboire < torpinouche)))) {
                             //        beeCost = 0.0008*(GetBlockSubsidy(cocorico, consensusParams));
-                                   
+
                             //}
-                            
+
                             //else{
                                     beeCost = 0.0004*(GetBlockSubsidy(cocorico, consensusParams));
-                                    
+
                             //}
-
-
 
 			isMature = false;
 			status = "immature";
                         }
-                        
+
                         // count dead bees
 			if (blocksLeft < 1) {
-			    
-                            
+
+
 			    blocksLeft = 0;
 			    status = "expired";
 			    isMature = true;    // We still want to calc rewards
                             int cocorico2 = (chainActive.Height() - depth);
-                            
+
                             //int ciboire3 = mapBlockIndex[wtx.hashBlock]->GetBlockTime();
-                            
+
                             //if (((torpinouche > totito) && ((ciboire3 > totito) && (ciboire3 < torpinouche))) || ((totito > torpinouche) && ((ciboire3 > totito) || (ciboire3 < torpinouche)))){
                             //        beeCost = 0.0008*(GetBlockSubsidy(cocorico2, consensusParams));
-                                    
+
                             //}
-                            
+
                             //else{
                                     beeCost = 0.0004*(GetBlockSubsidy(cocorico2, consensusParams));
-                                   
+
                             //}
                             if (!includeDead)   // Skip dead bees unless explicitly including them  ------->   always include them...
 				continue;
 			}
-                        
+
                         // count mature bees
                         if ((blocksLeft <= wititi2) && (blocksLeft >= 1)) {
                             status = "mature";
                             isMature = true;
-                            
+
                             //int TheHeight2 = chainActive.Height();
                             //int ciboire2 = mapBlockIndex[wtx.hashBlock]->GetBlockTime();
                             int cocorico3 = (chainActive.Height() - depth);
-                            
-                           
-                            
+
+
+
                             //if (((torpinouche > totito) && ((ciboire2 > totito) && (ciboire2 < torpinouche))) || ((totito > torpinouche) && ((ciboire2 > totito) || (ciboire2 < torpinouche)))) {
                             //        beeCost = 0.0008*(GetBlockSubsidy(cocorico3, consensusParams));
-                                    
+
                             //}
-                            
+
                             //else{
                                     beeCost = 0.0004*(GetBlockSubsidy(cocorico3, consensusParams));
-                                   
+
                             //}
 
                             // get the bee cost according to GI  AT A GIVEN TIME....
                         }
-			
-			
+
+
 			bool communityContrib = false;
 			if (wtx.tx->vout.size() > 1 && wtx.tx->vout[1].scriptPubKey == scriptPubKeyCF) {
 			    beeFeePaid += wtx.tx->vout[1].nValue;            // Add any community fund contribution back to the total paid
 			    communityContrib = true;
 			}
-                       
+
 			int beeCount = beeFeePaid / beeCost;
-			
-
-
-
 
 			// If mature, check for coinbase transactions from blocks minted by a bee from this BCT
 			std::string bctTxid = wtx.GetHash().GetHex();
@@ -3684,10 +3552,9 @@ std::vector<CBeeCreationTransactionInfo> CWallet::GetBCTs3(bool includeDead, boo
 
 				blocksFound++;
 				rewardsPaid += wtx2.tx->vout[1].nValue;
-				
+
 			    }
 			}
-
 
 			int64_t time = 0;
 			if (mapBlockIndex[wtx.hashBlock])
@@ -3708,9 +3575,9 @@ std::vector<CBeeCreationTransactionInfo> CWallet::GetBCTs3(bool includeDead, boo
 
 			bcts.push_back(bct);
 		}	
-	    
+
 	}
-    
+
     return bcts;
 }
 
@@ -3723,13 +3590,13 @@ bool CWallet::CreateBeeTransaction(int beeCount, CWalletTx& wtxNew, CReserveKey&
         strFailReason = "Error: The Hive has not yet been activated on the network";
         return false;
     }
-	
+
     // Sanity check beeCount
     if (beeCount < 1) {
         strFailReason = "Error: At least 1 bee must be created";
         return false;
     }
-	
+
     // Check available balance (note: can't check fee at this point because we don't know the tx size)
     CAmount beeCost = GetBeeCost(chainActive.Height(), consensusParams);
     CAmount curBalance = GetAvailableBalance();
@@ -3809,7 +3676,7 @@ bool CWallet::CreateBeeTransaction(int beeCount, CWalletTx& wtxNew, CReserveKey&
             strFailReason = "Error: Invalid change address specified";
             return false;
         }
-		
+
         // Make sure it's a wallet address (otherwise the change won't make it back to us)
         isminetype isMine = ::IsMine((const CKeyStore&)*this, (const CTxDestination&)destinationChange, SIGVERSION_BASE);
         if (isMine != ISMINE_SPENDABLE) {
@@ -3876,27 +3743,26 @@ bool CWallet::CreateBeeTransaction2(int beeCount, CWalletTx& wtxNew, CReserveKey
         strFailReason = "Error: The Hive has not yet been activated on the network";
         return false;
     }
-	
+
     // Sanity check beeCount
     if (beeCount < 1) {
         strFailReason = "Error: At least 1 bee must be created";
         return false;
     }
 
-    
+
     // Check available balance (note: can't check fee at this point because we don't know the tx size)
     int HeightZ = chainActive.Height();
     int mangedlamarde = wototo;
-    
+
     CAmount beeCost;
-   
+
     double superZ = threshold;
-    
+
     if (mangedlamarde <= superZ)
 	beeCost = 0.0004*(GetBlockSubsidy(HeightZ, consensusParams));
     else                  
 	beeCost = 0.0008*(GetBlockSubsidy(HeightZ, consensusParams)); 
-    
 
     CAmount curBalance = GetAvailableBalance();
     CAmount totalBeeCost = beeCost * beeCount;
@@ -3973,7 +3839,7 @@ bool CWallet::CreateBeeTransaction2(int beeCount, CWalletTx& wtxNew, CReserveKey
             strFailReason = "Error: Invalid change address specified";
             return false;
         }
-		
+
         // Make sure it's a wallet address (otherwise the change won't make it back to us)
         isminetype isMine = ::IsMine((const CKeyStore&)*this, (const CTxDestination&)destinationChange, SIGVERSION_BASE);
         if (isMine != ISMINE_SPENDABLE) {
@@ -4040,27 +3906,26 @@ bool CWallet::CreateBeeTransaction3(int beeCount, CWalletTx& wtxNew, CReserveKey
         strFailReason = "Error: The Hive has not yet been activated on the network";
         return false;
     }
-	
+
     // Sanity check beeCount
     if (beeCount < 1) {
         strFailReason = "Error: At least 1 bee must be created";
         return false;
     }
 
-    
+
     // Check available balance (note: can't check fee at this point because we don't know the tx size)
     int HeightZ = chainActive.Height();
     //int mangedlamarde = wototo;
-    
+
     CAmount beeCost;
-   
+
     //double superZ = threshold;
-    
+
     //if (mangedlamarde <= superZ)
 	beeCost = 0.0004*(GetBlockSubsidy(HeightZ, consensusParams));
     //else                  
 	//beeCost = 0.0008*(GetBlockSubsidy(HeightZ, consensusParams)); 
-    
 
     CAmount curBalance = GetAvailableBalance();
     CAmount totalBeeCost = beeCost * beeCount;
@@ -4137,7 +4002,7 @@ bool CWallet::CreateBeeTransaction3(int beeCount, CWalletTx& wtxNew, CReserveKey
             strFailReason = "Error: Invalid change address specified";
             return false;
         }
-		
+
         // Make sure it's a wallet address (otherwise the change won't make it back to us)
         isminetype isMine = ::IsMine((const CKeyStore&)*this, (const CTxDestination&)destinationChange, SIGVERSION_BASE);
         if (isMine != ISMINE_SPENDABLE) {
@@ -4557,9 +4422,6 @@ bool CWallet::CreateTransaction(const std::vector<CRecipient>& vecSend, CWalletT
     return true;
 }
 
-/**
- * Call after CreateTransaction unless you want to abort
- */
 bool CWallet::CommitTransaction(CWalletTx& wtxNew, CReserveKey& reservekey, CConnman* connman, CValidationState& state)
 {
     {
@@ -4710,7 +4572,6 @@ DBErrors CWallet::ZapWalletTx(std::vector<CWalletTx>& vWtx)
     return DB_LOAD_OK;
 }
 
-
 bool CWallet::SetAddressBook(const CTxDestination& address, const std::string& strName, const std::string& strPurpose)
 {
     bool fUpdated = false;
@@ -4719,7 +4580,8 @@ bool CWallet::SetAddressBook(const CTxDestination& address, const std::string& s
         std::map<CTxDestination, CAddressBookData>::iterator mi = mapAddressBook.find(address);
         fUpdated = mi != mapAddressBook.end();
         mapAddressBook[address].name = strName;
-        if (!strPurpose.empty()) /* update purpose only if requested */
+        if (!strPurpose.empty())
+
             mapAddressBook[address].purpose = strPurpose;
     }
     NotifyAddressBookChanged(this, address, strName, ::IsMine(*this, address) != ISMINE_NO,
@@ -4764,10 +4626,6 @@ const std::string& CWallet::GetAccountName(const CScript& scriptPubKey) const
     return DEFAULT_ACCOUNT_NAME;
 }
 
-/**
- * Mark old keypool keys as used,
- * and generate all new keys
- */
 bool CWallet::NewKeyPool()
 {
     {
@@ -5041,7 +4899,8 @@ std::set< std::set<CTxDestination> > CWallet::GetAddressGroupings()
             for (CTxIn txin : pcoin->tx->vin)
             {
                 CTxDestination address;
-                if(!IsMine(txin)) /* If this input isn't mine, ignore it */
+                if(!IsMine(txin))
+
                     continue;
                 if(!ExtractDestination(mapWallet[txin.prevout.hash].tx->vout[txin.prevout.n].scriptPubKey, address))
                     continue;
@@ -5237,7 +5096,7 @@ void CWallet::ListLockedCoins(std::vector<COutPoint>& vOutpts) const
     }
 }
 
-/** @} */ // end of Actions
+ // end of Actions
 
 void CWallet::GetKeyBirthTimes(std::map<CTxDestination, int64_t> &mapKeyBirth) const {
     AssertLockHeld(cs_wallet); // mapKeyMetadata
@@ -5290,27 +5149,6 @@ void CWallet::GetKeyBirthTimes(std::map<CTxDestination, int64_t> &mapKeyBirth) c
         mapKeyBirth[entry.first] = entry.second->GetBlockTime() - TIMESTAMP_WINDOW; // block times can be 2h off
 }
 
-/**
- * Compute smart timestamp for a transaction being added to the wallet.
- *
- * Logic:
- * - If sending a transaction, assign its timestamp to the current time.
- * - If receiving a transaction outside a block, assign its timestamp to the
- *   current time.
- * - If receiving a block with a future timestamp, assign all its (not already
- *   known) transactions' timestamps to the current time.
- * - If receiving a block with a past timestamp, before the most recent known
- *   transaction (that we care about), assign all its (not already known)
- *   transactions' timestamps to the same timestamp as that most-recent-known
- *   transaction.
- * - If receiving a block with a past timestamp, but after the most recent known
- *   transaction, assign all its (not already known) transactions' timestamps to
- *   the block time.
- *
- * For more information see CWalletTx::nTimeSmart,
- * https://bitcointalk.org/?topic=54527, or
- * https://github.com/bitcoin/bitcoin/pull/1393.
- */
 unsigned int CWallet::ComputeTimeSmart(const CWalletTx& wtx) const
 {
     unsigned int nTimeSmart = wtx.nTimeReceived;
@@ -5708,7 +5546,6 @@ int CMerkleTx::GetBlocksToMaturity() const
     return std::max(0, (COINBASE_MATURITY+1) - GetDepthInMainChain());
 }
 
-
 bool CWalletTx::AcceptToMemoryPool(const CAmount& nAbsurdFee, CValidationState& state)
 {
     // Quick check to avoid re-setting fInMempool to false
@@ -5721,8 +5558,11 @@ bool CWalletTx::AcceptToMemoryPool(const CAmount& nAbsurdFee, CValidationState& 
     // user could call sendmoney in a loop and hit spurious out of funds errors
     // because we think that the transaction they just generated's change is
     // unavailable as we're not yet aware its in mempool.
-    bool ret = ::AcceptToMemoryPool(mempool, state, tx, nullptr /* pfMissingInputs */,
-                                nullptr /* plTxnReplaced */, false /* bypass_limits */, nAbsurdFee);
+    bool ret = ::AcceptToMemoryPool(mempool, state, tx, nullptr
+,
+                                nullptr
+, false
+, nAbsurdFee);
     fInMempool = ret;
     return ret;
 }

@@ -1,4 +1,4 @@
-// Copyright (c) 2016-2017 The Bitcoin Core developers
+// Copyright (c) 2016-2025 The Bitcoin Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -10,7 +10,6 @@
 #include <array>
 #include <vector>
 #include <string>
-
 
 static void Base58Encode(benchmark::State& state)
 {
@@ -25,7 +24,6 @@ static void Base58Encode(benchmark::State& state)
         EncodeBase58(buff.data(), buff.data() + buff.size());
     }
 }
-
 
 static void Base58CheckEncode(benchmark::State& state)
 {
@@ -43,7 +41,6 @@ static void Base58CheckEncode(benchmark::State& state)
     }
 }
 
-
 static void Base58Decode(benchmark::State& state)
 {
     const char* addr = "17VZNX1SN5NtKa8UQFxwQbFeFc3iqRYhem";
@@ -52,7 +49,6 @@ static void Base58Decode(benchmark::State& state)
         DecodeBase58(addr, vch);
     }
 }
-
 
 BENCHMARK(Base58Encode, 470 * 1000);
 BENCHMARK(Base58CheckEncode, 320 * 1000);

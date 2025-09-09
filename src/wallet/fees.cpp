@@ -1,5 +1,5 @@
 // Copyright (c) 2009-2010 Satoshi Nakamoto
-// Copyright (c) 2009-2017 The Bitcoin Core developers
+// Copyright (c) 2009-2025 The Bitcoin Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -12,22 +12,14 @@
 #include <wallet/coincontrol.h>
 #include <wallet/wallet.h>
 
-
 CAmount GetRequiredFee(unsigned int nTxBytes)
 {
     return std::max(CWallet::minTxFee.GetFee(nTxBytes), ::minRelayTxFee.GetFee(nTxBytes));
 }
 
-
 CAmount GetMinimumFee(unsigned int nTxBytes, const CCoinControl& coin_control, const CTxMemPool& pool, const CBlockPolicyEstimator& estimator, FeeCalculation *feeCalc)
 {
-    /* User control of how to calculate fee uses the following parameter precedence:
-       1. coin_control.m_feerate
-       2. coin_control.m_confirm_target
-       3. payTxFee (user-set global variable)
-       4. nTxConfirmTarget (user-set global variable)
-       The first parameter that is set is used.
-    */
+
     CAmount fee_needed;
     if (coin_control.m_feerate) { // 1.
         fee_needed = coin_control.m_feerate->GetFee(nTxBytes);
@@ -76,11 +68,12 @@ CAmount GetMinimumFee(unsigned int nTxBytes, const CCoinControl& coin_control, c
     return fee_needed;
 }
 
-
 CFeeRate GetDiscardRate(const CBlockPolicyEstimator& estimator)
 {
     unsigned int highest_target = estimator.HighestTargetTracked(FeeEstimateHorizon::LONG_HALFLIFE);
-    CFeeRate discard_rate = estimator.estimateSmartFee(highest_target, nullptr /* FeeCalculation */, false /* conservative */);
+    CFeeRate discard_rate = estimator.estimateSmartFee(highest_target, nullptr
+, false
+);
     // Don't let discard_rate be greater than longest possible fee estimate if we get a valid fee estimate
     discard_rate = (discard_rate == CFeeRate(0)) ? CWallet::m_discard_rate : std::min(discard_rate, CWallet::m_discard_rate);
     // Discard rate must be at least dustRelayFee

@@ -1,4 +1,4 @@
-// Copyright (c) 2011-2017 The Bitcoin Core developers
+// Copyright (c) 2011-2025 The Bitcoin Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -37,14 +37,14 @@ bool BannedNodeLessThan::operator()(const CCombinedBan& left, const CCombinedBan
 class BanTablePriv
 {
 public:
-    /** Local cache of peer information */
+
     QList<CCombinedBan> cachedBanlist;
-    /** Column to sort nodes by */
+
     int sortColumn;
-    /** Order (ascending or descending) to sort nodes by */
+
     Qt::SortOrder sortOrder;
 
-    /** Pull a full list of banned nodes from CNode into our cache */
+
     void refreshBanlist()
     {
         banmap_t banMap;

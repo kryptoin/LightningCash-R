@@ -1,4 +1,4 @@
-// Copyright (c) 2009-2017 The Bitcoin Core developers
+// Copyright (c) 2009-2025 The Bitcoin Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -70,13 +70,6 @@ const std::map<unsigned char, std::string> mapSigHashTypes = {
     {static_cast<unsigned char>(SIGHASH_SINGLE|SIGHASH_ANYONECANPAY), std::string("SINGLE|ANYONECANPAY")},    
 };
 
-/**
- * Create the assembly string representation of a CScript object.
- * @param[in] script    CScript object to convert into the asm string representation.
- * @param[in] fAttemptSighashDecode    Whether to attempt to decode sighash types on data within the script that matches the format
- *                                     of a signature. Only pass true for scripts you believe could contain signatures. For example,
- *                                     pass false, or omit the this argument (defaults to false), for scriptPubKeys.
- */
 std::string ScriptToAsmStr(const CScript& script, const bool fAttemptSighashDecode)
 {
     std::string str;

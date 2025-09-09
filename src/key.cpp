@@ -1,4 +1,4 @@
-// Copyright (c) 2009-2017 The Bitcoin Core developers
+// Copyright (c) 2009-2025 The Bitcoin Core developers
 // Copyright (c) 2017 The Zcash developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
@@ -15,32 +15,15 @@
 
 static secp256k1_context* secp256k1_context_sign = nullptr;
 
-/** These functions are taken from the libsecp256k1 distribution and are very ugly. */
-
-/**
- * This parses a format loosely based on a DER encoding of the ECPrivateKey type from
- * section C.4 of SEC 1 <http://www.secg.org/sec1-v2.pdf>, with the following caveats:
- *
- * * The octet-length of the SEQUENCE must be encoded as 1 or 2 octets. It is not
- *   required to be encoded as one octet if it is less than 256, as DER would require.
- * * The octet-length of the SEQUENCE must not be greater than the remaining
- *   length of the key encoding, but need not match it (i.e. the encoding may contain
- *   junk after the encoded SEQUENCE).
- * * The privateKey OCTET STRING is zero-filled on the left to 32 octets.
- * * Anything after the encoding of the privateKey OCTET STRING is ignored, whether
- *   or not it is validly encoded DER.
- *
- * out32 must point to an output buffer of length at least 32 bytes.
- */
 static int ec_privkey_import_der(const secp256k1_context* ctx, unsigned char *out32, const unsigned char *privkey, size_t privkeylen) {
     const unsigned char *end = privkey + privkeylen;
     memset(out32, 0, 32);
-    /* sequence header */
+
     if (end - privkey < 1 || *privkey != 0x30u) {
         return 0;
     }
     privkey++;
-    /* sequence length constructor */
+
     if (end - privkey < 1 || !(*privkey & 0x80u)) {
         return 0;
     }
@@ -51,18 +34,18 @@ static int ec_privkey_import_der(const secp256k1_context* ctx, unsigned char *ou
     if (end - privkey < lenb) {
         return 0;
     }
-    /* sequence length */
+
     size_t len = privkey[lenb-1] | (lenb > 1 ? privkey[lenb-2] << 8 : 0u);
     privkey += lenb;
     if (end - privkey < len) {
         return 0;
     }
-    /* sequence element 0: version number (=1) */
+
     if (end - privkey < 3 || privkey[0] != 0x02u || privkey[1] != 0x01u || privkey[2] != 0x01u) {
         return 0;
     }
     privkey += 3;
-    /* sequence element 1: octet string, up to 32 bytes */
+
     if (end - privkey < 2 || privkey[0] != 0x04u) {
         return 0;
     }
@@ -79,16 +62,6 @@ static int ec_privkey_import_der(const secp256k1_context* ctx, unsigned char *ou
     return 1;
 }
 
-/**
- * This serializes to a DER encoding of the ECPrivateKey type from section C.4 of SEC 1
- * <http://www.secg.org/sec1-v2.pdf>. The optional parameters and publicKey fields are
- * included.
- *
- * privkey must point to an output buffer of length at least CKey::PRIVATE_KEY_SIZE bytes.
- * privkeylen must initially be set to the size of the privkey buffer. Upon return it
- * will be set to the number of bytes used in the buffer.
- * key32 must point to a 32-byte raw private key.
- */
 static int ec_privkey_export_der(const secp256k1_context *ctx, unsigned char *privkey, size_t *privkeylen, const unsigned char *key32, int compressed) {
     assert(*privkeylen >= CKey::PRIVATE_KEY_SIZE);
     secp256k1_pubkey pubkey;

@@ -1,4 +1,4 @@
-// Copyright (c) 2011-2017 The Bitcoin Core developers
+// Copyright (c) 2011-2025 The Bitcoin Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -30,10 +30,6 @@ private:
     Qt::SortOrder order;
 };
 
-/**
-   Qt model providing information about connected peers, similar to the
-   "getpeerinfo" RPC call. Used by the rpc console UI.
- */
 class BanTableModel : public QAbstractTableModel
 {
     Q_OBJECT
@@ -49,8 +45,6 @@ public:
         Bantime = 1
     };
 
-    /** @name Methods overridden from QAbstractTableModel
-        @{*/
     int rowCount(const QModelIndex &parent) const;
     int columnCount(const QModelIndex &parent) const;
     QVariant data(const QModelIndex &index, int role) const;
@@ -59,7 +53,6 @@ public:
     Qt::ItemFlags flags(const QModelIndex &index) const;
     void sort(int column, Qt::SortOrder order);
     bool shouldShow();
-    /*@}*/
 
 public Q_SLOTS:
     void refresh();

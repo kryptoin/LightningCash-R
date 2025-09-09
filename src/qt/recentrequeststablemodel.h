@@ -1,4 +1,4 @@
-// Copyright (c) 2011-2017 The Bitcoin Core developers
+// Copyright (c) 2011-2025 The Bitcoin Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -52,9 +52,6 @@ private:
     Qt::SortOrder order;
 };
 
-/** Model for list of recently generated payment requests / bitcoin: URIs.
- * Part of wallet model.
- */
 class RecentRequestsTableModel: public QAbstractTableModel
 {
     Q_OBJECT
@@ -71,8 +68,6 @@ public:
         NUMBER_OF_COLUMNS
     };
 
-    /** @name Methods overridden from QAbstractTableModel
-        @{*/
     int rowCount(const QModelIndex &parent) const;
     int columnCount(const QModelIndex &parent) const;
     QVariant data(const QModelIndex &index, int role) const;
@@ -81,7 +76,6 @@ public:
     QModelIndex index(int row, int column, const QModelIndex &parent) const;
     bool removeRows(int row, int count, const QModelIndex &parent = QModelIndex());
     Qt::ItemFlags flags(const QModelIndex &index) const;
-    /*@}*/
 
     const RecentRequestEntry &entry(int row) const { return list[row]; }
     void addNewRequest(const SendCoinsRecipient &recipient);
@@ -98,9 +92,8 @@ private:
     QList<RecentRequestEntry> list;
     int64_t nReceiveRequestsMaxId;
 
-    /** Updates the column title to "Amount (DisplayUnit)" and emits headerDataChanged() signal for table headers to react. */
     void updateAmountColumnTitle();
-    /** Gets title for amount column including current display unit if optionsModel reference available. */
+
     QString getAmountTitle();
 };
 

@@ -1,4 +1,4 @@
-// Copyright (c) 2011-2017 The Bitcoin Core developers
+// Copyright (c) 2011-2025 The Bitcoin Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -161,7 +161,6 @@ TestChain100Setup::~TestChain100Setup()
 {
 }
 
-
 CTxMemPoolEntry TestMemPoolEntryHelper::FromTx(const CMutableTransaction &tx) {
     CTransaction txn(tx);
     return FromTx(txn);
@@ -172,10 +171,6 @@ CTxMemPoolEntry TestMemPoolEntryHelper::FromTx(const CTransaction &txn) {
                            spendsCoinbase, sigOpCost, lp);
 }
 
-/**
- * @returns a real block (0000000000013b8ab2cd513b0261a14096412195a72a0c4827d229dcc7e0f7af)
- *      with 9 txs.
- */
 CBlock getBlock13b8a()
 {
     CBlock block;

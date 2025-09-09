@@ -1,5 +1,5 @@
 // Copyright (c) 2010 Satoshi Nakamoto
-// Copyright (c) 2009-2017 The Bitcoin Core developers
+// Copyright (c) 2009-2025 The Bitcoin Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -48,9 +48,6 @@ static CUpdatedBlock latestblock;
 
 extern void TxToJSON(const CTransaction& tx, const uint256 hashBlock, UniValue& entry);
 
-/* Calculate the difficulty for a given block index,
- * or the block index of the given chain.
- */
 // LightningCashr: Hive: Optional getHiveDifficulty param
 double GetDifficulty(const CChain& chain, const CBlockIndex* blockindex, bool getHiveDifficulty = false)
 {
@@ -64,9 +61,6 @@ double GetDifficulty(const CChain& chain, const CBlockIndex* blockindex, bool ge
 
     // LightningCashr: Hive: If tip is hivemined and we want PoW, step back one (Hive blocks always follow a PoW block)
     const Consensus::Params& consensusParams = Params().GetConsensus();
-/*    if (!getHiveDifficulty && blockindex->GetBlockHeader().IsHiveMined(consensusParams)) {
-        assert (blockindex->pprev);
-        blockindex = blockindex->pprev;*/
 
     if (!getHiveDifficulty) {
         // LightningCashr: Hive 1.1: Allow there to be multiple hive blocks in the way
@@ -404,7 +398,6 @@ UniValue gethivedifficulty(const JSONRPCRequest& request)
         throw std::runtime_error(
             "Error: The Hive is not yet enabled on the network"
         );
-
 
     LOCK(cs_main);
     return GetDifficulty(nullptr, true);
@@ -884,8 +877,14 @@ static void ApplyStats(CCoinsStats &stats, CHashWriter& ss, const uint256& hash,
         ss << VARINT(output.second.out.nValue);
         stats.nTransactionOutputs++;
         stats.nTotalAmount += output.second.out.nValue;
-        stats.nBogoSize += 32 /* txid */ + 4 /* vout index */ + 4 /* height + coinbase */ + 8 /* amount */ +
-                           2 /* scriptPubKey len */ + output.second.out.scriptPubKey.size() /* scriptPubKey */;
+        stats.nBogoSize += 32
+ + 4
+ + 4
+ + 8
+ +
+                           2
+ + output.second.out.scriptPubKey.size()
+;
     }
     ss << VARINT(0);
 }
@@ -1128,7 +1127,6 @@ UniValue verifychain(const JSONRPCRequest& request)
     return CVerifyDB().VerifyDB(Params(), pcoinsTip.get(), nCheckLevel, nCheckDepth);
 }
 
-/** Implementation of IsSuperMajority with better feedback */
 static UniValue SoftForkMajorityDesc(int version, CBlockIndex* pindex, const Consensus::Params& consensusParams)
 {
     UniValue rv(UniValue::VOBJ);
@@ -1301,13 +1299,10 @@ UniValue getblockchaininfo(const JSONRPCRequest& request)
     return obj;
 }
 
-/** Comparison function for sorting the getchaintips heads.  */
 struct CompareBlocksByHeight
 {
     bool operator()(const CBlockIndex* a, const CBlockIndex* b) const
     {
-        /* Make sure that unequal blocks with the same height do not compare
-           equal. Use the pointers themselves to make a distinction. */
 
         if (a->nHeight != b->nHeight)
           return (a->nHeight > b->nHeight);
@@ -1351,13 +1346,6 @@ UniValue getchaintips(const JSONRPCRequest& request)
 
     LOCK(cs_main);
 
-    /*
-     * Idea:  the set of chain tips is chainActive.tip, plus orphan blocks which do not have another orphan building off of them.
-     * Algorithm:
-     *  - Make one pass through mapBlockIndex, picking out the orphan blocks, and also storing a set of the orphan block's pprev pointers.
-     *  - Iterate through the orphan blocks. If the block isn't pointed to by another orphan, it is a chain tip.
-     *  - add chainActive.Tip()
-     */
     std::set<const CBlockIndex*, CompareBlocksByHeight> setTips;
     std::set<const CBlockIndex*> setOrphans;
     std::set<const CBlockIndex*> setPrevs;
@@ -1380,7 +1368,6 @@ UniValue getchaintips(const JSONRPCRequest& request)
     // Always report the currently active tip.
     setTips.insert(chainActive.Tip());
 
-    /* Construct the output array.  */
     UniValue res(UniValue::VARR);
     for (const CBlockIndex* block : setTips)
     {
@@ -1616,7 +1603,7 @@ UniValue getchaintxstats(const JSONRPCRequest& request)
             pindex = chainActive.Tip();
         }
     }
-    
+
     assert(pindex != nullptr);
 
     if (request.params[0].isNull()) {
@@ -1693,7 +1680,6 @@ static const CRPCCommand commands[] =
 
     { "blockchain",         "preciousblock",          &preciousblock,          {"blockhash"} },
 
-    /* Not shown in help */
     { "hidden",             "invalidateblock",        &invalidateblock,        {"blockhash"} },
     { "hidden",             "reconsiderblock",        &reconsiderblock,        {"blockhash"} },
     { "hidden",             "waitfornewblock",        &waitfornewblock,        {"timeout"} },

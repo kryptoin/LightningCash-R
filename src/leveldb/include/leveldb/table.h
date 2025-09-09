@@ -71,7 +71,6 @@ class Table {
       void* arg,
       void (*handle_result)(void* arg, const Slice& k, const Slice& v));
 
-
   void ReadMeta(const Footer& footer);
   void ReadFilter(const Slice& filter_handle_value);
 

@@ -1,4 +1,4 @@
-// Copyright (c) 2011-2017 The Bitcoin Core developers
+// Copyright (c) 2011-2025 The Bitcoin Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -46,16 +46,16 @@ bool NodeLessThan::operator()(const CNodeCombinedStats &left, const CNodeCombine
 class PeerTablePriv
 {
 public:
-    /** Local cache of peer information */
+
     QList<CNodeCombinedStats> cachedNodeStats;
-    /** Column to sort nodes by */
+
     int sortColumn;
-    /** Order (ascending or descending) to sort nodes by */
+
     Qt::SortOrder sortOrder;
-    /** Index of rows by node ID */
+
     std::map<NodeId, int> mapNodeRows;
 
-    /** Pull a full list of peers from vNodes into our cache */
+
     void refreshPeers()
     {
         {

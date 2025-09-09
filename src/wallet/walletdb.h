@@ -1,5 +1,5 @@
 // Copyright (c) 2009-2010 Satoshi Nakamoto
-// Copyright (c) 2009-2017 The Bitcoin Core developers
+// Copyright (c) 2009-2025 The Bitcoin Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -17,21 +17,6 @@
 #include <utility>
 #include <vector>
 
-/**
- * Overview of wallet database classes:
- *
- * - CDBEnv is an environment in which the database exists (has no analog in dbwrapper.h)
- * - CWalletDBWrapper represents a wallet database (similar to CDBWrapper in dbwrapper.h)
- * - CDB is a low-level database transaction (similar to CDBBatch in dbwrapper.h)
- * - CWalletDB is a modifier object for the wallet, and encapsulates a database
- *   transaction as well as methods to act on the database (no analog in
- *   dbwrapper.h)
- *
- * The latter two are named confusingly, in contrast to what the names CDB
- * and CWalletDB suggest they are transient transaction objects and don't
- * represent the database itself.
- */
-
 static const bool DEFAULT_FLUSHWALLET = true;
 
 class CAccount;
@@ -45,7 +30,6 @@ class CWalletTx;
 class uint160;
 class uint256;
 
-/** Error statuses for the wallet database */
 enum DBErrors
 {
     DB_LOAD_OK,
@@ -56,7 +40,6 @@ enum DBErrors
     DB_NEED_REWRITE
 };
 
-/* simple HD chain data model */
 class CHDChain
 {
 public:
@@ -133,11 +116,6 @@ public:
     }
 };
 
-/** Access to the wallet database.
- * This should really be named CWalletDBBatch, as it represents a single transaction at the
- * database. It will be committed when the object goes out of scope.
- * Optionally (on by default) it will flush to disk as well.
- */
 class CWalletDB
 {
 private:
@@ -217,17 +195,17 @@ public:
     DBErrors FindWalletTx(std::vector<uint256>& vTxHash, std::vector<CWalletTx>& vWtx);
     DBErrors ZapWalletTx(std::vector<CWalletTx>& vWtx);
     DBErrors ZapSelectTx(std::vector<uint256>& vHashIn, std::vector<uint256>& vHashOut);
-    /* Try to (very carefully!) recover wallet database (with a possible key type filter) */
+
     static bool Recover(const std::string& filename, void *callbackDataIn, bool (*recoverKVcallback)(void* callbackData, CDataStream ssKey, CDataStream ssValue), std::string& out_backup_filename);
-    /* Recover convenience-function to bypass the key filter callback, called when verify fails, recovers everything */
+
     static bool Recover(const std::string& filename, std::string& out_backup_filename);
-    /* Recover filter (used as callback), will only let keys (cryptographical keys) as KV/key-type pass through */
+
     static bool RecoverKeysOnlyFilter(void *callbackData, CDataStream ssKey, CDataStream ssValue);
-    /* Function to determine if a certain KV/key-type is a key (cryptographical key) type */
+
     static bool IsKeyType(const std::string& strType);
-    /* verifies the database environment */
+
     static bool VerifyEnvironment(const std::string& walletFile, const fs::path& walletDir, std::string& errorStr);
-    /* verifies the database file */
+
     static bool VerifyDatabaseFile(const std::string& walletFile, const fs::path& walletDir, std::string& warningStr, std::string& errorStr);
 
     //! write the hdchain model (external chain child index counter)

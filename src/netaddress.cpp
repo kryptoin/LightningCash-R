@@ -1,5 +1,5 @@
 // Copyright (c) 2009-2010 Satoshi Nakamoto
-// Copyright (c) 2009-2017 The Bitcoin Core developers
+// Copyright (c) 2009-2025 The Bitcoin Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -410,7 +410,6 @@ int static GetExtNetwork(const CNetAddr *addr)
     return addr->GetNetwork();
 }
 
-/** Calculates a metric for how reachable (*this) is from a given partner */
 int CNetAddr::GetReachabilityFrom(const CNetAddr *paddrPartner) const
 {
     enum Reachability {
@@ -678,7 +677,7 @@ static inline int NetmaskBits(uint8_t x)
 
 std::string CSubNet::ToString() const
 {
-    /* Parse binary 1{n}0{N-n} to see if mask can be represented as /n */
+
     int cidr = 0;
     bool valid_cidr = true;
     int n = network.IsIPv4() ? 12 : 0;
@@ -696,7 +695,6 @@ std::string CSubNet::ToString() const
         if (netmask[n] != 0x00)
             valid_cidr = false;
 
-    /* Format output */
     std::string strNetmask;
     if (valid_cidr) {
         strNetmask = strprintf("%u", cidr);

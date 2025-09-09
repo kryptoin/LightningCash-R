@@ -1,5 +1,5 @@
 // Copyright (c) 2009-2010 Satoshi Nakamoto
-// Copyright (c) 2009-2017 The Bitcoin Core developers
+// Copyright (c) 2009-2025 The Bitcoin Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -12,33 +12,11 @@
 #include <thread>
 #include <mutex>
 
-
 ////////////////////////////////////////////////
 //                                            //
 // THE SIMPLE DEFINITION, EXCLUDING DEBUG CODE //
 //                                            //
 ////////////////////////////////////////////////
-
-/*
-CCriticalSection mutex;
-    std::recursive_mutex mutex;
-
-LOCK(mutex);
-    std::unique_lock<std::recursive_mutex> criticalblock(mutex);
-
-LOCK2(mutex1, mutex2);
-    std::unique_lock<std::recursive_mutex> criticalblock1(mutex1);
-    std::unique_lock<std::recursive_mutex> criticalblock2(mutex2);
-
-TRY_LOCK(mutex, name);
-    std::unique_lock<std::recursive_mutex> name(mutex, std::try_to_lock_t);
-
-ENTER_CRITICAL_SECTION(mutex); // no RAII
-    mutex.lock();
-
-LEAVE_CRITICAL_SECTION(mutex); // no RAII
-    mutex.unlock();
- */
 
 ///////////////////////////////
 //                           //
@@ -46,10 +24,6 @@ LEAVE_CRITICAL_SECTION(mutex); // no RAII
 //                           //
 ///////////////////////////////
 
-/**
- * Template mixin that adds -Wthread-safety locking
- * annotations to a subset of the mutex API.
- */
 template <typename PARENT>
 class LOCKABLE AnnotatedMixin : public PARENT
 {
@@ -87,10 +61,6 @@ void static inline DeleteLock(void* cs) {}
 #define AssertLockHeld(cs) AssertLockHeldInternal(#cs, __FILE__, __LINE__, &cs)
 #define AssertLockNotHeld(cs) AssertLockNotHeldInternal(#cs, __FILE__, __LINE__, &cs)
 
-/**
- * Wrapped mutex: supports recursive locking, but no waiting
- * TODO: We should move away from using the recursive lock by default.
- */
 class CCriticalSection : public AnnotatedMixin<std::recursive_mutex>
 {
 public:
@@ -99,20 +69,16 @@ public:
     }
 };
 
-/** Wrapped mutex: supports waiting but not recursive locking */
 typedef AnnotatedMixin<std::mutex> CWaitableCriticalSection;
 
-/** Just a typedef for std::condition_variable, can be wrapped later if desired */
 typedef std::condition_variable CConditionVariable;
 
-/** Just a typedef for std::unique_lock, can be wrapped later if desired */
 typedef std::unique_lock<std::mutex> WaitableLock;
 
 #ifdef DEBUG_LOCKCONTENTION
 void PrintLockContention(const char* pszName, const char* pszFile, int nLine);
 #endif
 
-/** Wrapper around std::unique_lock<CCriticalSection> */
 class SCOPED_LOCKABLE CCriticalBlock
 {
 private:
@@ -227,7 +193,6 @@ public:
     }
 };
 
-/** RAII-style semaphore lock */
 class CSemaphoreGrant
 {
 private:

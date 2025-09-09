@@ -2042,7 +2042,6 @@ TEST(DBTest, Randomized) {
         ASSERT_OK(model.Delete(WriteOptions(), k));
         ASSERT_OK(db_->Delete(WriteOptions(), k));
 
-
       } else {                                    // Multi-element batch
         WriteBatch b;
         const int num = rnd.Uniform(8);
@@ -2120,7 +2119,8 @@ void BM_LogAndApply(int iters, int num_base_files) {
   for (int i = 0; i < num_base_files; i++) {
     InternalKey start(MakeKey(2*fnum), 1, kTypeValue);
     InternalKey limit(MakeKey(2*fnum+1), 1, kTypeDeletion);
-    vbase.AddFile(2, fnum++, 1 /* file size */, start, limit);
+    vbase.AddFile(2, fnum++, 1
+, start, limit);
   }
   ASSERT_OK(vset.LogAndApply(&vbase, &mu));
 
@@ -2131,7 +2131,8 @@ void BM_LogAndApply(int iters, int num_base_files) {
     vedit.DeleteFile(2, fnum);
     InternalKey start(MakeKey(2*fnum), 1, kTypeValue);
     InternalKey limit(MakeKey(2*fnum+1), 1, kTypeDeletion);
-    vedit.AddFile(2, fnum++, 1 /* file size */, start, limit);
+    vedit.AddFile(2, fnum++, 1
+, start, limit);
     vset.LogAndApply(&vedit, &mu);
   }
   uint64_t stop_micros = env->NowMicros();

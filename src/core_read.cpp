@@ -1,4 +1,4 @@
-// Copyright (c) 2009-2017 The Bitcoin Core developers
+// Copyright (c) 2009-2025 The Bitcoin Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -9,7 +9,7 @@
 #include <script/script.h>
 #include <serialize.h>
 #include <streams.h>
-#include <univalue.h>
+#include "univalue.h"
 #include <util.h>
 #include <utilstrencodings.h>
 #include <version.h>
@@ -104,7 +104,7 @@ bool CheckTxScriptsSanity(const CMutableTransaction& tx)
             return false;
         }
     }
-    
+
     return true;
 }
 
@@ -139,7 +139,7 @@ bool DecodeHexTx(CMutableTransaction& tx, const std::string& hex_tx, bool try_no
             // Fall through.
         }
     }
-    
+
     return false;
 }
 

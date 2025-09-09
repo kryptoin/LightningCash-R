@@ -87,7 +87,6 @@ class WriteBatchItemPrinter : public WriteBatch::Handler {
   }
 };
 
-
 // Called on every log record (each one of which is a WriteBatch)
 // found in a kLogFile.
 static void WriteBatchPrinter(uint64_t pos, Slice record, WritableFile* dst) {

@@ -1,5 +1,5 @@
 // Copyright (c) 2009-2010 Satoshi Nakamoto
-// Copyright (c) 2009-2017 The Bitcoin Core developers
+// Copyright (c) 2009-2025 The Bitcoin Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -61,14 +61,6 @@ bool FeeModeFromString(const std::string& mode_string, FeeEstimateMode& fee_esti
     return true;
 }
 
-/**
- * We will instantiate an instance of this class to track transactions that were
- * included in a block. We will lump transactions into a bucket according to their
- * approximate feerate and then track how long it took for those txs to be included in a block
- *
- * The tracking of unconfirmed (mempool) transactions is completely independent of the
- * historical tracking of transactions that have been confirmed in a block.
- */
 class TxConfirmStats
 {
 private:
@@ -111,66 +103,40 @@ private:
     void resizeInMemoryCounters(size_t newbuckets);
 
 public:
-    /**
-     * Create new TxConfirmStats. This is called by BlockPolicyEstimator's
-     * constructor with default values.
-     * @param defaultBuckets contains the upper limits for the bucket boundaries
-     * @param maxPeriods max number of periods to track
-     * @param decay how much to decay the historical moving average per block
-     */
+
     TxConfirmStats(const std::vector<double>& defaultBuckets, const std::map<double, unsigned int>& defaultBucketMap,
                    unsigned int maxPeriods, double decay, unsigned int scale);
 
-    /** Roll the circular buffer for unconfirmed txs*/
+
     void ClearCurrent(unsigned int nBlockHeight);
 
-    /**
-     * Record a new transaction data point in the current block stats
-     * @param blocksToConfirm the number of blocks it took this transaction to confirm
-     * @param val the feerate of the transaction
-     * @warning blocksToConfirm is 1-based and has to be >= 1
-     */
+
     void Record(int blocksToConfirm, double val);
 
-    /** Record a new transaction entering the mempool*/
+
     unsigned int NewTx(unsigned int nBlockHeight, double val);
 
-    /** Remove a transaction from mempool tracking stats*/
+
     void removeTx(unsigned int entryHeight, unsigned int nBestSeenHeight,
                   unsigned int bucketIndex, bool inBlock);
 
-    /** Update our estimates by decaying our historical moving average and updating
-        with the data gathered from the current block */
+
     void UpdateMovingAverages();
 
-    /**
-     * Calculate a feerate estimate.  Find the lowest value bucket (or range of buckets
-     * to make sure we have enough data points) whose transactions still have sufficient likelihood
-     * of being confirmed within the target number of confirmations
-     * @param confTarget target number of confirmations
-     * @param sufficientTxVal required average number of transactions per block in a bucket range
-     * @param minSuccess the success probability we require
-     * @param requireGreater return the lowest feerate such that all higher values pass minSuccess OR
-     *        return the highest feerate such that all lower values fail minSuccess
-     * @param nBlockHeight the current block height
-     */
+
     double EstimateMedianVal(int confTarget, double sufficientTxVal,
                              double minSuccess, bool requireGreater, unsigned int nBlockHeight,
                              EstimationResult *result = nullptr) const;
 
-    /** Return the max number of confirms we're tracking */
+
     unsigned int GetMaxConfirms() const { return scale * confAvg.size(); }
 
-    /** Write state of estimation data to a file*/
+
     void Write(CAutoFile& fileout) const;
 
-    /**
-     * Read saved state of estimation data from a file and replace all internal data structures and
-     * variables with this state.
-     */
+
     void Read(CAutoFile& filein, int nFileVersion, size_t numBuckets);
 };
-
 
 TxConfirmStats::TxConfirmStats(const std::vector<double>& defaultBuckets,
                                 const std::map<double, unsigned int>& defaultBucketMap,
@@ -212,7 +178,6 @@ void TxConfirmStats::ClearCurrent(unsigned int nBlockHeight)
         unconfTxs[nBlockHeight%unconfTxs.size()][j] = 0;
     }
 }
-
 
 void TxConfirmStats::Record(int blocksToConfirm, double val)
 {
@@ -382,7 +347,6 @@ double TxConfirmStats::EstimateMedianVal(int confTarget, double sufficientTxVal,
              failBucket.start, failBucket.end,
              100 * failBucket.withinTarget / (failBucket.totalConfirmed + failBucket.inMempool + failBucket.leftMempool),
              failBucket.withinTarget, failBucket.totalConfirmed, failBucket.inMempool, failBucket.leftMempool);
-
 
     if (result) {
         result->pass = passBucket;
@@ -652,7 +616,6 @@ void CBlockPolicyEstimator::processBlock(unsigned int nBlockHeight,
         LogPrint(BCLog::ESTIMATEFEE, "Blockpolicy first recorded height %u\n", firstRecordedHeight);
     }
 
-
     LogPrint(BCLog::ESTIMATEFEE, "Blockpolicy estimates updated by %u of %u block txs, since last block %u of %u tracked, mempool map size %u, max target %u from %s\n",
              countedTxs, entries.size(), trackedTxs, trackedTxs + untrackedTxs, mapMemPoolTxs.size(),
              MaxUsableEstimate(), HistoricalBlockSpan() > BlockSpan() ? "historical" : "current");
@@ -750,10 +713,6 @@ unsigned int CBlockPolicyEstimator::MaxUsableEstimate() const
     return std::min(longStats->GetMaxConfirms(), std::max(BlockSpan(), HistoricalBlockSpan()) / 2);
 }
 
-/** Return a fee estimate at the required successThreshold from the shortest
- * time horizon which tracks confirmations up to the desired target.  If
- * checkShorterHorizon is requested, also allow short time horizon estimates
- * for a lower target to reduce the given answer */
 double CBlockPolicyEstimator::estimateCombinedFee(unsigned int confTarget, double successThreshold, bool checkShorterHorizon, EstimationResult *result) const
 {
     double estimate = -1;
@@ -790,9 +749,6 @@ double CBlockPolicyEstimator::estimateCombinedFee(unsigned int confTarget, doubl
     return estimate;
 }
 
-/** Ensure that for a conservative estimate, the DOUBLE_SUCCESS_PCT is also met
- * at 2 * target for any longer time horizons.
- */
 double CBlockPolicyEstimator::estimateConservativeFee(unsigned int doubleTarget, EstimationResult *result) const
 {
     double estimate = -1;
@@ -810,13 +766,6 @@ double CBlockPolicyEstimator::estimateConservativeFee(unsigned int doubleTarget,
     return estimate;
 }
 
-/** estimateSmartFee returns the max of the feerates calculated with a 60%
- * threshold required at target / 2, an 85% threshold required at target and a
- * 95% threshold required at 2 * target.  Each calculation is performed at the
- * shortest time horizon which tracks the required target.  Conservative
- * estimates, however, required the 95% threshold at 2 * target be met for any
- * longer time horizons also.
- */
 CFeeRate CBlockPolicyEstimator::estimateSmartFee(int confTarget, FeeCalculation *feeCalc, bool conservative) const
 {
     LOCK(cs_feeEstimator);
@@ -846,16 +795,7 @@ CFeeRate CBlockPolicyEstimator::estimateSmartFee(int confTarget, FeeCalculation 
     if (confTarget <= 1) return CFeeRate(0); // error condition
 
     assert(confTarget > 0); //estimateCombinedFee and estimateConservativeFee take unsigned ints
-    /** true is passed to estimateCombined fee for target/2 and target so
-     * that we check the max confirms for shorter time horizons as well.
-     * This is necessary to preserve monotonically increasing estimates.
-     * For non-conservative estimates we do the same thing for 2*target, but
-     * for conservative estimates we want to skip these shorter horizons
-     * checks for 2*target because we are taking the max over all time
-     * horizons so we already have monotonically increasing estimates and
-     * the purpose of conservative estimates is not to let short term
-     * fluctuations lower our estimates by too much.
-     */
+
     double halfEst = estimateCombinedFee(confTarget/2, HALF_SUCCESS_PCT, true, &tempResult);
     if (feeCalc) {
         feeCalc->est = tempResult;
@@ -894,7 +834,6 @@ CFeeRate CBlockPolicyEstimator::estimateSmartFee(int confTarget, FeeCalculation 
 
     return CFeeRate(llround(median));
 }
-
 
 bool CBlockPolicyEstimator::Write(CAutoFile& fileout) const
 {

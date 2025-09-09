@@ -1,5 +1,5 @@
 // Copyright (c) 2009-2010 Satoshi Nakamoto
-// Copyright (c) 2009-2017 The Bitcoin Core developers
+// Copyright (c) 2009-2025 The Bitcoin Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -323,9 +323,8 @@ bool CDB::VerifyDatabaseFile(const std::string& walletFile, const fs::path& wall
     return true;
 }
 
-/* End of headers, beginning of key/value data */
 static const char *HEADER_END = "HEADER=END";
-/* End of key/value data */
+
 static const char *DATA_END = "DATA=END";
 
 bool CDBEnv::Salvage(const std::string& strFile, bool fAggressive, std::vector<CDBEnv::KeyValPair>& vResult)
@@ -388,7 +387,6 @@ bool CDBEnv::Salvage(const std::string& strFile, bool fAggressive, std::vector<C
     return (result == 0);
 }
 
-
 void CDBEnv::CheckpointLSN(const std::string& strFile)
 {
     dbenv->txn_checkpoint(0, 0, 0);
@@ -396,7 +394,6 @@ void CDBEnv::CheckpointLSN(const std::string& strFile)
         return;
     dbenv->lsn_reset(strFile.c_str(), 0);
 }
-
 
 CDB::CDB(CWalletDBWrapper& dbw, const char* pszMode, bool fFlushOnCloseIn) : pdb(nullptr), activeTxn(nullptr)
 {
@@ -596,7 +593,6 @@ bool CDB::Rewrite(CWalletDBWrapper& dbw, const char* pszSkip)
         MilliSleep(100);
     }
 }
-
 
 void CDBEnv::Flush(bool fShutdown)
 {

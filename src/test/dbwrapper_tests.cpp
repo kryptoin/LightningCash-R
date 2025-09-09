@@ -1,4 +1,4 @@
-// Copyright (c) 2012-2017 The Bitcoin Core developers
+// Copyright (c) 2012-2025 The Bitcoin Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -18,9 +18,9 @@ bool is_null_key(const std::vector<unsigned char>& key) {
 
     return isnull;
 }
- 
+
 BOOST_FIXTURE_TEST_SUITE(dbwrapper_tests, BasicTestingSetup)
-                       
+
 BOOST_AUTO_TEST_CASE(dbwrapper)
 {
     // Perform tests both obfuscated and non-obfuscated.
@@ -151,13 +151,13 @@ BOOST_AUTO_TEST_CASE(existing_data_no_obfuscate)
 
     uint256 in2 = InsecureRand256();
     uint256 res3;
- 
+
     // Check that we can write successfully
     BOOST_CHECK(odbw.Write(key, in2));
     BOOST_CHECK(odbw.Read(key, res3));
     BOOST_CHECK_EQUAL(res3.ToString(), in2.ToString());
 }
-                        
+
 // Ensure that we start obfuscating during a reindex.
 BOOST_AUTO_TEST_CASE(existing_data_reindex)
 {
@@ -188,7 +188,7 @@ BOOST_AUTO_TEST_CASE(existing_data_reindex)
 
     uint256 in2 = InsecureRand256();
     uint256 res3;
- 
+
     // Check that we can write successfully
     BOOST_CHECK(odbw.Write(key, in2));
     BOOST_CHECK(odbw.Read(key, res3));
@@ -314,7 +314,5 @@ BOOST_AUTO_TEST_CASE(iterator_string_ordering)
         BOOST_CHECK(!it->Valid());
     }
 }
-
-
 
 BOOST_AUTO_TEST_SUITE_END()

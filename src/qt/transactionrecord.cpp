@@ -1,4 +1,4 @@
-// Copyright (c) 2011-2017 The Bitcoin Core developers
+// Copyright (c) 2011-2025 The Bitcoin Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -12,9 +12,6 @@
 
 #include <stdint.h>
 
-
-/* Return positive answer if transaction should be shown in list.
- */
 bool TransactionRecord::showTransaction(const CWalletTx &wtx)
 {
     // There are currently no cases where we hide transactions, but
@@ -22,9 +19,6 @@ bool TransactionRecord::showTransaction(const CWalletTx &wtx)
     return true;
 }
 
-/*
- * Decompose CWallet transaction to model transaction records.
- */
 QList<TransactionRecord> TransactionRecord::decomposeTransaction(const CWallet *wallet, const CWalletTx &wtx)
 {
     QList<TransactionRecord> parts;
@@ -148,7 +142,7 @@ QList<TransactionRecord> TransactionRecord::decomposeTransaction(const CWallet *
                 }
 
                 CAmount nValue = txout.nValue;
-                /* Add fee to first output */
+
                 if (nTxFee > 0)
                 {
                     nValue += nTxFee;

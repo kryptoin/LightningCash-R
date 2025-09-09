@@ -1,5 +1,5 @@
 // Copyright (c) 2009-2010 Satoshi Nakamoto
-// Copyright (c) 2009-2016 The Bitcoin Core developers
+// Copyright (c) 2009-2025 The Bitcoin Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -13,7 +13,6 @@ typedef enum ScriptError_t
     SCRIPT_ERR_EVAL_FALSE,
     SCRIPT_ERR_OP_RETURN,
 
-    /* Max sizes */
     SCRIPT_ERR_SCRIPT_SIZE,
     SCRIPT_ERR_PUSH_SIZE,
     SCRIPT_ERR_OP_COUNT,
@@ -21,25 +20,21 @@ typedef enum ScriptError_t
     SCRIPT_ERR_SIG_COUNT,
     SCRIPT_ERR_PUBKEY_COUNT,
 
-    /* Failed verify operations */
     SCRIPT_ERR_VERIFY,
     SCRIPT_ERR_EQUALVERIFY,
     SCRIPT_ERR_CHECKMULTISIGVERIFY,
     SCRIPT_ERR_CHECKSIGVERIFY,
     SCRIPT_ERR_NUMEQUALVERIFY,
 
-    /* Logical/Format/Canonical errors */
     SCRIPT_ERR_BAD_OPCODE,
     SCRIPT_ERR_DISABLED_OPCODE,
     SCRIPT_ERR_INVALID_STACK_OPERATION,
     SCRIPT_ERR_INVALID_ALTSTACK_OPERATION,
     SCRIPT_ERR_UNBALANCED_CONDITIONAL,
 
-    /* CHECKLOCKTIMEVERIFY and CHECKSEQUENCEVERIFY */
     SCRIPT_ERR_NEGATIVE_LOCKTIME,
     SCRIPT_ERR_UNSATISFIED_LOCKTIME,
 
-    /* Malleability */
     SCRIPT_ERR_SIG_HASHTYPE,
     SCRIPT_ERR_SIG_DER,
     SCRIPT_ERR_MINIMALDATA,
@@ -51,11 +46,9 @@ typedef enum ScriptError_t
     SCRIPT_ERR_MINIMALIF,
     SCRIPT_ERR_SIG_NULLFAIL,
 
-    /* softfork safeness */
     SCRIPT_ERR_DISCOURAGE_UPGRADABLE_NOPS,
     SCRIPT_ERR_DISCOURAGE_UPGRADABLE_WITNESS_PROGRAM,
 
-    /* segregated witness */
     SCRIPT_ERR_WITNESS_PROGRAM_WRONG_LENGTH,
     SCRIPT_ERR_WITNESS_PROGRAM_WITNESS_EMPTY,
     SCRIPT_ERR_WITNESS_PROGRAM_MISMATCH,

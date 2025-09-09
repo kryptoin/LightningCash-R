@@ -1,11 +1,10 @@
-// Copyright (c) 2013-2017 The Bitcoin Core developers
+// Copyright (c) 2013-2025 The Bitcoin Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
 #include <hash.h>
 #include <crypto/common.h>
 #include <crypto/hmac_sha512.h>
-
 
 inline uint32_t ROTL32(uint32_t x, int8_t r)
 {
@@ -167,7 +166,7 @@ uint64_t CSipHasher::Finalize() const
 
 uint64_t SipHashUint256(uint64_t k0, uint64_t k1, const uint256& val)
 {
-    /* Specialized implementation for efficiency */
+
     uint64_t d = val.GetUint64(0);
 
     uint64_t v0 = 0x736f6d6570736575ULL ^ k0;
@@ -207,7 +206,7 @@ uint64_t SipHashUint256(uint64_t k0, uint64_t k1, const uint256& val)
 
 uint64_t SipHashUint256Extra(uint64_t k0, uint64_t k1, const uint256& val, uint32_t extra)
 {
-    /* Specialized implementation for efficiency */
+
     uint64_t d = val.GetUint64(0);
 
     uint64_t v0 = 0x736f6d6570736575ULL ^ k0;

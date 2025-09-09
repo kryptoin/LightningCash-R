@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2017 The Bitcoin Core developers
+// Copyright (c) 2015-2025 The Bitcoin Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 //
@@ -15,7 +15,6 @@ static const int AES_BLOCKSIZE = 16;
 static const int AES128_KEYSIZE = 16;
 static const int AES256_KEYSIZE = 32;
 
-/** An encryption class for AES-128. */
 class AES128Encrypt
 {
 private:
@@ -27,7 +26,6 @@ public:
     void Encrypt(unsigned char ciphertext[16], const unsigned char plaintext[16]) const;
 };
 
-/** A decryption class for AES-128. */
 class AES128Decrypt
 {
 private:
@@ -39,7 +37,6 @@ public:
     void Decrypt(unsigned char plaintext[16], const unsigned char ciphertext[16]) const;
 };
 
-/** An encryption class for AES-256. */
 class AES256Encrypt
 {
 private:
@@ -51,7 +48,6 @@ public:
     void Encrypt(unsigned char ciphertext[16], const unsigned char plaintext[16]) const;
 };
 
-/** A decryption class for AES-256. */
 class AES256Decrypt
 {
 private:

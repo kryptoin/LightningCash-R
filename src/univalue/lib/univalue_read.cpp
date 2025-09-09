@@ -387,7 +387,8 @@ bool UniValue::read(const char *raw, size_t size)
             case JTOK_KW_FALSE:
                 tmpVal.setBool(false);
                 break;
-            default: /* impossible */ break;
+            default:
+ break;
             }
 
             if (!stack.size()) {
@@ -441,7 +442,6 @@ bool UniValue::read(const char *raw, size_t size)
         }
     } while (!stack.empty ());
 
-    /* Check that nothing follows the initial construct (parsed above).  */
     tok = getJsonToken(tokenVal, consumed, raw, end);
     if (tok != JTOK_NONE)
         return false;

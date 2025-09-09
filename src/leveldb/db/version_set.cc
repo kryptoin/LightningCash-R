@@ -941,7 +941,9 @@ Status VersionSet::Recover(bool *save_manifest) {
   {
     LogReporter reporter;
     reporter.status = &s;
-    log::Reader reader(file, &reporter, true/*checksum*/, 0/*initial_offset*/);
+    log::Reader reader(file, &reporter, true
+, 0
+);
     Slice record;
     std::string scratch;
     while (reader.ReadRecord(&record, &scratch) && s.ok()) {

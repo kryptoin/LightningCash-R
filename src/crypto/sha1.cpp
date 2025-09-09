@@ -1,4 +1,4 @@
-// Copyright (c) 2014-2017 The Bitcoin Core developers
+// Copyright (c) 2014-2025 The Bitcoin Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -14,7 +14,7 @@ namespace
 /// Internal SHA-1 implementation.
 namespace sha1
 {
-/** One round of SHA-1. */
+
 void inline Round(uint32_t a, uint32_t& b, uint32_t c, uint32_t d, uint32_t& e, uint32_t f, uint32_t k, uint32_t w)
 {
     e += ((a << 5) | (a >> 27)) + f + k + w;
@@ -27,7 +27,6 @@ uint32_t inline f3(uint32_t b, uint32_t c, uint32_t d) { return (b & c) | (d & (
 
 uint32_t inline left(uint32_t x) { return (x << 1) | (x >> 31); }
 
-/** Initialize SHA-1 state. */
 void inline Initialize(uint32_t* s)
 {
     s[0] = 0x67452301ul;
@@ -42,7 +41,6 @@ const uint32_t k2 = 0x6ED9EBA1ul;
 const uint32_t k3 = 0x8F1BBCDCul;
 const uint32_t k4 = 0xCA62C1D6ul;
 
-/** Perform a SHA-1 transformation, processing a 64-byte chunk. */
 void Transform(uint32_t* s, const unsigned char* chunk)
 {
     uint32_t a = s[0], b = s[1], c = s[2], d = s[3], e = s[4];

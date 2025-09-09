@@ -1,4 +1,4 @@
-// Copyright (c) 2016-2017 The Bitcoin Core developers
+// Copyright (c) 2016-2025 The Bitcoin Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -31,16 +31,14 @@
 LockedPoolManager* LockedPoolManager::_instance = nullptr;
 std::once_flag LockedPoolManager::init_flag;
 
-/*******************************************************************************/
 // Utilities
 //
-/** Align up to power of 2 */
+
 static inline size_t align_up(size_t x, size_t align)
 {
     return (x + align - 1) & ~(align - 1);
 }
 
-/*******************************************************************************/
 // Implementation: Arena
 
 Arena::Arena(void *base_in, size_t size_in, size_t alignment_in):
@@ -76,7 +74,6 @@ void* Arena::alloc(size_t size)
     return reinterpret_cast<void*>(alloced->first);
 }
 
-/* extend the Iterator if other begins at its end */
 template <class Iterator, class Pair> bool extend(Iterator it, const Pair& other) {
     if (it->first + it->second == other.first) {
         it->second += other.second;
@@ -138,12 +135,10 @@ void Arena::walk() const
 }
 #endif
 
-/*******************************************************************************/
 // Implementation: Win32LockedPageAllocator
 
 #ifdef WIN32
-/** LockedPageAllocator specialized for Windows.
- */
+
 class Win32LockedPageAllocator: public LockedPageAllocator
 {
 public:
@@ -189,13 +184,10 @@ size_t Win32LockedPageAllocator::GetLimit()
 }
 #endif
 
-/*******************************************************************************/
 // Implementation: PosixLockedPageAllocator
 
 #ifndef WIN32
-/** LockedPageAllocator specialized for OSes that don't try to be
- * special snowflakes.
- */
+
 class PosixLockedPageAllocator: public LockedPageAllocator
 {
 public:
@@ -254,7 +246,6 @@ size_t PosixLockedPageAllocator::GetLimit()
 }
 #endif
 
-/*******************************************************************************/
 // Implementation: LockedPool
 
 LockedPool::LockedPool(std::unique_ptr<LockedPageAllocator> allocator_in, LockingFailed_Callback lf_cb_in):
@@ -354,7 +345,6 @@ LockedPool::LockedPageArena::~LockedPageArena()
     allocator->FreeLocked(base, size);
 }
 
-/*******************************************************************************/
 // Implementation: LockedPoolManager
 //
 LockedPoolManager::LockedPoolManager(std::unique_ptr<LockedPageAllocator> allocator_in):

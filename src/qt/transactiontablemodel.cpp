@@ -1,4 +1,4 @@
-// Copyright (c) 2011-2017 The Bitcoin Core developers
+// Copyright (c) 2011-2025 The Bitcoin Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -28,12 +28,18 @@
 
 // Amount column is right-aligned it contains numbers
 static int column_alignments[] = {
-        Qt::AlignLeft|Qt::AlignVCenter, /* status */
-        Qt::AlignLeft|Qt::AlignVCenter, /* watchonly */
-        Qt::AlignLeft|Qt::AlignVCenter, /* date */
-        Qt::AlignLeft|Qt::AlignVCenter, /* type */
-        Qt::AlignLeft|Qt::AlignVCenter, /* address */
-        Qt::AlignRight|Qt::AlignVCenter /* amount */
+        Qt::AlignLeft|Qt::AlignVCenter,
+
+        Qt::AlignLeft|Qt::AlignVCenter,
+
+        Qt::AlignLeft|Qt::AlignVCenter,
+
+        Qt::AlignLeft|Qt::AlignVCenter,
+
+        Qt::AlignLeft|Qt::AlignVCenter,
+
+        Qt::AlignRight|Qt::AlignVCenter
+
     };
 
 // Comparison operator for sort/binary search of model tx list
@@ -66,14 +72,8 @@ public:
     CWallet *wallet;
     TransactionTableModel *parent;
 
-    /* Local cache of wallet.
-     * As it is in the same order as the CWallet, by definition
-     * this is sorted by sha256.
-     */
     QList<TransactionRecord> cachedWallet;
 
-    /* Query entire wallet anew from core.
-     */
     void refreshWallet()
     {
         qDebug() << "TransactionTablePriv::refreshWallet";
@@ -88,11 +88,6 @@ public:
         }
     }
 
-    /* Update our model of the wallet incrementally, to synchronize our model of the wallet
-       with that of the core.
-
-       Call with transaction that was added, removed or changed.
-     */
     void updateWallet(const uint256 &hash, int status, bool showTransaction)
     {
         qDebug() << "TransactionTablePriv::updateWallet: " + QString::fromStdString(hash.ToString()) + " " + QString::number(status);
@@ -109,9 +104,11 @@ public:
         if(status == CT_UPDATED)
         {
             if(showTransaction && !inModel)
-                status = CT_NEW; /* Not in model, but want to show, treat as new */
+                status = CT_NEW;
+
             if(!showTransaction && inModel)
-                status = CT_DELETED; /* In model, but want to hide, treat as deleted */
+                status = CT_DELETED;
+
         }
 
         qDebug() << "    inModel=" + QString::number(inModel) +
@@ -139,7 +136,8 @@ public:
                 // Added -- insert at the right position
                 QList<TransactionRecord> toInsert =
                         TransactionRecord::decomposeTransaction(wallet, mi->second);
-                if(!toInsert.isEmpty()) /* only if something to insert */
+                if(!toInsert.isEmpty())
+
                 {
                     parent->beginInsertRows(QModelIndex(), lowerIndex, lowerIndex+toInsert.size()-1);
                     int insert_idx = lowerIndex;
@@ -259,7 +257,6 @@ TransactionTableModel::~TransactionTableModel()
     delete priv;
 }
 
-/** Updates the column title to "Amount (DisplayUnit)" and emits headerDataChanged() signal for table headers to react. */
 void TransactionTableModel::updateAmountColumnTitle()
 {
     columns[Amount] = BitcoinUnits::getAmountColumnTitle(walletModel->getOptionsModel()->getDisplayUnit());
@@ -349,9 +346,6 @@ QString TransactionTableModel::formatTxDate(const TransactionRecord *wtx) const
     return QString();
 }
 
-/* Look up address in address book, if found return label (address)
-   otherwise just return (address)
- */
 QString TransactionTableModel::lookupAddress(const std::string &address, bool tooltip) const
 {
     QString label = walletModel->getAddressTableModel()->labelForAddress(QString::fromStdString(address));

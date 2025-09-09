@@ -1,5 +1,5 @@
 // Copyright (c) 2009-2010 Satoshi Nakamoto
-// Copyright (c) 2009-2017 The Bitcoin Core developers
+// Copyright (c) 2009-2025 The Bitcoin Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -33,9 +33,6 @@
 typedef CWallet* CWalletRef;
 extern std::vector<CWalletRef> vpwallets;
 
-/**
- * Settings
- */
 extern CFeeRate payTxFee;
 extern unsigned int nTxConfirmTarget;
 extern bool bSpendZeroConfChange;
@@ -84,7 +81,6 @@ class CWalletTx;
 struct FeeCalculation;
 enum class FeeEstimateMode;
 
-/** (client) version numbers for particular wallet features */
 enum WalletFeature
 {
     FEATURE_BASE = 10500, // the earliest version new wallets supports (only useful for getwalletinfo's clientversion output)
@@ -114,8 +110,6 @@ enum OutputType : int
 extern OutputType g_address_type;
 extern OutputType g_change_type;
 
-
-/** A key pool entry */
 class CKeyPool
 {
 public:
@@ -140,8 +134,7 @@ public:
                 READWRITE(fInternal);
             }
             catch (std::ios_base::failure&) {
-                /* flag as external address if we can't read the internal boolean
-                   (this will be the case for any wallet before the HD chain split version) */
+
                 fInternal = false;
             }
         }
@@ -151,7 +144,6 @@ public:
     }
 };
 
-/** Address book data */
 class CAddressBookData
 {
 public:
@@ -173,7 +165,6 @@ struct CRecipient
 
 typedef std::map<std::string, std::string> mapValue_t;
 
-
 static inline void ReadOrderPos(int64_t& nOrderPos, mapValue_t& mapValue)
 {
     if (!mapValue.count("n"))
@@ -183,7 +174,6 @@ static inline void ReadOrderPos(int64_t& nOrderPos, mapValue_t& mapValue)
     }
     nOrderPos = atoi64(mapValue["n"].c_str());
 }
-
 
 static inline void WriteOrderPos(const int64_t& nOrderPos, mapValue_t& mapValue)
 {
@@ -199,22 +189,16 @@ struct COutputEntry
     int vout;
 };
 
-/** A transaction with a merkle branch linking it to the block chain. */
 class CMerkleTx
 {
 private:
-  /** Constant used in hashBlock to indicate tx has been abandoned */
+
     static const uint256 ABANDON_HASH;
 
 public:
     CTransactionRef tx;
     uint256 hashBlock;
 
-    /* An nIndex == -1 means that hashBlock (in nonzero) refers to the earliest
-     * block in the chain we know this or any in-wallet dependency conflicts
-     * with. Older clients interpret nIndex == -1 as unconfirmed for backward
-     * compatibility.
-     */
     int nIndex;
 
     CMerkleTx()
@@ -253,12 +237,6 @@ public:
 
     void SetMerkleBranch(const CBlockIndex* pIndex, int posInBlock);
 
-    /**
-     * Return depth of transaction in blockchain:
-     * <0  : conflicts with a transaction this deep in the blockchain
-     *  0  : in memory pool, waiting to be included in a block
-     * >=1 : this many blocks deep in the main chain
-     */
     int GetDepthInMainChain(const CBlockIndex* &pindexRet) const;
     int GetDepthInMainChain() const { const CBlockIndex *pindexRet; return GetDepthInMainChain(pindexRet); }
     int GetDepthInOrder(const CBlockIndex* &pindexRet) const;
@@ -279,60 +257,20 @@ public:
     }
 };
 
-/**
- * A transaction with a bunch of additional info that only the owner cares about.
- * It includes any unrecorded transactions needed to link it back to the block chain.
- */
 class CWalletTx : public CMerkleTx
 {
 private:
     const CWallet* pwallet;
 
 public:
-    /**
-     * Key/value map with information about the transaction.
-     *
-     * The following keys can be read and written through the map and are
-     * serialized in the wallet database:
-     *
-     *     "comment", "to"   - comment strings provided to sendtoaddress,
-     *                         sendfrom, sendmany wallet RPCs
-     *     "replaces_txid"   - txid (as HexStr) of transaction replaced by
-     *                         bumpfee on transaction created by bumpfee
-     *     "replaced_by_txid" - txid (as HexStr) of transaction created by
-     *                         bumpfee on transaction replaced by bumpfee
-     *     "from", "message" - obsolete fields that could be set in UI prior to
-     *                         2011 (removed in commit 4d9b223)
-     *
-     * The following keys are serialized in the wallet database, but shouldn't
-     * be read or written through the map (they will be temporarily added and
-     * removed from the map during serialization):
-     *
-     *     "fromaccount"     - serialized strFromAccount value
-     *     "n"               - serialized nOrderPos value
-     *     "timesmart"       - serialized nTimeSmart value
-     *     "spent"           - serialized vfSpent value that existed prior to
-     *                         2014 (removed in commit 93a18a3)
-     */
+
     mapValue_t mapValue;
     std::vector<std::pair<std::string, std::string> > vOrderForm;
     unsigned int fTimeReceivedIsTxTime;
     unsigned int nTimeReceived; //!< time received by this node
-    /**
-     * Stable timestamp that never changes, and reflects the order a transaction
-     * was added to the wallet. Timestamp is based on the block time for a
-     * transaction added as part of a block, or else the time when the
-     * transaction was received if it wasn't part of a block, with the timestamp
-     * adjusted in both cases so timestamp order matches the order transactions
-     * were added to the wallet. More details can be found in
-     * CWallet::ComputeTimeSmart().
-     */
+
     unsigned int nTimeSmart;
-    /**
-     * From me flag is set to 1 for transactions that were created by the wallet
-     * on this bitcoin node, and set to 0 for transactions that were created
-     * externally and came in through the network or sendrawtransaction RPC.
-     */
+
     char fFromMe;
     std::string strFromAccount;
     int64_t nOrderPos; //!< position in ordered transaction list
@@ -492,12 +430,10 @@ public:
     // RelayWalletTransaction may only be called if fBroadcastTransactions!
     bool RelayWalletTransaction(CConnman* connman);
 
-    /** Pass this transaction to the mempool. Fails if absolute fee exceeds absurd fee. */
     bool AcceptToMemoryPool(const CAmount& nAbsurdFee, CValidationState& state);
 
     std::set<uint256> GetConflicts() const;
 };
-
 
 class CInputCoin {
 public:
@@ -535,17 +471,10 @@ public:
     int i;
     int nDepth;
 
-    /** Whether we have the private keys to spend this output */
     bool fSpendable;
 
-    /** Whether we know how to spend this output, ignoring the lack of keys */
     bool fSolvable;
 
-    /**
-     * Whether this output is considered safe to spend. Unconfirmed transactions
-     * from outside keys and unconfirmed replacement transactions are considered
-     * unsafe and will not be used to fund new spending transactions.
-     */
     bool fSafe;
 
     COutput(const CWalletTx *txIn, int iIn, int nDepthIn, bool fSpendableIn, bool fSolvableIn, bool fSafeIn)
@@ -556,10 +485,6 @@ public:
     std::string ToString() const;
 };
 
-
-
-
-/** Private key that includes an expiration date in case it never gets used. */
 class CWalletKey
 {
 public:
@@ -586,10 +511,6 @@ public:
     }
 };
 
-/**
- * Internal transfers.
- * Database key is acentry<account><counter>.
- */
 class CAccountingEntry
 {
 public:
@@ -695,10 +616,7 @@ struct CBeeRange
 };
 
 class WalletRescanReserver; //forward declarations for ScanForWalletTransactions/RescanFromTime
-/**
- * A CWallet is an extension of a keystore, which also maintains a set of transactions and balances,
- * and provides the ability to create new transactions.
- */
+
 class CWallet final : public CCryptoKeyStore, public CValidationInterface
 {
 private:
@@ -708,12 +626,6 @@ private:
     std::mutex mutexScanning;
     friend class WalletRescanReserver;
 
-
-    /**
-     * Select a set of coins such that nValueRet >= nTargetValue and at least
-     * all coins from coinControl are selected; Never select unconfirmed coins
-     * if they are not ours
-     */
     bool SelectCoins(const std::vector<COutput>& vAvailableCoins, const CAmount& nTargetValue, std::set<CInputCoin>& setCoinsRet, CAmount& nValueRet, const CCoinControl *coinControl = nullptr) const;
 
     CWalletDB *pwalletdbEncryption;
@@ -728,29 +640,19 @@ private:
     int64_t nLastResend;
     bool fBroadcastTransactions;
 
-    /**
-     * Used to keep track of spent outpoints, and
-     * detect and report conflicts (double-spends or
-     * mutated transactions where the mutant gets mined).
-     */
     typedef std::multimap<COutPoint, uint256> TxSpends;
     TxSpends mapTxSpends;
     void AddToSpends(const COutPoint& outpoint, const uint256& wtxid);
     void AddToSpends(const uint256& wtxid);
 
-    /* Mark a transaction (and its in-wallet descendants) as conflicting with a particular block. */
     void MarkConflicted(const uint256& hashBlock, const uint256& hashTx);
 
     void SyncMetaData(std::pair<TxSpends::iterator, TxSpends::iterator>);
 
-    /* Used by TransactionAddedToMemorypool/BlockConnected/Disconnected.
-     * Should be called with pindexBlock and posInBlock if this is for a transaction that is included in a block. */
     void SyncTransaction(const CTransactionRef& tx, const CBlockIndex *pindex = nullptr, int posInBlock = 0);
 
-    /* the HD chain data model (external chain counters) */
     CHDChain hdChain;
 
-    /* HD derive new child key (on internal or external chain) */
     void DeriveNewChildKey(CWalletDB &walletdb, CKeyMetadata& metadata, CKey& secret, bool internal = false);
 
     std::set<int64_t> setInternalKeyPool;
@@ -760,48 +662,21 @@ private:
 
     int64_t nTimeFirstKey;
 
-    /**
-     * Private version of AddWatchOnly method which does not accept a
-     * timestamp, and which will reset the wallet's nTimeFirstKey value to 1 if
-     * the watch key did not previously have a timestamp associated with it.
-     * Because this is an inherited virtual method, it is accessible despite
-     * being marked private, but it is marked private anyway to encourage use
-     * of the other AddWatchOnly which accepts a timestamp and sets
-     * nTimeFirstKey more intelligently for more efficient rescans.
-     */
     bool AddWatchOnly(const CScript& dest) override;
 
     std::unique_ptr<CWalletDBWrapper> dbw;
 
-    /**
-     * The following is used to keep track of how far behind the wallet is
-     * from the chain sync, and to allow clients to block on us being caught up.
-     *
-     * Note that this is *not* how far we've processed, we may need some rescan
-     * to have seen all transactions in the chain, but is only used to track
-     * live BlockConnected callbacks.
-     *
-     * Protected by cs_main (see BlockUntilSyncedToCurrentChain)
-     */
     const CBlockIndex* m_last_block_processed;
 
 public:
-    /*
-     * Main wallet lock.
-     * This lock protects all the fields added by CWallet.
-     */
+
     mutable CCriticalSection cs_wallet;
 
-    /** Get database handle used by this wallet. Ideally this function would
-     * not be necessary.
-     */
     CWalletDBWrapper& GetDBHandle()
     {
         return *dbw;
     }
 
-    /** Get a name for this wallet for logging/debugging purposes.
-     */
     std::string GetName() const
     {
         if (dbw) {
@@ -879,27 +754,12 @@ public:
     //! check whether we are allowed to upgrade (or already support) to the named feature
     bool CanSupportFeature(enum WalletFeature wf) const { AssertLockHeld(cs_wallet); return nWalletMaxVersion >= wf; }
 
-    /**
-     * populate vCoins with vector of available COutputs.
-     */
     void AvailableCoins(std::vector<COutput>& vCoins, bool fOnlySafe=true, const CCoinControl *coinControl = nullptr, const CAmount& nMinimumAmount = 1, const CAmount& nMaximumAmount = MAX_MONEY, const CAmount& nMinimumSumAmount = MAX_MONEY, const uint64_t nMaximumCount = 0, const int nMinDepth = 0, const int nMaxDepth = 9999999) const;
 
-    /**
-     * Return list of available coins and locked coins grouped by non-change output address.
-     */
     std::map<CTxDestination, std::vector<COutput>> ListCoins() const;
 
-    /**
-     * Find non-change parent output.
-     */
     const CTxOut& FindNonChangeParentOutput(const CTransaction& tx, int output) const;
 
-    /**
-     * Shuffle and select coins until nTargetValue is reached while avoiding
-     * small change; This method is stochastic for some inputs and upon
-     * completion the coin set and corresponding actual target value is
-     * assembled
-     */
     bool SelectCoinsMinConf(const CAmount& nTargetValue, int nConfMine, int nConfTheirs, uint64_t nMaxAncestors, std::vector<COutput> vCoins, std::set<CInputCoin>& setCoinsRet, CAmount& nValueRet) const;
 
     bool IsSpent(const uint256& hash, unsigned int n) const;
@@ -910,17 +770,10 @@ public:
     void UnlockAllCoins();
     void ListLockedCoins(std::vector<COutPoint>& vOutpts) const;
 
-    /*
-     * Rescan abort properties
-     */
     void AbortRescan() { fAbortRescan = true; }
     bool IsAbortingRescan() { return fAbortRescan; }
     bool IsScanning() { return fScanningWallet; }
 
-    /**
-     * keystore implementation
-     * Generate a new key
-     */
     CPubKey GenerateNewKey(CWalletDB& walletdb, bool internal = false);
     //! Adds a key to the store, and saves it to disk.
     bool AddKeyPubKey(const CKey& key, const CPubKey &pubkey) override;
@@ -968,10 +821,6 @@ public:
     void GetKeyBirthTimes(std::map<CTxDestination, int64_t> &mapKeyBirth) const;
     unsigned int ComputeTimeSmart(const CWalletTx& wtx) const;
 
-    /**
-     * Increment the next transaction order id
-     * @return next transaction order id
-     */
     int64_t IncOrderPosNext(CWalletDB *pwalletdb = nullptr);
     DBErrors ReorderTransactions();
     bool AccountMove(std::string strFrom, std::string strTo, CAmount nAmount, std::string strComment = "");
@@ -1014,18 +863,9 @@ public:
     std::vector<CBeeCreationTransactionInfo> GetBCTs2(bool includeDead, bool scanRewards, const Consensus::Params& consensusParams, int minHoneyConfirmations = 1);
     std::vector<CBeeCreationTransactionInfo> GetBCTs3(bool includeDead, bool scanRewards, const Consensus::Params& consensusParams, int minHoneyConfirmations = 1);
 
-    /**
-     * Insert additional inputs into the transaction by
-     * calling CreateTransaction();
-     */
     bool FundTransaction(CMutableTransaction& tx, CAmount& nFeeRet, int& nChangePosInOut, std::string& strFailReason, bool lockUnspents, const std::set<int>& setSubtractFeeFromOutputs, CCoinControl);
     bool SignTransaction(CMutableTransaction& tx);
 
-    /**
-     * Create a new transaction paying the recipients with a set of coins
-     * selected by SelectCoins(); Also create the change output, when needed
-     * @note passing nChangePosInOut as -1 will result in setting a random position
-     */
     bool CreateTransaction(const std::vector<CRecipient>& vecSend, CWalletTx& wtxNew, CReserveKey& reservekey, CAmount& nFeeRet, int& nChangePosInOut,
                            std::string& strFailReason, const CCoinControl& coin_control, bool sign = true);
     bool CommitTransaction(CWalletTx& wtxNew, CReserveKey& reservekey, CConnman* connman, CValidationState& state);
@@ -1048,9 +888,7 @@ public:
     void ReturnKey(int64_t nIndex, bool fInternal, const CPubKey& pubkey);
     bool GetKeyFromPool(CPubKey &key, bool internal = false);
     int64_t GetOldestKeyPoolTime();
-    /**
-     * Marks all keys in the keypool up to and including reserve_key as used.
-     */
+
     void MarkReserveKeysAsUsed(int64_t keypool_id);
     const std::map<CKeyID, int64_t>& GetAllReserveKeys() const { return m_pool_key_to_index; }
 
@@ -1060,20 +898,17 @@ public:
     std::set<CTxDestination> GetAccountAddresses(const std::string& strAccount) const;
 
     isminetype IsMine(const CTxIn& txin) const;
-    /**
-     * Returns amount of debit if the input matches the
-     * filter, otherwise returns 0
-     */
+
     CAmount GetDebit(const CTxIn& txin, const isminefilter& filter) const;
     isminetype IsMine(const CTxOut& txout) const;
     CAmount GetCredit(const CTxOut& txout, const isminefilter& filter) const;
     bool IsChange(const CTxOut& txout) const;
     CAmount GetChange(const CTxOut& txout) const;
     bool IsMine(const CTransaction& tx) const;
-    /** should probably be renamed to IsRelevantToMe */
+
     bool IsFromMe(const CTransaction& tx) const;
     CAmount GetDebit(const CTransaction& tx, const isminefilter& filter) const;
-    /** Returns whether all of the inputs match the filter */
+
     bool IsAllFromMe(const CTransaction& tx, const isminefilter& filter) const;
     CAmount GetCredit(const CTransaction& tx, const isminefilter& filter) const;
     CAmount GetChange(const CTransaction& tx) const;
@@ -1125,99 +960,52 @@ public:
     //! Flush wallet (bitdb flush)
     void Flush(bool shutdown=false);
 
-    /**
-     * Address book entry changed.
-     * @note called with lock cs_wallet held.
-     */
     boost::signals2::signal<void (CWallet *wallet, const CTxDestination
             &address, const std::string &label, bool isMine,
             const std::string &purpose,
             ChangeType status)> NotifyAddressBookChanged;
 
-    /**
-     * Wallet transaction added, removed or updated.
-     * @note called with lock cs_wallet held.
-     */
     boost::signals2::signal<void (CWallet *wallet, const uint256 &hashTx,
             ChangeType status)> NotifyTransactionChanged;
 
-    /** Show progress e.g. for rescan */
     boost::signals2::signal<void (const std::string &title, int nProgress)> ShowProgress;
 
-    /** Watch-only address added */
     boost::signals2::signal<void (bool fHaveWatchOnly)> NotifyWatchonlyChanged;
 
-    /** Inquire whether this wallet broadcasts transactions. */
     bool GetBroadcastTransactions() const { return fBroadcastTransactions; }
-    /** Set whether this wallet broadcasts transactions. */
+
     void SetBroadcastTransactions(bool broadcast) { fBroadcastTransactions = broadcast; }
 
-    /** Return whether transaction can be abandoned */
     bool TransactionCanBeAbandoned(const uint256& hashTx) const;
 
-    /* Mark a transaction (and it in-wallet descendants) as abandoned so its inputs may be respent. */
     bool AbandonTransaction(const uint256& hashTx);
 
-    /** Mark a transaction as replaced by another transaction (e.g., BIP 125). */
     bool MarkReplaced(const uint256& originalHash, const uint256& newHash);
 
-    /* Initializes the wallet, returns a new CWallet instance or a null pointer in case of an error */
     static CWallet* CreateWalletFromFile(const std::string walletFile);
 
-    /**
-     * Wallet post-init setup
-     * Gives the wallet a chance to register repetitive tasks and complete post-init tasks
-     */
     void postInitProcess(CScheduler& scheduler);
 
     bool BackupWallet(const std::string& strDest);
 
-    /* Set the HD chain model (chain child index counters) */
     bool SetHDChain(const CHDChain& chain, bool memonly);
     const CHDChain& GetHDChain() const { return hdChain; }
 
-    /* Returns true if HD is enabled */
     bool IsHDEnabled() const;
 
-    /* Generates a new HD master key (will not be activated) */
     CPubKey GenerateNewHDMasterKey();
 
-    /* Set the current HD master key (will reset the chain child index counters)
-       Sets the master key's version based on the current wallet version (so the
-       caller must ensure the current wallet version is correct before calling
-       this function). */
     bool SetHDMasterKey(const CPubKey& key);
 
-    /**
-     * Blocks until the wallet state is up-to-date to /at least/ the current
-     * chain at the time this function is entered
-     * Obviously holding cs_main/cs_wallet when going into this call may cause
-     * deadlock
-     */
     void BlockUntilSyncedToCurrentChain();
 
-    /**
-     * Explicitly make the wallet learn the related scripts for outputs to the
-     * given key. This is purely to make the wallet file compatible with older
-     * software, as CBasicKeyStore automatically does this implicitly for all
-     * keys now.
-     */
     void LearnRelatedScripts(const CPubKey& key, OutputType);
 
-    /**
-     * Same as LearnRelatedScripts, but when the OutputType is not known (and could
-     * be anything).
-     */
     void LearnAllRelatedScripts(const CPubKey& key);
 
-    /**
-     * Get a destination of the requested type (if possible) to the specified script.
-     * This function will automatically add the necessary scripts to the wallet.
-     */
     CTxDestination AddAndGetDestinationForScript(const CScript& script, OutputType);
 };
 
-/** A key allocated from the key pool. */
 class CReserveKey final : public CReserveScript
 {
 protected:
@@ -1248,11 +1036,6 @@ public:
     void KeepScript() override { KeepKey(); }
 };
 
-
-/**
- * Account information.
- * Stored in wallet with key "acc"+string account name.
- */
 class CAccount
 {
 public:
@@ -1307,16 +1090,10 @@ bool CWallet::DummySignTx(CMutableTransaction &txNew, const ContainerType &coins
 OutputType ParseOutputType(const std::string& str, OutputType default_type = OUTPUT_TYPE_DEFAULT);
 const std::string& FormatOutputType(OutputType type);
 
-/**
- * Get a destination of the requested type (if possible) to the specified key.
- * The caller must make sure LearnRelatedScripts has been called beforehand.
- */
 CTxDestination GetDestinationForKey(const CPubKey& key, OutputType);
 
-/** Get all destinations (potentially) supported by the wallet for the given key. */
 std::vector<CTxDestination> GetAllDestinationsForKey(const CPubKey& key);
 
-/** RAII object to check and reserve a wallet rescan */
 class WalletRescanReserver
 {
 private:

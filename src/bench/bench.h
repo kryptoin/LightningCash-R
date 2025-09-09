@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2017 The Bitcoin Core developers
+// Copyright (c) 2015-2025 The Bitcoin Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -20,23 +20,6 @@
 // Why not use the Google Benchmark framework? Because adding Yet Another Dependency
 // (that uses cmake as its build system and has lots of features we don't need) isn't
 // worth it.
-
-/*
- * Usage:
-
-static void CODE_TO_TIME(benchmark::State& state)
-{
-    ... do any setup needed...
-    while (state.KeepRunning()) {
-       ... do stuff you want to time...
-    }
-    ... do any cleanup needed...
-}
-
-// default to running benchmark for 5000 iterations
-BENCHMARK(CODE_TO_TIME, 5000);
-
- */
 
 namespace benchmark {
 // In case high_resolution_clock is steady, prefer that, otherwise use steady_clock.
@@ -131,7 +114,6 @@ private:
     int64_t m_height;
 };
 }
-
 
 // BENCHMARK(foo, num_iters_for_one_second) expands to:  benchmark::BenchRunner bench_11foo("foo", num_iterations);
 // Choose a num_iters_for_one_second that takes roughly 1 second. The goal is that all benchmarks should take approximately

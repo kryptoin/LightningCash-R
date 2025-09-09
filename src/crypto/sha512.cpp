@@ -1,4 +1,4 @@
-// Copyright (c) 2014-2017 The Bitcoin Core developers
+// Copyright (c) 2014-2025 The Bitcoin Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -21,7 +21,6 @@ uint64_t inline Sigma1(uint64_t x) { return (x >> 14 | x << 50) ^ (x >> 18 | x <
 uint64_t inline sigma0(uint64_t x) { return (x >> 1 | x << 63) ^ (x >> 8 | x << 56) ^ (x >> 7); }
 uint64_t inline sigma1(uint64_t x) { return (x >> 19 | x << 45) ^ (x >> 61 | x << 3) ^ (x >> 6); }
 
-/** One round of SHA-512. */
 void inline Round(uint64_t a, uint64_t b, uint64_t c, uint64_t& d, uint64_t e, uint64_t f, uint64_t g, uint64_t& h, uint64_t k, uint64_t w)
 {
     uint64_t t1 = h + Sigma1(e) + Ch(e, f, g) + k + w;
@@ -30,7 +29,6 @@ void inline Round(uint64_t a, uint64_t b, uint64_t c, uint64_t& d, uint64_t e, u
     h = t1 + t2;
 }
 
-/** Initialize SHA-256 state. */
 void inline Initialize(uint64_t* s)
 {
     s[0] = 0x6a09e667f3bcc908ull;
@@ -43,7 +41,6 @@ void inline Initialize(uint64_t* s)
     s[7] = 0x5be0cd19137e2179ull;
 }
 
-/** Perform one SHA-512 transformation, processing a 128-byte chunk. */
 void Transform(uint64_t* s, const unsigned char* chunk)
 {
     uint64_t a = s[0], b = s[1], c = s[2], d = s[3], e = s[4], f = s[5], g = s[6], h = s[7];
@@ -147,7 +144,6 @@ void Transform(uint64_t* s, const unsigned char* chunk)
 } // namespace sha512
 
 } // namespace
-
 
 ////// SHA-512
 

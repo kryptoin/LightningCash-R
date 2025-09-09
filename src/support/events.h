@@ -1,4 +1,4 @@
-// Copyright (c) 2016-2017 The Bitcoin Core developers
+// Copyright (c) 2016-2025 The Bitcoin Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -12,13 +12,12 @@
 #include <event2/http.h>
 
 #define MAKE_RAII(type) \
-/* deleter */\
 struct type##_deleter {\
     void operator()(struct type* ob) {\
         type##_free(ob);\
     }\
 };\
-/* unique ptr typedef */\
+\
 typedef std::unique_ptr<struct type, type##_deleter> raii_##type
 
 MAKE_RAII(event_base);

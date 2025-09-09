@@ -1,4 +1,4 @@
-// Copyright (c) 2009-2017 The Bitcoin Core developers
+// Copyright (c) 2009-2025 The Bitcoin Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -54,17 +54,15 @@ bool LookupSubNet(const char *pszName, CSubNet& subnet);
 SOCKET CreateSocket(const CService &addrConnect);
 bool ConnectSocketDirectly(const CService &addrConnect, const SOCKET& hSocketRet, int nTimeout);
 bool ConnectThroughProxy(const proxyType &proxy, const std::string& strDest, int port, const SOCKET& hSocketRet, int nTimeout, bool *outProxyConnectionFailed);
-/** Return readable error string for a network error code */
+
 std::string NetworkErrorString(int err);
-/** Close socket and set hSocket to INVALID_SOCKET */
+
 bool CloseSocket(SOCKET& hSocket);
-/** Disable or enable blocking-mode for a socket */
+
 bool SetSocketNonBlocking(const SOCKET& hSocket, bool fNonBlocking);
-/** Set the TCP_NODELAY flag on a socket */
+
 bool SetSocketNoDelay(const SOCKET& hSocket);
-/**
- * Convert milliseconds to a struct timeval for e.g. select.
- */
+
 struct timeval MillisToTimeval(int64_t nTimeout);
 void InterruptSocks5(bool interrupt);
 

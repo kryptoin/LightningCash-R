@@ -1,5 +1,5 @@
 // Copyright (c) 2009-2010 Satoshi Nakamoto
-// Copyright (c) 2009-2017 The Bitcoin Core developers
+// Copyright (c) 2009-2025 The Bitcoin Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -9,9 +9,6 @@
 #include <rpc/blockchain.h>     // LightningCashr: Hive 1.1
 #include <validation.h>         // LightningCashr: Hive 1.1
 
-/**
- * CChain implementation
- */
 void CChain::SetTip(CBlockIndex *pindex) {
     if (pindex == nullptr) {
         vChain.clear();
@@ -70,10 +67,8 @@ CBlockIndex* CChain::FindEarliestAtLeast(int64_t nTime) const
     return (lower == vChain.end() ? nullptr : *lower);
 }
 
-/** Turn the lowest '1' bit in the binary representation of a number into a '0'. */
 int static inline InvertLowestOne(int n) { return n & (n - 1); }
 
-/** Compute what height to jump back to with the CBlockIndex::pskip pointer. */
 int static inline GetSkipHeight(int height) {
     if (height < 2)
         return 0;
@@ -127,7 +122,7 @@ void CBlockIndex::BuildSkip()
 arith_uint256 GetBlockProof(const CBlockIndex& block)
 {
     const Consensus::Params& consensusParams = Params().GetConsensus();
- 
+
     arith_uint256 bnTarget;
     bool fNegative;
     bool fOverflow;
@@ -284,8 +279,6 @@ arith_uint256 GetNumHashes(const CBlockIndex& block)
     return (~bnTarget / (bnTarget + 1)) + 1;
 }
 
-
-
 int64_t GetBlockProofEquivalentTime(const CBlockIndex& to, const CBlockIndex& from, const CBlockIndex& tip, const Consensus::Params& params)
 {
     arith_uint256 r;
@@ -303,8 +296,6 @@ int64_t GetBlockProofEquivalentTime(const CBlockIndex& to, const CBlockIndex& fr
     return sign * r.GetLow64();
 }
 
-/** Find the last common ancestor two blocks have.
- *  Both pa and pb must be non-nullptr. */
 const CBlockIndex* LastCommonAncestor(const CBlockIndex* pa, const CBlockIndex* pb) {
     if (pa->nHeight > pb->nHeight) {
         pa = pa->GetAncestor(pb->nHeight);

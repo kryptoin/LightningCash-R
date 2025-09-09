@@ -1,5 +1,5 @@
 // Copyright (c) 2010 Satoshi Nakamoto
-// Copyright (c) 2009-2017 The Bitcoin Core developers
+// Copyright (c) 2009-2025 The Bitcoin Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -194,7 +194,6 @@ UniValue getnewaddress(const JSONRPCRequest& request)
     return EncodeDestination(dest);
 }
 
-
 CTxDestination GetAccountDestination(CWallet* const pwallet, std::string strAccount, bool bForceNew=false)
 {
     CTxDestination dest;
@@ -286,7 +285,6 @@ UniValue getrawchangeaddress(const JSONRPCRequest& request)
     return EncodeDestination(dest);
 }
 
-
 UniValue setaccount(const JSONRPCRequest& request)
 {
     CWallet * const pwallet = GetWalletForJSONRPCRequest(request);
@@ -334,7 +332,6 @@ UniValue setaccount(const JSONRPCRequest& request)
     return NullUniValue;
 }
 
-
 UniValue getaccount(const JSONRPCRequest& request)
 {
     CWallet * const pwallet = GetWalletForJSONRPCRequest(request);
@@ -369,7 +366,6 @@ UniValue getaccount(const JSONRPCRequest& request)
     }
     return strAccount;
 }
-
 
 UniValue getaddressesbyaccount(const JSONRPCRequest& request)
 {
@@ -530,7 +526,6 @@ UniValue sendtoaddress(const JSONRPCRequest& request)
         }
     }
 
-
     EnsureWalletIsUnlocked(pwallet);
 
     SendMoney(pwallet, dest, nAmount, fSubtractFeeFromAmount, wtx, coin_control);
@@ -632,9 +627,9 @@ UniValue createbees(const JSONRPCRequest& request)
 
     CWalletTx wtxNew;
     std::string strError;
-	
+
 	EnsureWalletIsUnlocked(pwallet);
-	
+
     CReserveKey reservekeyChange(pwallet);
     CReserveKey reservekeyHoney(pwallet);
 
@@ -743,13 +738,12 @@ UniValue getnetworkhiveinfo(const JSONRPCRequest& request)
 		throw std::runtime_error("Error: A block required to calculate network bee population was not available (pruned data / not found on disk)");
     }
 
-
     if ((consensusParams.variableBeecost) && (((chainActive.Tip()->nHeight) - 1) >= (consensusParams.variableForkBlock)) && (((chainActive.Tip()->nHeight) - 1) >= (consensusParams.ratioForkBlock)) && (((chainActive.Tip()->nHeight) - 1) >= (consensusParams.remvariableForkBlock)) && ((chainActive.Tip()->nHeight) < nSpeedFork)) {
 	    //LogPrintf("OK \n");
 	    if (!GetNetworkHiveInfo4(globalImmatureBees, globalImmatureBCTs, globalMatureBees, globalMatureBCTs, potentialRewards, consensusParams, includeGraph))
 		throw std::runtime_error("Error: A block required to calculate network bee population was not available (pruned data / not found on disk)");
     }
-    
+
     if ((consensusParams.variableBeecost) && (((chainActive.Tip()->nHeight) - 1) >= (consensusParams.variableForkBlock)) && (((chainActive.Tip()->nHeight) - 1) >= (consensusParams.ratioForkBlock)) && (((chainActive.Tip()->nHeight) - 1) < (consensusParams.remvariableForkBlock)) && ((chainActive.Tip()->nHeight) < nSpeedFork)) {
 	    //LogPrintf("OK \n");
 	    if (!GetNetworkHiveInfo3(globalImmatureBees, globalImmatureBCTs, globalMatureBees, globalMatureBCTs, potentialRewards, consensusParams, includeGraph))
@@ -816,7 +810,7 @@ UniValue getbeecreationtxid(const JSONRPCRequest& request)
             "\nExamples:\n"
             + HelpExampleCli("getbeecreationtxid", "bd76be6d12dfd072a605fd85a2aa956f6f5e0dee5dbbb0b4b5da5e72966b9dfd")
         );
-        
+
     ObserveSafeMode();
     pwallet->BlockUntilSyncedToCurrentChain();
 
@@ -844,7 +838,7 @@ UniValue getbeecreationtxid(const JSONRPCRequest& request)
         throw JSONRPCError(RPC_INVALID_PARAMETER, "Malformed honey transaction!");  // Should never hit; could probably be an assert.
     std::vector<unsigned char> bctTxId(&wtx.tx->vout[0].scriptPubKey[14], &wtx.tx->vout[0].scriptPubKey[14 + 64]);
     std::string bctTxIdStr = std::string(bctTxId.begin(), bctTxId.end());
-    
+
     return bctTxIdStr;
 }
 
@@ -990,7 +984,7 @@ UniValue gethiveinfo(const JSONRPCRequest& request)
     summary.push_back(Pair("rewards_paid", ValueFromAmount(totalRewards)));
     summary.push_back(Pair("profit", ValueFromAmount(totalRewards-totalBeeFee)));
     summary.push_back(Pair("warnings", pwallet->IsLocked()? "Wallet is locked and must be unlocked to mine" : ""));
-            
+
     UniValue jsonResults(UniValue::VOBJ);
     jsonResults.push_back(Pair("summary", summary));
     jsonResults.push_back(Pair("bees", bctList));
@@ -1184,7 +1178,6 @@ UniValue getreceivedbyaddress(const JSONRPCRequest& request)
     return  ValueFromAmount(nAmount);
 }
 
-
 UniValue getreceivedbyaccount(const JSONRPCRequest& request)
 {
     CWallet * const pwallet = GetWalletForJSONRPCRequest(request);
@@ -1248,7 +1241,6 @@ UniValue getreceivedbyaccount(const JSONRPCRequest& request)
 
     return ValueFromAmount(nAmount);
 }
-
 
 UniValue getbalance(const JSONRPCRequest& request)
 {
@@ -1353,7 +1345,6 @@ UniValue getunconfirmedbalance(const JSONRPCRequest &request)
     return ValueFromAmount(pwallet->GetUnconfirmedBalance());
 }
 
-
 UniValue movecmd(const JSONRPCRequest& request)
 {
     CWallet * const pwallet = GetWalletForJSONRPCRequest(request);
@@ -1403,7 +1394,6 @@ UniValue movecmd(const JSONRPCRequest& request)
 
     return true;
 }
-
 
 UniValue sendfrom(const JSONRPCRequest& request)
 {
@@ -1480,7 +1470,6 @@ UniValue sendfrom(const JSONRPCRequest& request)
 
     return wtx.GetHash().GetHex();
 }
-
 
 UniValue sendmany(const JSONRPCRequest& request)
 {
@@ -2081,17 +2070,6 @@ static void MaybePushAddress(UniValue & entry, const CTxDestination &dest)
     }
 }
 
-/**
- * List transactions based on the given criteria.
- *
- * @param  pwallet    The wallet.
- * @param  wtx        The wallet transaction.
- * @param  strAccount The account, if any, or "*" for all.
- * @param  nMinDepth  The minimum confirmation depth.
- * @param  fLong      Whether to include the JSON version of the transaction.
- * @param  ret        The UniValue into which the result is stored.
- * @param  filter     The "is mine" filter bool.
- */
 void ListTransactions(CWallet* const pwallet, const CWalletTx& wtx, const std::string& strAccount, int nMinDepth, bool fLong, UniValue& ret, const isminefilter& filter)
 {
     CAmount nFee;
@@ -2115,7 +2093,7 @@ void ListTransactions(CWallet* const pwallet, const CWalletTx& wtx, const std::s
             }
             entry.push_back(Pair("account", strSentAccount));
             MaybePushAddress(entry, s.destination);
-            
+
             // LightningCashr: Hive: Sent transactions are never honey
             entry.push_back(Pair("ishoney", false));
 
@@ -2153,7 +2131,7 @@ void ListTransactions(CWallet* const pwallet, const CWalletTx& wtx, const std::s
 
                 // LightningCashr: Hive: Indicate whether this is honey (hive block coinbase tx)
                 entry.push_back(Pair("ishoney", wtx.IsHiveCoinBase()));
-                
+
                 if (wtx.IsCoinBase())
                 {
                     if (wtx.GetDepthInMainChain() < 1)
@@ -2705,7 +2683,6 @@ UniValue abandontransaction(const JSONRPCRequest& request)
     return NullUniValue;
 }
 
-
 UniValue backupwallet(const JSONRPCRequest& request)
 {
     CWallet * const pwallet = GetWalletForJSONRPCRequest(request);
@@ -2737,7 +2714,6 @@ UniValue backupwallet(const JSONRPCRequest& request)
 
     return NullUniValue;
 }
-
 
 UniValue keypoolrefill(const JSONRPCRequest& request)
 {
@@ -2777,7 +2753,6 @@ UniValue keypoolrefill(const JSONRPCRequest& request)
 
     return NullUniValue;
 }
-
 
 static void LockWallet(CWallet* pWallet)
 {
@@ -2853,7 +2828,7 @@ UniValue walletpassphrase(const JSONRPCRequest& request)
 		pwallet->Lock();
 		wasUnLockedHiveOnly = true;
 	}
-	
+
     if (strWalletPass.length() > 0)
     {
         if (!pwallet->Unlock(strWalletPass)) {
@@ -2866,9 +2841,9 @@ UniValue walletpassphrase(const JSONRPCRequest& request)
             "Stores the wallet decryption key in memory for <timeout> seconds.");
 
     pwallet->TopUpKeyPool();
-	
+
 	fWalletUnlockHiveMiningOnly = false;	
-	
+
 	// LightningCashr: Hive: Support locked wallets
 	if (!wasUnLockedHiveOnly) {
 		pwallet->nRelockTime = GetTime() + nSleepTime;
@@ -2876,10 +2851,9 @@ UniValue walletpassphrase(const JSONRPCRequest& request)
 	} else {
 		RPCRunLater(strprintf("sethiveonly(%s)", pwallet->GetName()), boost::bind(SetHiveOnly), nSleepTime);
 	}
-	
+
     return NullUniValue;
 }
-
 
 // LightningCashr: Hive: Unlock wallet for hiving only (Prevent trivial sendmoney attack if user OS account compromised)
 UniValue walletpassphrasehiveonly(const JSONRPCRequest& request)
@@ -2898,7 +2872,7 @@ UniValue walletpassphrasehiveonly(const JSONRPCRequest& request)
 			"walletpassphrase separately.\n"
             "\nArguments:\n"
             "1. \"passphrase\"       (string, required) The wallet passphrase\n"
-            
+
             "\nExamples:\n"
             "\nUnlock the wallet for hive mining only\n"
             + HelpExampleCli("walletpassphrasehiveonly", "\"my pass phrase\"") +
@@ -2938,7 +2912,6 @@ UniValue walletpassphrasehiveonly(const JSONRPCRequest& request)
 
     return NullUniValue;
 }
-
 
 UniValue walletpassphrasechange(const JSONRPCRequest& request)
 {
@@ -2990,7 +2963,6 @@ UniValue walletpassphrasechange(const JSONRPCRequest& request)
     return NullUniValue;
 }
 
-
 UniValue walletlock(const JSONRPCRequest& request)
 {
     CWallet * const pwallet = GetWalletForJSONRPCRequest(request);
@@ -3029,7 +3001,6 @@ UniValue walletlock(const JSONRPCRequest& request)
 
     return NullUniValue;
 }
-
 
 UniValue encryptwallet(const JSONRPCRequest& request)
 {
@@ -3898,7 +3869,6 @@ UniValue bumpfee(const JSONRPCRequest& request)
 
     LOCK2(cs_main, pwallet->cs_wallet);
     EnsureWalletIsUnlocked(pwallet);
-
 
     std::vector<std::string> errors;
     CAmount old_fee;

@@ -1,4 +1,4 @@
-// Copyright (c) 2011-2017 The Bitcoin Core developers
+// Copyright (c) 2011-2025 The Bitcoin Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -13,19 +13,22 @@ namespace Ui {
     class AskPassphraseDialog;
 }
 
-/** Multifunctional dialog to ask for passphrases. Used for encryption, unlocking, and changing the passphrase.
- */
 class AskPassphraseDialog : public QDialog
 {
     Q_OBJECT
 
 public:
     enum Mode {
-        Encrypt,            /**< Ask passphrase twice and encrypt */
-        UnlockHiveMining,   /** <Ask passphrase and unlock */     // LightningCashr: Hive: Support locked wallets
-        Unlock,             /**< Ask passphrase and unlock */
-        ChangePass,         /**< Ask old passphrase + new passphrase twice */
-        Decrypt             /**< Ask passphrase and decrypt wallet */
+        Encrypt,
+
+        UnlockHiveMining,
+     // LightningCashr: Hive: Support locked wallets
+        Unlock,
+
+        ChangePass,
+
+        Decrypt
+
     };
 
     explicit AskPassphraseDialog(Mode mode, QWidget *parent);

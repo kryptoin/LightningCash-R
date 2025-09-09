@@ -1,4 +1,4 @@
-// Copyright (c) 2009-2017 The Bitcoin Core developers
+// Copyright (c) 2009-2025 The Bitcoin Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -26,7 +26,6 @@
 #include <boost/date_time/posix_time/posix_time.hpp>
 
 #include <univalue.h>
-
 
 std::string static EncodeDumpTime(int64_t nTime) {
     return DateTimeStrFormat("%Y-%m-%dT%H:%M:%SZ", nTime);
@@ -92,7 +91,6 @@ bool GetWalletAddressesForKey(CWallet * const pwallet, const CKeyID &keyid, std:
     return fLabelFound;
 }
 
-
 UniValue importprivkey(const JSONRPCRequest& request)
 {
     CWallet * const pwallet = GetWalletForJSONRPCRequest(request);
@@ -122,7 +120,6 @@ UniValue importprivkey(const JSONRPCRequest& request)
             "\nAs a JSON-RPC call\n"
             + HelpExampleRpc("importprivkey", "\"mykey\", \"testing\", false")
         );
-
 
     WalletRescanReserver reserver(pwallet);
     bool fRescan = true;
@@ -183,7 +180,8 @@ UniValue importprivkey(const JSONRPCRequest& request)
         }
     }
     if (fRescan) {
-        pwallet->RescanFromTime(TIMESTAMP_MIN, reserver, true /* update */);
+        pwallet->RescanFromTime(TIMESTAMP_MIN, reserver, true
+);
     }
 
     return NullUniValue;
@@ -224,7 +222,8 @@ void ImportScript(CWallet* const pwallet, const CScript& script, const std::stri
 
     pwallet->MarkDirty();
 
-    if (!pwallet->HaveWatchOnly(script) && !pwallet->AddWatchOnly(script, 0 /* nCreateTime */)) {
+    if (!pwallet->HaveWatchOnly(script) && !pwallet->AddWatchOnly(script, 0
+)) {
         throw JSONRPCError(RPC_WALLET_ERROR, "Error adding address to wallet");
     }
 
@@ -280,7 +279,6 @@ UniValue importaddress(const JSONRPCRequest& request)
             + HelpExampleRpc("importaddress", "\"myscript\", \"testing\", false")
         );
 
-
     std::string strLabel = "";
     if (!request.params[1].isNull())
         strLabel = request.params[1].get_str();
@@ -321,7 +319,8 @@ UniValue importaddress(const JSONRPCRequest& request)
     }
     if (fRescan)
     {
-        pwallet->RescanFromTime(TIMESTAMP_MIN, reserver, true /* update */);
+        pwallet->RescanFromTime(TIMESTAMP_MIN, reserver, true
+);
         pwallet->ReacceptWalletTransactions();
     }
 
@@ -453,7 +452,6 @@ UniValue importpubkey(const JSONRPCRequest& request)
             + HelpExampleRpc("importpubkey", "\"mypubkey\", \"testing\", false")
         );
 
-
     std::string strLabel = "";
     if (!request.params[1].isNull())
         strLabel = request.params[1].get_str();
@@ -489,13 +487,13 @@ UniValue importpubkey(const JSONRPCRequest& request)
     }
     if (fRescan)
     {
-        pwallet->RescanFromTime(TIMESTAMP_MIN, reserver, true /* update */);
+        pwallet->RescanFromTime(TIMESTAMP_MIN, reserver, true
+);
         pwallet->ReacceptWalletTransactions();
     }
 
     return NullUniValue;
 }
-
 
 UniValue importwallet(const JSONRPCRequest& request)
 {
@@ -613,7 +611,8 @@ UniValue importwallet(const JSONRPCRequest& request)
         pwallet->ShowProgress("", 100); // hide progress dialog in GUI
         pwallet->UpdateTimeFirstKey(nTimeBegin);
     }
-    pwallet->RescanFromTime(nTimeBegin, reserver, false /* update */);
+    pwallet->RescanFromTime(nTimeBegin, reserver, false
+);
     pwallet->MarkDirty();
 
     if (!fGood)
@@ -665,7 +664,6 @@ UniValue dumpprivkey(const JSONRPCRequest& request)
     return CBitcoinSecret(vchSecret).ToString();
 }
 
-
 UniValue dumpwallet(const JSONRPCRequest& request)
 {
     CWallet * const pwallet = GetWalletForJSONRPCRequest(request);
@@ -698,11 +696,6 @@ UniValue dumpwallet(const JSONRPCRequest& request)
     boost::filesystem::path filepath = request.params[0].get_str();
     filepath = boost::filesystem::absolute(filepath);
 
-    /* Prevent arbitrary files from being overwritten. There have been reports
-     * that users have overwritten wallet files this way:
-     * https://github.com/bitcoin/bitcoin/issues/9934
-     * It may also avoid other security issues.
-     */
     if (boost::filesystem::exists(filepath)) {
         throw JSONRPCError(RPC_INVALID_PARAMETER, filepath.string() + " already exists. If you are sure this is what you want, move it out of the way first");
     }
@@ -797,7 +790,6 @@ UniValue dumpwallet(const JSONRPCRequest& request)
 
     return reply;
 }
-
 
 UniValue ProcessImport(CWallet * const pwallet, const UniValue& data, const int64_t timestamp)
 {
@@ -1237,7 +1229,8 @@ UniValue importmulti(const JSONRPCRequest& mainRequest)
         }
     }
     if (fRescan && fRunScan && requests.size()) {
-        int64_t scannedTime = pwallet->RescanFromTime(nLowestTimestamp, reserver, true /* update */);
+        int64_t scannedTime = pwallet->RescanFromTime(nLowestTimestamp, reserver, true
+);
         pwallet->ReacceptWalletTransactions();
 
         if (scannedTime > nLowestTimestamp) {

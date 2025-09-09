@@ -1,5 +1,5 @@
 // Copyright (c) 2009-2010 Satoshi Nakamoto
-// Copyright (c) 2009-2017 The Bitcoin Core developers
+// Copyright (c) 2009-2025 The Bitcoin Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -41,9 +41,6 @@ const char *GETBLOCKTXN="getblocktxn";
 const char *BLOCKTXN="blocktxn";
 } // namespace NetMsgType
 
-/** All known message types. Keep this in the same order as the list of
- * messages above and in protocol.h.
- */
 const static std::string allNetMessageTypes[] = {
     NetMsgType::VERSION,
     NetMsgType::VERACK,
@@ -125,8 +122,6 @@ bool CMessageHeader::IsValid(const MessageStartChars& pchMessageStartIn) const
 
     return true;
 }
-
-
 
 CAddress::CAddress() : CService()
 {

@@ -9,10 +9,8 @@ namespace
 
 typedef std::vector<uint8_t> data;
 
-/** The Bech32 character set for encoding. */
 const char* CHARSET = "qpzry9x8gf2tvdw0s3jn54khce6mua7l";
 
-/** The Bech32 character set for decoding. */
 const int8_t CHARSET_REV[128] = {
     -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
     -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
@@ -24,16 +22,12 @@ const int8_t CHARSET_REV[128] = {
      1,  0,  3, 16, 11, 28, 12, 14,  6,  4,  2, -1, -1, -1, -1, -1
 };
 
-/** Concatenate two byte arrays. */
 data Cat(data x, const data& y)
 {
     x.insert(x.end(), y.begin(), y.end());
     return x;
 }
 
-/** This function will compute what 6 5-bit values to XOR into the last 6 input values, in order to
- *  make the checksum 0. These 6 values are packed together in a single 30-bit integer. The higher
- *  bits correspond to earlier values. */
 uint32_t PolyMod(const data& v)
 {
     // The input is interpreted as a list of coefficients of a polynomial over F = GF(32), with an
@@ -93,13 +87,11 @@ uint32_t PolyMod(const data& v)
     return c;
 }
 
-/** Convert to lower case. */
 inline unsigned char LowerCase(unsigned char c)
 {
     return (c >= 'A' && c <= 'Z') ? (c - 'A') + 'a' : c;
 }
 
-/** Expand a HRP for use in checksum computation. */
 data ExpandHRP(const std::string& hrp)
 {
     data ret;
@@ -114,7 +106,6 @@ data ExpandHRP(const std::string& hrp)
     return ret;
 }
 
-/** Verify a checksum. */
 bool VerifyChecksum(const std::string& hrp, const data& values)
 {
     // PolyMod computes what value to xor into the final values to make the checksum 0. However,
@@ -124,7 +115,6 @@ bool VerifyChecksum(const std::string& hrp, const data& values)
     return PolyMod(Cat(ExpandHRP(hrp), values)) == 1;
 }
 
-/** Create a checksum. */
 data CreateChecksum(const std::string& hrp, const data& values)
 {
     data enc = Cat(ExpandHRP(hrp), values);
@@ -143,7 +133,6 @@ data CreateChecksum(const std::string& hrp, const data& values)
 namespace bech32
 {
 
-/** Encode a Bech32 string. */
 std::string Encode(const std::string& hrp, const data& values) {
     data checksum = CreateChecksum(hrp, values);
     data combined = Cat(values, checksum);
@@ -155,7 +144,6 @@ std::string Encode(const std::string& hrp, const data& values) {
     return ret;
 }
 
-/** Decode a Bech32 string. */
 std::pair<std::string, data> Decode(const std::string& str) {
     bool lower = false, upper = false;
     for (size_t i = 0; i < str.size(); ++i) {

@@ -1,4 +1,4 @@
-// Copyright (c) 2011-2017 The Bitcoin Core developers
+// Copyright (c) 2011-2025 The Bitcoin Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -18,7 +18,6 @@
 #include <univalue.h>
 
 #include <boost/test/unit_test.hpp>
-
 
 extern UniValue read_json(const std::string& jsondata);
 
@@ -174,7 +173,6 @@ BOOST_AUTO_TEST_CASE(base58_keys_valid_gen)
     SelectParams(CBaseChainParams::MAIN);
 }
 
-
 // Goal: check that base58 parsing code is robust against a variety of corrupted data
 BOOST_AUTO_TEST_CASE(base58_keys_invalid)
 {
@@ -202,6 +200,5 @@ BOOST_AUTO_TEST_CASE(base58_keys_invalid)
         }
     }
 }
-
 
 BOOST_AUTO_TEST_SUITE_END()

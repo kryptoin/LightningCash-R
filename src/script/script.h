@@ -1,5 +1,5 @@
 // Copyright (c) 2009-2010 Satoshi Nakamoto
-// Copyright (c) 2009-2017 The Bitcoin Core developers
+// Copyright (c) 2009-2025 The Bitcoin Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -44,7 +44,6 @@ std::vector<unsigned char> ToByteVector(const T& in)
     return std::vector<unsigned char>(in.begin(), in.end());
 }
 
-/** Script opcodes */
 enum opcodetype
 {
     // push value
@@ -206,14 +205,7 @@ public:
 
 class CScriptNum
 {
-/**
- * Numeric opcodes (OP_1ADD, etc) are restricted to operating on 4-byte integers.
- * The semantics are subtle, though: operands must be in the range [-2^31 +1...2^31 -1],
- * but results may overflow (and are valid as long as they are not used in a subsequent
- * numeric operation). CScriptNum enforces those semantics by storing results as
- * an int64 and allowing out-of-range values to be returned as a vector of bytes but
- * throwing an exception if arithmetic is done or the result is interpreted as an integer.
- */
+
 public:
 
     explicit CScriptNum(const int64_t& n)
@@ -379,15 +371,8 @@ private:
     int64_t m_value;
 };
 
-/**
- * We use a prevector for the script to reduce the considerable memory overhead
- *  of vectors in cases where they normally contain a small number of small elements.
- * Tests in October 2015 showed use of this reduced dbcache memory usage by 23%
- *  and made an initial sync 13% faster.
- */
 typedef prevector<28, unsigned char> CScriptBase;
 
-/** Serialized script, used inside transaction inputs and outputs */
 class CScript : public CScriptBase
 {
 protected:
@@ -439,7 +424,6 @@ public:
     explicit CScript(opcodetype b)     { operator<<(b); }
     explicit CScript(const CScriptNum& b) { operator<<(b); }
     explicit CScript(const std::vector<unsigned char>& b) { operator<<(b); }
-
 
     CScript& operator<<(int64_t b) { return push_int64(b); }
 
@@ -493,7 +477,6 @@ public:
         assert(!"Warning: Pushing a CScript onto a CScript with << is probably not intended, use + to concatenate!");
         return *this;
     }
-
 
     bool GetOp(iterator& pc, opcodetype& opcodeRet, std::vector<unsigned char>& vchRet)
     {
@@ -574,7 +557,7 @@ public:
         return true;
     }
 
-    /** Encode/decode small integers: */
+
     static int DecodeOP_N(opcodetype opcode)
     {
         if (opcode == OP_0)
@@ -627,37 +610,24 @@ public:
         return nFound;
     }
 
-    /**
-     * Pre-version-0.6, Bitcoin always counted CHECKMULTISIGs
-     * as 20 sigops. With pay-to-script-hash, that changed:
-     * CHECKMULTISIGs serialized in scriptSigs are
-     * counted more accurately, assuming they are of the form
-     *  ... OP_N CHECKMULTISIG ...
-     */
+
     unsigned int GetSigOpCount(bool fAccurate) const;
 
-    /**
-     * Accurately count sigOps, including sigOps in
-     * pay-to-script-hash transactions:
-     */
+
     unsigned int GetSigOpCount(const CScript& scriptSig) const;
 
     bool IsPayToScriptHash() const;
     bool IsPayToWitnessScriptHash() const;
     bool IsWitnessProgram(int& version, std::vector<unsigned char>& program) const;
 
-    /** Called by IsStandardTx and P2SH/BIP62 VerifyScript (which makes it consensus-critical). */
+
     bool IsPushOnly(const_iterator pc) const;
     bool IsPushOnly() const;
 
-    /** Check if the script contains valid OP_CODES */
+
     bool HasValidOps() const;
 
-    /**
-     * Returns whether the script is guaranteed to fail at execution,
-     * regardless of the initial stack. This allows outputs to be pruned
-     * instantly when entering the UTXO set.
-     */
+
     bool IsUnspendable() const
     {
         return (size() > 0 && *begin() == OP_RETURN) || (size() > MAX_SCRIPT_SIZE);

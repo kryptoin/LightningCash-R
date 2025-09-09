@@ -1,4 +1,4 @@
-// Copyright (c) 2011-2017 The Bitcoin Core developers
+// Copyright (c) 2011-2025 The Bitcoin Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -46,12 +46,6 @@ void HiveTableModel::updateBCTs(bool includeDeadBees) {
 
         // Load entries from wallet
         std::vector<CBeeCreationTransactionInfo> vBeeCreationTransactions;
-
-
-/*	if (chainActive.Height() >= Params().GetConsensus().ratioForkBlock)
-		walletModel->getBCTs2(vBeeCreationTransactions, includeDeadBees);
-	else
-		walletModel->getBCTs(vBeeCreationTransactions, includeDeadBees);*/
 
 	walletModel->getBCTs(vBeeCreationTransactions, includeDeadBees);
 
@@ -135,8 +129,8 @@ QVariant HiveTableModel::data(const QModelIndex &index, int role) const {
                             blocksTillMature = rec->blocksLeft - Params().GetConsensus().beeLifespanBlocks2;
                         if (chainActive.Height() < Params().GetConsensus().ratioForkBlock)
                             blocksTillMature = rec->blocksLeft - Params().GetConsensus().beeLifespanBlocks;
-                        
-                        
+
+
                         status = "Matures in " + QString::number(blocksTillMature) + " blocks ";
                     } else if (rec->beeStatus == "mature")
                         status = "Expires in " + QString::number(rec->blocksLeft) + " blocks ";
@@ -152,9 +146,8 @@ QVariant HiveTableModel::data(const QModelIndex &index, int role) const {
                     + " (" + QString::number(rec->blocksFound) + " blocks mined)";
         }
     } else if (role == Qt::TextAlignmentRole) {
-        /*if (index.column() == Rewards && rec->blocksFound == 0)
-            return (int)(Qt::AlignCenter|Qt::AlignVCenter);
-        else*/ if (index.column() == Cost || index.column() == Rewards || index.column() == Count)
+
+ if (index.column() == Cost || index.column() == Rewards || index.column() == Count)
             return (int)(Qt::AlignRight|Qt::AlignVCenter);
         else
             return (int)(Qt::AlignCenter|Qt::AlignVCenter);
@@ -168,7 +161,7 @@ QVariant HiveTableModel::data(const QModelIndex &index, int role) const {
                 return QColor(170, 70, 0);
             return QColor(27, 170, 45);
         }
-        
+
         if (index.column() == Status) {
             if (rec->beeStatus == "expired")
                 return QColor(200, 0, 0);

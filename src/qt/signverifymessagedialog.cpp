@@ -1,4 +1,4 @@
-// Copyright (c) 2011-2017 The Bitcoin Core developers
+// Copyright (c) 2011-2025 The Bitcoin Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -114,7 +114,6 @@ void SignVerifyMessageDialog::on_signMessageButton_SM_clicked()
     if (!model)
         return;
 
-    /* Clear old signature to ensure users don't get confused on error with an old signature displayed */
     ui->signatureOut_SM->clear();
 
     CTxDestination destination = DecodeDestination(ui->addressIn_SM->text().toStdString());
@@ -258,10 +257,9 @@ bool SignVerifyMessageDialog::eventFilter(QObject *object, QEvent *event)
     {
         if (ui->tabWidget->currentIndex() == 0)
         {
-            /* Clear status message on focus change */
+
             ui->statusLabel_SM->clear();
 
-            /* Select generated signature */
             if (object == ui->signatureOut_SM)
             {
                 ui->signatureOut_SM->selectAll();
@@ -270,7 +268,7 @@ bool SignVerifyMessageDialog::eventFilter(QObject *object, QEvent *event)
         }
         else if (ui->tabWidget->currentIndex() == 1)
         {
-            /* Clear status message on focus change */
+
             ui->statusLabel_VM->clear();
         }
     }

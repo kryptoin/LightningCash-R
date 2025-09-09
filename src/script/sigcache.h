@@ -1,5 +1,5 @@
 // Copyright (c) 2009-2010 Satoshi Nakamoto
-// Copyright (c) 2009-2017 The Bitcoin Core developers
+// Copyright (c) 2009-2025 The Bitcoin Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -19,14 +19,6 @@ static const int64_t MAX_MAX_SIG_CACHE_SIZE = 16384;
 
 class CPubKey;
 
-/**
- * We're hashing a nonce into the entries themselves, so we don't need extra
- * blinding in the set hash computation.
- *
- * This may exhibit platform endian dependent behavior but because these are
- * nonced hashes (random) and this state is only ever used locally it is safe.
- * All that matters is local consistency.
- */
 class SignatureCacheHasher
 {
 public:

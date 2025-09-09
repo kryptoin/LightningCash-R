@@ -1,4 +1,4 @@
-// Copyright (c) 2011-2017 The Bitcoin Core developers
+// Copyright (c) 2011-2025 The Bitcoin Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -77,8 +77,6 @@ const QStringList historyFilter = QStringList()
 
 }
 
-/* Object for executing console RPC commands in a separate thread.
-*/
 class RPCExecutor : public QObject
 {
     Q_OBJECT
@@ -90,9 +88,6 @@ Q_SIGNALS:
     void reply(int category, const QString &command);
 };
 
-/** Class for handling RPC timers
- * (used for e.g. re-locking the wallet after a timeout)
- */
 class QtRPCTimerBase: public QObject, public RPCTimerBase
 {
     Q_OBJECT
@@ -123,27 +118,7 @@ public:
     }
 };
 
-
 #include <qt/rpcconsole.moc>
-
-/**
- * Split shell command line into a list of arguments and optionally execute the command(s).
- * Aims to emulate \c bash and friends.
- *
- * - Command nesting is possible with parenthesis; for example: validateaddress(getnewaddress())
- * - Arguments are delimited with whitespace or comma
- * - Extra whitespace at the beginning and end and between arguments will be ignored
- * - Text can be "double" or 'single' quoted
- * - The backslash \c \ is used as escape character
- *   - Outside quotes, any character can be escaped
- *   - Within double quotes, only escape \c " and backslashes before a \c " or another backslash
- *   - Within single quotes, no escaping is possible and no special interpretation takes place
- *
- * @param[out]   result      stringified Result from the executed command(chain)
- * @param[in]    strCommand  Command line to split
- * @param[in]    fExecute    set true if you want the command to be executed
- * @param[out]   pstrFilteredOut  Command line, filtered to remove any sensitive data
- */
 
 bool RPCConsole::RPCParseCommandLine(std::string &strResult, const std::string &strCommand, const bool fExecute, std::string * const pstrFilteredOut)
 {
@@ -520,7 +495,8 @@ bool RPCConsole::eventFilter(QObject* obj, QEvent *event)
         {
         case Qt::Key_Up: if(obj == ui->lineEdit) { browseHistory(-1); return true; } break;
         case Qt::Key_Down: if(obj == ui->lineEdit) { browseHistory(1); return true; } break;
-        case Qt::Key_PageUp: /* pass paging keys to messages widget */
+        case Qt::Key_PageUp:
+
         case Qt::Key_PageDown:
             if(obj == ui->lineEdit)
             {
@@ -625,7 +601,7 @@ void RPCConsole::setClientModel(ClientModel *model)
         connect(model->getPeerTableModel(), SIGNAL(layoutChanged()), this, SLOT(peerLayoutChanged()));
         // peer table signal handling - cache selected node ids
         connect(model->getPeerTableModel(), SIGNAL(layoutAboutToBeChanged()), this, SLOT(peerLayoutAboutToChange()));
-        
+
         // set up ban table
         ui->banlistWidget->setModel(model->getBanTableModel());
         ui->banlistWidget->verticalHeader()->hide();
@@ -773,7 +749,7 @@ void RPCConsole::clear(bool clearHistory)
 #else
     QString clsKey = "Ctrl-L";
 #endif
-	 
+
     message(CMD_REPLY, (tr("Welcome to the %1 RPC console.").arg(tr(PACKAGE_NAME)) + "<br>" +
                         tr("Use up and down arrows to navigate history, and %1 to clear screen.").arg("<b>"+clsKey+"</b>") + "<br>" +
                         tr("Type %1 for an overview of available commands.").arg("<b>help</b>") + "<br>" +
@@ -1145,7 +1121,7 @@ void RPCConsole::disconnectSelectedNode()
 {
     if(!g_connman)
         return;
-    
+
     // Get selected peer addresses
     QList<QModelIndex> nodes = GUIUtil::getEntryData(ui->peerWidget, PeerTableModel::NetNodeId);
     for(int i = 0; i < nodes.count(); i++)
@@ -1162,7 +1138,7 @@ void RPCConsole::banSelectedNode(int bantime)
 {
     if (!clientModel || !g_connman)
         return;
-    
+
     // Get selected peer addresses
     QList<QModelIndex> nodes = GUIUtil::getEntryData(ui->peerWidget, PeerTableModel::NetNodeId);
     for(int i = 0; i < nodes.count(); i++)

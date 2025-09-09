@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2017 The Bitcoin Core developers
+// Copyright (c) 2015-2025 The Bitcoin Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -35,9 +35,6 @@ static inline uint64_t InsecureRandBits(int bits) { return insecure_rand_ctx.ran
 static inline uint64_t InsecureRandRange(uint64_t range) { return insecure_rand_ctx.randrange(range); }
 static inline bool InsecureRandBool() { return insecure_rand_ctx.randbool(); }
 
-/** Basic testing setup.
- * This just configures logging and chain parameters.
- */
 struct BasicTestingSetup {
     ECCVerifyHandle globalVerifyHandle;
 
@@ -45,9 +42,6 @@ struct BasicTestingSetup {
     ~BasicTestingSetup();
 };
 
-/** Testing setup that configures a complete environment.
- * Included are data directory, coins database, script check threads setup.
- */
 class CConnman;
 class CNode;
 struct CConnmanTest {

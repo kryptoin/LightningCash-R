@@ -1,4 +1,4 @@
-// Copyright (c) 2014-2017 The Bitcoin Core developers
+// Copyright (c) 2014-2025 The Bitcoin Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -269,7 +269,6 @@ UtxoData::iterator FindRandomFrom(const std::set<COutPoint> &utxoSet) {
     assert(utxoDataIt != utxoData.end());
     return utxoDataIt;
 }
-
 
 // This test is similar to the previous test
 // except the emphasis is on testing the functionality of UpdateCoins
@@ -620,13 +619,7 @@ void CheckAccessCoin(CAmount base_value, CAmount cache_value, CAmount expected_v
 
 BOOST_AUTO_TEST_CASE(ccoins_access)
 {
-    /* Check AccessCoin behavior, requesting a coin from a cache view layered on
-     * top of a base view, and checking the resulting entry in the cache after
-     * the access.
-     *
-     *               Base    Cache   Result  Cache        Result
-     *               Value   Value   Value   Flags        Flags
-     */
+
     CheckAccessCoin(ABSENT, ABSENT, ABSENT, NO_ENTRY   , NO_ENTRY   );
     CheckAccessCoin(ABSENT, PRUNED, PRUNED, 0          , 0          );
     CheckAccessCoin(ABSENT, PRUNED, PRUNED, FRESH      , FRESH      );
@@ -671,13 +664,7 @@ void CheckSpendCoins(CAmount base_value, CAmount cache_value, CAmount expected_v
 
 BOOST_AUTO_TEST_CASE(ccoins_spend)
 {
-    /* Check SpendCoin behavior, requesting a coin from a cache view layered on
-     * top of a base view, spending, and then checking
-     * the resulting entry in the cache after the modification.
-     *
-     *              Base    Cache   Result  Cache        Result
-     *              Value   Value   Value   Flags        Flags
-     */
+
     CheckSpendCoins(ABSENT, ABSENT, ABSENT, NO_ENTRY   , NO_ENTRY   );
     CheckSpendCoins(ABSENT, PRUNED, PRUNED, 0          , DIRTY      );
     CheckSpendCoins(ABSENT, PRUNED, ABSENT, FRESH      , NO_ENTRY   );
@@ -742,14 +729,7 @@ void CheckAddCoin(Args&&... args)
 
 BOOST_AUTO_TEST_CASE(ccoins_add)
 {
-    /* Check AddCoin behavior, requesting a new coin from a cache view,
-     * writing a modification to the coin, and then checking the resulting
-     * entry in the cache after the modification. Verify behavior with the
-     * with the AddCoin potential_overwrite argument set to false, and to true.
-     *
-     *           Cache   Write   Result  Cache        Result       potential_overwrite
-     *           Value   Value   Value   Flags        Flags
-     */
+
     CheckAddCoin(ABSENT, VALUE3, VALUE3, NO_ENTRY   , DIRTY|FRESH, false);
     CheckAddCoin(ABSENT, VALUE3, VALUE3, NO_ENTRY   , DIRTY      , true );
     CheckAddCoin(PRUNED, VALUE3, VALUE3, 0          , DIRTY|FRESH, false);
@@ -791,13 +771,7 @@ void CheckWriteCoins(CAmount parent_value, CAmount child_value, CAmount expected
 
 BOOST_AUTO_TEST_CASE(ccoins_write)
 {
-    /* Check BatchWrite behavior, flushing one entry from a child cache to a
-     * parent cache, and checking the resulting entry in the parent cache
-     * after the write.
-     *
-     *              Parent  Child   Result  Parent       Child        Result
-     *              Value   Value   Value   Flags        Flags        Flags
-     */
+
     CheckWriteCoins(ABSENT, ABSENT, ABSENT, NO_ENTRY   , NO_ENTRY   , NO_ENTRY   );
     CheckWriteCoins(ABSENT, PRUNED, PRUNED, NO_ENTRY   , DIRTY      , DIRTY      );
     CheckWriteCoins(ABSENT, PRUNED, ABSENT, NO_ENTRY   , DIRTY|FRESH, NO_ENTRY   );

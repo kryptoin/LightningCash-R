@@ -1,4 +1,4 @@
-// Copyright (c) 2012-2017 The Bitcoin Core developers
+// Copyright (c) 2012-2025 The Bitcoin Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -44,7 +44,6 @@ Verify(const CScript& scriptSig, const CScript& scriptPubKey, bool fStrict, Scri
 
     return VerifyScript(scriptSig, scriptPubKey, nullptr, fStrict ? SCRIPT_VERIFY_P2SH : SCRIPT_VERIFY_NONE, MutableTransactionSignatureChecker(&txTo, 0, txFrom.vout[0].nValue), &err);
 }
-
 
 BOOST_FIXTURE_TEST_SUITE(script_P2SH_tests, BasicTestingSetup)
 
@@ -246,7 +245,6 @@ BOOST_AUTO_TEST_CASE(switchover)
     scriptSig << Serialize(notValid);
 
     CScript fund = GetScriptForDestination(CScriptID(notValid));
-
 
     // Validation should succeed under old rules (hash is correct):
     BOOST_CHECK(Verify(scriptSig, fund, false, err));

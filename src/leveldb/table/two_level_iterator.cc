@@ -121,7 +121,6 @@ void TwoLevelIterator::Prev() {
   SkipEmptyDataBlocksBackward();
 }
 
-
 void TwoLevelIterator::SkipEmptyDataBlocksForward() {
   while (data_iter_.iter() == NULL || !data_iter_.Valid()) {
     // Move to next block

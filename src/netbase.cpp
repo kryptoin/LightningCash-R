@@ -1,5 +1,5 @@
 // Copyright (c) 2009-2010 Satoshi Nakamoto
-// Copyright (c) 2009-2017 The Bitcoin Core developers
+// Copyright (c) 2009-2025 The Bitcoin Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -98,7 +98,7 @@ bool static LookupIntern(const char *pszName, std::vector<CNetAddr>& vIP, unsign
             struct sockaddr_in6* s6 = (struct sockaddr_in6*) aiTrav->ai_addr;
             resolved = CNetAddr(s6->sin6_addr, s6->sin6_scope_id);
         }
-        /* Never allow resolving to an internal address. Consider any such result invalid */
+
         if (!resolved.IsInternal()) {
             vIP.push_back(resolved);
         }
@@ -180,13 +180,11 @@ struct timeval MillisToTimeval(int64_t nTimeout)
     return timeout;
 }
 
-/** SOCKS version */
 enum SOCKSVersion: uint8_t {
     SOCKS4 = 0x04,
     SOCKS5 = 0x05
 };
 
-/** Values defined for METHOD in RFC1928 */
 enum SOCKS5Method: uint8_t {
     NOAUTH = 0x00,        //! No authentication required
     GSSAPI = 0x01,        //! GSSAPI
@@ -194,14 +192,12 @@ enum SOCKS5Method: uint8_t {
     NO_ACCEPTABLE = 0xff, //! No acceptable methods
 };
 
-/** Values defined for CMD in RFC1928 */
 enum SOCKS5Command: uint8_t {
     CONNECT = 0x01,
     BIND = 0x02,
     UDP_ASSOCIATE = 0x03
 };
 
-/** Values defined for REP in RFC1928 */
 enum SOCKS5Reply: uint8_t {
     SUCCEEDED = 0x00,        //! Succeeded
     GENFAILURE = 0x01,       //! General failure
@@ -214,14 +210,12 @@ enum SOCKS5Reply: uint8_t {
     ATYPEUNSUPPORTED = 0x08, //! Address type not supported
 };
 
-/** Values defined for ATYPE in RFC1928 */
 enum SOCKS5Atyp: uint8_t {
     IPV4 = 0x01,
     DOMAINNAME = 0x03,
     IPV6 = 0x04,
 };
 
-/** Status codes that can be returned by InterruptibleRecv */
 enum class IntrRecvError {
     OK,
     Timeout,
@@ -230,17 +224,6 @@ enum class IntrRecvError {
     Interrupted
 };
 
-/**
- * Read bytes from socket. This will either read the full number of bytes requested
- * or return False on error or timeout.
- * This function can be interrupted by calling InterruptSocks5()
- *
- * @param data Buffer to receive into
- * @param len  Length of data to receive
- * @param timeout  Timeout in milliseconds for receive operation
- *
- * @note This function requires that hSocket is in non-blocking mode.
- */
 static IntrRecvError InterruptibleRecv(uint8_t* data, size_t len, int timeout, const SOCKET& hSocket)
 {
     int64_t curTime = GetTimeMillis();
@@ -280,14 +263,12 @@ static IntrRecvError InterruptibleRecv(uint8_t* data, size_t len, int timeout, c
     return len == 0 ? IntrRecvError::OK : IntrRecvError::Timeout;
 }
 
-/** Credentials for proxy authentication */
 struct ProxyCredentials
 {
     std::string username;
     std::string password;
 };
 
-/** Convert SOCKS5 reply to an error message */
 std::string Socks5ErrorString(uint8_t err)
 {
     switch(err) {
@@ -312,7 +293,6 @@ std::string Socks5ErrorString(uint8_t err)
     }
 }
 
-/** Connect using SOCKS5 (as described in RFC1928) */
 static bool Socks5(const std::string& strDest, int port, const ProxyCredentials *auth, const SOCKET& hSocket)
 {
     IntrRecvError recvr;
@@ -386,9 +366,7 @@ static bool Socks5(const std::string& strDest, int port, const ProxyCredentials 
     uint8_t pchRet2[4];
     if ((recvr = InterruptibleRecv(pchRet2, 4, SOCKS5_RECV_TIMEOUT, hSocket)) != IntrRecvError::OK) {
         if (recvr == IntrRecvError::Timeout) {
-            /* If a timeout happens here, this effectively means we timed out while connecting
-             * to the remote node. This is very common for Tor, so do not print an
-             * error message. */
+
             return false;
         } else {
             return error("Error while reading proxy response");
@@ -659,12 +637,13 @@ std::string NetworkErrorString(int err)
 {
     char buf[256];
     buf[0] = 0;
-    /* Too bad there are two incompatible implementations of the
-     * thread-safe strerror. */
+
     const char *s;
-#ifdef STRERROR_R_CHAR_P /* GNU variant can return a pointer outside the passed buffer */
+#ifdef STRERROR_R_CHAR_P
+
     s = strerror_r(err, buf, sizeof(buf));
-#else /* POSIX variant always returns message in buffer */
+#else
+
     s = buf;
     if (strerror_r(err, buf, sizeof(buf)))
         buf[0] = 0;

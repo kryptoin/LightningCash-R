@@ -1,5 +1,5 @@
 // Copyright (c) 2009-2010 Satoshi Nakamoto
-// Copyright (c) 2009-2017 The Bitcoin Core developers
+// Copyright (c) 2009-2025 The Bitcoin Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -63,7 +63,6 @@ struct CDiskTxPos : public CDiskBlockPos
     }
 };
 
-/** CCoinsView backed by the coin database (chainstate/) */
 class CCoinsViewDB final : public CCoinsView
 {
 protected:
@@ -83,7 +82,6 @@ public:
     size_t EstimateSize() const override;
 };
 
-/** Specialization of CCoinsViewCursor to iterate over a CCoinsViewDB */
 class CCoinsViewDBCursor: public CCoinsViewCursor
 {
 public:
@@ -105,7 +103,6 @@ private:
     friend class CCoinsViewDB;
 };
 
-/** Access to the block database (blocks/index/) */
 class CBlockTreeDB : public CDBWrapper
 {
 public:

@@ -1,4 +1,4 @@
-// Copyright (c) 2011-2017 The Bitcoin Core developers
+// Copyright (c) 2011-2025 The Bitcoin Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -340,17 +340,6 @@ void SendCoinsDialog::on_sendButton_clicked()
         .arg(BitcoinUnits::formatHtmlWithUnit(model->getOptionsModel()->getDisplayUnit(), totalAmount)));
     questionString.append(QString("<span style='font-size:10pt;font-weight:normal;'><br />(=%1)</span>")
         .arg(alternativeUnits.join(" " + tr("or") + "<br />")));
-
-    /* LightningCashr: Disable RBF
-    questionString.append("<hr /><span>");
-    if (ui->optInRBF->isChecked()) {
-        questionString.append(tr("You can increase the fee later (signals Replace-By-Fee, BIP-125)."));
-    } else {
-        questionString.append(tr("Not signalling Replace-By-Fee, BIP-125."));
-    }
-    questionString.append("</span>");
-    */
-
 
     SendConfirmationDialog confirmationDialog(tr("Confirm send coins"),
         questionString.arg(formatted.join("<br />")), SEND_CONFIRM_DELAY, this);

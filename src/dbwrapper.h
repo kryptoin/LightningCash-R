@@ -1,4 +1,4 @@
-// Copyright (c) 2012-2017 The Bitcoin Core developers
+// Copyright (c) 2012-2025 The Bitcoin Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -27,23 +27,14 @@ public:
 
 class CDBWrapper;
 
-/** These should be considered an implementation detail of the specific database.
- */
 namespace dbwrapper_private {
 
-/** Handle database error by throwing dbwrapper_error exception.
- */
 void HandleError(const leveldb::Status& status);
 
-/** Work around circular dependency, as well as for testing in dbwrapper_tests.
- * Database obfuscation should be considered an implementation detail of the
- * specific database.
- */
 const std::vector<unsigned char>& GetObfuscateKey(const CDBWrapper &w);
 
 };
 
-/** Batch of changes queued to be written to a CDBWrapper */
 class CDBBatch
 {
     friend class CDBWrapper;
@@ -58,9 +49,7 @@ private:
     size_t size_estimate;
 
 public:
-    /**
-     * @param[in] _parent   CDBWrapper that this batch is to be submitted to
-     */
+
     explicit CDBBatch(const CDBWrapper &_parent) : parent(_parent), ssKey(SER_DISK, CLIENT_VERSION), ssValue(SER_DISK, CLIENT_VERSION), size_estimate(0) { };
 
     void Clear()
@@ -122,10 +111,7 @@ private:
 
 public:
 
-    /**
-     * @param[in] _parent          Parent CDBWrapper instance.
-     * @param[in] _piter           The original leveldb iterator.
-     */
+
     CDBIterator(const CDBWrapper &_parent, leveldb::Iterator *_piter) :
         parent(_parent), piter(_piter) { };
     ~CDBIterator();
@@ -210,14 +196,7 @@ private:
     std::vector<unsigned char> CreateObfuscateKey() const;
 
 public:
-    /**
-     * @param[in] path        Location in the filesystem where leveldb data will be stored.
-     * @param[in] nCacheSize  Configures various leveldb cache settings.
-     * @param[in] fMemory     If true, use leveldb's memory environment.
-     * @param[in] fWipe       If true, remove all existing data.
-     * @param[in] obfuscate   If true, store data obfuscated via simple XOR. If false, XOR
-     *                        with a zero'd byte array.
-     */
+
     CDBWrapper(const fs::path& path, size_t nCacheSize, bool fMemory = false, bool fWipe = false, bool obfuscate = false);
     ~CDBWrapper();
 
@@ -301,9 +280,7 @@ public:
         return new CDBIterator(*this, pdb->NewIterator(iteroptions));
     }
 
-    /**
-     * Return true if the database managed by this class contains no entries.
-     */
+
     bool IsEmpty();
 
     template<typename K>
@@ -322,9 +299,7 @@ public:
         return size;
     }
 
-    /**
-     * Compact a certain range of keys in the database.
-     */
+
     template<typename K>
     void CompactRange(const K& key_begin, const K& key_end) const
     {

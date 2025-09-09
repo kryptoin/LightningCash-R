@@ -12,7 +12,6 @@
 
 #include <boost/test/unit_test.hpp>
 
-
 BOOST_FIXTURE_TEST_SUITE(script_standard_tests, BasicTestingSetup)
 
 BOOST_AUTO_TEST_CASE(script_standard_Solver_success)

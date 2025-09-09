@@ -164,7 +164,8 @@ Result CreateTransaction(const CWallet* wallet, const uint256& txid, const CCoin
         new_fee = total_fee;
         nNewFeeRate = CFeeRate(total_fee, maxNewTxSize);
     } else {
-        new_fee = GetMinimumFee(maxNewTxSize, coin_control, mempool, ::feeEstimator, nullptr /* FeeCalculation */);
+        new_fee = GetMinimumFee(maxNewTxSize, coin_control, mempool, ::feeEstimator, nullptr
+);
         nNewFeeRate = CFeeRate(new_fee, maxNewTxSize);
 
         // New fee rate must be at least old rate + minimum incremental relay rate

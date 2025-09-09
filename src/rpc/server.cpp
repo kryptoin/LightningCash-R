@@ -1,5 +1,5 @@
 // Copyright (c) 2010 Satoshi Nakamoto
-// Copyright (c) 2009-2017 The Bitcoin Core developers
+// Copyright (c) 2009-2025 The Bitcoin Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -27,9 +27,9 @@ static bool fRPCRunning = false;
 static bool fRPCInWarmup = true;
 static std::string rpcWarmupStatus("RPC server started");
 static CCriticalSection cs_rpcWarmup;
-/* Timer-creating functions */
+
 static RPCTimerInterface* timerInterface = nullptr;
-/* Map of name to timer. */
+
 static std::map<std::string, std::unique_ptr<RPCTimerBase> > deadlineTimers;
 
 static struct CRPCSignals
@@ -147,10 +147,6 @@ std::vector<unsigned char> ParseHexO(const UniValue& o, std::string strKey)
     return ParseHexV(find_value(o, strKey), strKey);
 }
 
-/**
- * Note: This interface may still be subject to change.
- */
-
 std::string CRPCTable::help(const std::string& strCommand, const JSONRPCRequest& helpreq) const
 {
     std::string strRet;
@@ -226,7 +222,6 @@ UniValue help(const JSONRPCRequest& jsonRequest)
     return tableRPC.help(strCommand, jsonRequest);
 }
 
-
 UniValue stop(const JSONRPCRequest& jsonRequest)
 {
     // Accept the deprecated and ignored 'detach' boolean argument
@@ -256,13 +251,10 @@ UniValue uptime(const JSONRPCRequest& jsonRequest)
     return GetTime() - GetStartupTime();
 }
 
-/**
- * Call Table
- */
 static const CRPCCommand vRPCCommands[] =
 { //  category              name                      actor (function)         argNames
   //  --------------------- ------------------------  -----------------------  ----------
-    /* Overall control/query calls */
+
     { "control",            "help",                   &help,                   {"command"}  },
     { "control",            "stop",                   &stop,                   {}  },
     { "control",            "uptime",                 &uptime,                 {}  },
@@ -419,10 +411,6 @@ std::string JSONRPCExecBatch(const JSONRPCRequest& jreq, const UniValue& vReq)
     return ret.write() + "\n";
 }
 
-/**
- * Process named arguments into a vector of positional arguments, based on the
- * passed-in specification for the RPC call's arguments.
- */
 static inline JSONRPCRequest transformNamedArguments(const JSONRPCRequest& in, const std::vector<std::string>& argNames)
 {
     JSONRPCRequest out = in;

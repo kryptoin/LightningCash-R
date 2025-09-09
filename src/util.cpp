@@ -1,5 +1,5 @@
 // Copyright (c) 2009-2010 Satoshi Nakamoto
-// Copyright (c) 2009-2017 The Bitcoin Core developers
+// Copyright (c) 2009-2025 The Bitcoin Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -58,7 +58,8 @@
 #define NOMINMAX
 #endif
 
-#include <io.h> /* for _commit */
+#include <io.h>
+
 #include <shlobj.h>
 #endif
 
@@ -96,10 +97,8 @@ bool fLogIPs = DEFAULT_LOGIPS;
 std::atomic<bool> fReopenDebugLog(false);
 CTranslationInterface translationInterface;
 
-/** Log categories bitfield. */
 std::atomic<uint32_t> logCategories(0);
 
-/** Init OpenSSL library multithreading support */
 static std::unique_ptr<CCriticalSection[]> ppmutexOpenSSL;
 void locking_callback(int mode, int i, const char* file, int line) NO_THREAD_SAFETY_ANALYSIS
 {
@@ -147,28 +146,8 @@ public:
 }
 instance_of_cinit;
 
-/**
- * LogPrintf() has been broken a couple of times now
- * by well-meaning people adding mutexes in the most straightforward way.
- * It breaks because it may be called by global destructors during shutdown.
- * Since the order of destruction of static/global objects is undefined,
- * defining a mutex as a global object doesn't work (the mutex gets
- * destroyed, and then some later destructor calls OutputDebugStringF,
- * maybe indirectly, and you get a core dump at shutdown trying to lock
- * the mutex).
- */
-
 static boost::once_flag debugPrintInitFlag = BOOST_ONCE_INIT;
 
-/**
- * We use boost::call_once() to make sure mutexDebugLog and
- * vMsgsBeforeOpenLog are initialized in a thread-safe manner.
- *
- * NOTE: fileout, mutexDebugLog and sometimes vMsgsBeforeOpenLog
- * are leaked on exit. This is ugly, but will be cleaned up by
- * the OS/libc. When the shutdown sequence is fully audited and
- * tested, explicit destruction of these objects can be implemented.
- */
 static FILE* fileout = nullptr;
 static boost::mutex* mutexDebugLog = nullptr;
 static std::list<std::string>* vMsgsBeforeOpenLog;
@@ -303,11 +282,6 @@ std::vector<CLogCategoryActive> ListActiveLogCategories()
     return ret;
 }
 
-/**
- * fStartedNewLine is a state variable held by the calling context that will
- * suppress printing of the timestamp when multiple calls are made that don't
- * end in a newline. Initialize it to true, and hold it, in the calling context.
- */
 static std::string LogTimestampStr(const std::string &str, std::atomic_bool *fStartedNewLine)
 {
     std::string strStamped;
@@ -376,13 +350,8 @@ int LogPrintStr(const std::string &str)
     return ret;
 }
 
-/** A map that contains all the currently held directory locks. After
- * successful locking, these will be held here until the global destructor
- * cleans them up and thus automatically unlocks them, or ReleaseDirectoryLocks
- * is called.
- */
 static std::map<std::string, std::unique_ptr<boost::interprocess::file_lock>> dir_locks;
-/** Mutex to protect dir_locks. */
+
 static std::mutex cs_dir_locks;
 
 bool LockDirectory(const fs::path& directory, const std::string lockfile_name, bool probe_only)
@@ -420,7 +389,6 @@ void ReleaseDirectoryLocks()
     dir_locks.clear();
 }
 
-/** Interpret string as boolean, for argument parsing */
 static bool InterpretBool(const std::string& strValue)
 {
     if (strValue.empty())
@@ -428,7 +396,6 @@ static bool InterpretBool(const std::string& strValue)
     return (atoi(strValue) != 0);
 }
 
-/** Turn -noX into -X=0 */
 static void InterpretNegativeSetting(std::string& strKey, std::string& strValue)
 {
     if (strKey.length()>3 && strKey[0]=='-' && strKey[1]=='n' && strKey[2]=='o')
@@ -534,8 +501,6 @@ void ArgsManager::ForceSetArg(const std::string& strArg, const std::string& strV
     mapArgs[strArg] = strValue;
     mapMultiArgs[strArg] = {strValue};
 }
-
-
 
 static const int screenWidth = 79;
 static const int optIndent = 2;
@@ -710,14 +675,10 @@ bool RenameOver(fs::path src, fs::path dest)
 #else
     int rc = std::rename(src.string().c_str(), dest.string().c_str());
     return (rc == 0);
-#endif /* WIN32 */
+#endif
+
 }
 
-/**
- * Ignores exceptions thrown by Boost's create_directories if the requested directory exists.
- * Specifically handles case where path p exists, but it wasn't possible for the user to
- * write to the parent directory.
- */
 bool TryCreateDirectories(const fs::path& p)
 {
     try
@@ -757,10 +718,6 @@ bool TruncateFile(FILE *file, unsigned int length) {
 #endif
 }
 
-/**
- * this function tries to raise the file descriptor limit to the requested number.
- * It returns the actual file descriptor limit (which may be more or less than nMinFD)
- */
 int RaiseFileDescriptorLimit(int nMinFD) {
 #if defined(WIN32)
     return 2048;
@@ -780,10 +737,6 @@ int RaiseFileDescriptorLimit(int nMinFD) {
 #endif
 }
 
-/**
- * this function tries to make a particular range of a file allocated (corresponding to disk space)
- * it is advisory, and the range specified in the arguments will never contain live data
- */
 void AllocateFileRange(FILE *file, unsigned int offset, unsigned int length) {
 #if defined(WIN32)
     // Windows-specific version
@@ -967,7 +920,7 @@ std::string CopyrightHolders(const std::string& strPrefix)
         strYear.replace(strYear.find("2011"), sizeof("2011")-1, "2018");
         strCopyrightHolders += "\n" + strYear + "The LitecoinCash devs";
     }
-        
+
     // Litecoin: Check for untranslated substitution to make sure Litecion Core copyright is not removed by accident
     if (strprintf(COPYRIGHT_HOLDERS, COPYRIGHT_HOLDERS_SUBSTITUTION).find("Litecoin Core") == std::string::npos)
         strCopyrightHolders += "\n" + strPrefix + "The Litecoin Core developers";

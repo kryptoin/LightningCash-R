@@ -1,5 +1,5 @@
 // Copyright (c) 2010 Satoshi Nakamoto
-// Copyright (c) 2009-2017 The Bitcoin Core developers
+// Copyright (c) 2009-2025 The Bitcoin Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -13,15 +13,6 @@
 #include <version.h>
 
 #include <fstream>
-
-/**
- * JSON-RPC protocol.  Bitcoin speaks version 1.0 for maximum compatibility,
- * but uses JSON-RPC 1.1/2.0 standards for parts of the 1.0 standard that were
- * unspecified (HTTP errors and contents of 'error').
- *
- * 1.0 spec: http://json-rpc.org/wiki/specification
- * 1.2 spec: http://jsonrpc.org/historical/json-rpc-over-http.html
- */
 
 UniValue JSONRPCRequestObj(const std::string& strMethod, const UniValue& params, const UniValue& id)
 {
@@ -58,14 +49,10 @@ UniValue JSONRPCError(int code, const std::string& message)
     return error;
 }
 
-/** Username used when cookie authentication is in use (arbitrary, only for
- * recognizability in debugging/logging purposes)
- */
 static const std::string COOKIEAUTH_USER = "__cookie__";
-/** Default name for auth cookie file */
+
 static const std::string COOKIEAUTH_FILE = ".cookie";
 
-/** Get name of RPC authentication cookie file */
 static fs::path GetAuthCookieFile(bool temp=false)
 {
     std::string arg = gArgs.GetArg("-rpccookiefile", COOKIEAUTH_FILE);
@@ -84,9 +71,7 @@ bool GenerateAuthCookie(std::string *cookie_out)
     GetRandBytes(rand_pwd, COOKIE_SIZE);
     std::string cookie = COOKIEAUTH_USER + ":" + HexStr(rand_pwd, rand_pwd+COOKIE_SIZE);
 
-    /** the umask determines what permissions are used to create this file -
-     * these are set to 077 in init.cpp unless overridden with -sysperms.
-     */
+
     std::ofstream file;
     fs::path filepath_tmp = GetAuthCookieFile(true);
     file.open(filepath_tmp.string().c_str());

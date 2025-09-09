@@ -1,5 +1,5 @@
 // Copyright (c) 2009-2010 Satoshi Nakamoto
-// Copyright (c) 2009-2017 The Bitcoin Core developers
+// Copyright (c) 2009-2025 The Bitcoin Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -60,11 +60,6 @@ int64_t GetSystemTimeInSeconds()
 void MilliSleep(int64_t n)
 {
 
-/**
- * Boost's sleep_for was uninterruptible when backed by nanosleep from 1.50
- * until fixed in 1.52. Use the deprecated sleep method for the broken case.
- * See: https://svn.boost.org/trac/boost/ticket/7238
- */
 #if defined(HAVE_WORKING_BOOST_SLEEP_FOR)
     boost::this_thread::sleep_for(boost::chrono::milliseconds(n));
 #elif defined(HAVE_WORKING_BOOST_SLEEP)

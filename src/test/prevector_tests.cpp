@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2017 The Bitcoin Core developers
+// Copyright (c) 2015-2025 The Bitcoin Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -29,7 +29,6 @@ class prevector_tester {
     bool passed = true;
     FastRandomContext rand_cache;
     uint256 rand_seed;
-
 
     template <typename A, typename B>
         void local_check_equal(A a, B b)

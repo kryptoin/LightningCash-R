@@ -29,10 +29,12 @@ void ChaCha20::SetKey(const unsigned char* k, size_t keylen)
     input[5] = ReadLE32(k + 4);
     input[6] = ReadLE32(k + 8);
     input[7] = ReadLE32(k + 12);
-    if (keylen == 32) { /* recommended */
+    if (keylen == 32) {
+
         k += 16;
         constants = sigma;
-    } else { /* keylen == 16 */
+    } else {
+
         constants = tau;
     }
     input[8] = ReadLE32(k + 0);

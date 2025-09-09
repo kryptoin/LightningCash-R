@@ -1,5 +1,5 @@
 // Copyright (c) 2009-2010 Satoshi Nakamoto
-// Copyright (c) 2009-2017 The Bitcoin Core developers
+// Copyright (c) 2009-2025 The Bitcoin Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -20,8 +20,6 @@ class CScript;
 
 class arith_uint256;    // LightningCashr: Hive: Mining optimisations
 struct CBeeRange;       // LightningCashr: Hive: Mining optimisations
-
-
 
 namespace Consensus { struct Params; };
 
@@ -66,11 +64,6 @@ struct CTxMemPoolModifiedEntry {
     int64_t nSigOpCostWithAncestors;
 };
 
-/** Comparator for CTxMemPool::txiter objects.
- *  It simply compares the internal memory address of the CTxMemPoolEntry object
- *  pointed to. This means it has no meaning, and is only useful for using them
- *  as key in other indexes.
- */
 struct CompareCTxMemPoolIter {
     bool operator()(const CTxMemPool::txiter& a, const CTxMemPool::txiter& b) const
     {
@@ -132,7 +125,6 @@ struct update_for_parent_inclusion
     CTxMemPool::txiter iter;
 };
 
-/** Generate a new block, without valid proof-of-work */
 class BlockAssembler
 {
 private:
@@ -146,7 +138,7 @@ private:
     bool fIncludeBCTs;              // LightningCashr: Hive: Allow BCTs in block?
     unsigned int nBlockMaxWeight;
     CFeeRate blockMinFeeRate;
-    
+
     // Information on the current status of the block
     uint64_t nBlockWeight;
     uint64_t nBlockTx;
@@ -169,54 +161,42 @@ public:
     explicit BlockAssembler(const CChainParams& params);
     BlockAssembler(const CChainParams& params, const Options& options);
 
-    /** Construct a new block template with coinbase to scriptPubKeyIn */
+
     // LightningCashr: Hive: If hiveProofScript is passed, create a Hive block instead of a PoW block
     std::unique_ptr<CBlockTemplate> CreateNewBlock(const CScript& scriptPubKeyIn, bool fMineWitnessTx=true, const CScript* hiveProofScript=nullptr);
 
 private:
     // utility functions
-    /** Clear the block's state and prepare for assembling a new block */
+
     void resetBlock();
-    /** Add a tx to the block */
+
     void AddToBlock(CTxMemPool::txiter iter);
 
     // Methods for how to add transactions to a block.
-    /** Add transactions based on feerate including unconfirmed ancestors
-      * Increments nPackagesSelected / nDescendantsUpdated with corresponding
-      * statistics from the package selection (for logging statistics). */
+
     void addPackageTxs(int &nPackagesSelected, int &nDescendantsUpdated);
 
     // helper functions for addPackageTxs()
-    /** Remove confirmed (inBlock) entries from given set */
+
     void onlyUnconfirmed(CTxMemPool::setEntries& testSet);
-    /** Test if a new package would "fit" in the block */
+
     bool TestPackage(uint64_t packageSize, int64_t packageSigOpsCost) const;
-    /** Perform checks on each transaction in a package:
-      * locktime, premature-witness, serialized size (if necessary)
-      * These checks should always succeed, and they're here
-      * only as an extra check in case of suboptimal node configuration */
+
     bool TestPackageTransactions(const CTxMemPool::setEntries& package);
-    /** Return true if given transaction from mapTx has already been evaluated,
-      * or if the transaction's cached data in mapTx is incorrect. */
+
     bool SkipMapTxEntry(CTxMemPool::txiter it, indexed_modified_transaction_set &mapModifiedTx, CTxMemPool::setEntries &failedTx);
-    /** Sort the package in an order that is valid to appear in a block */
+
     void SortForBlock(const CTxMemPool::setEntries& package, CTxMemPool::txiter entry, std::vector<CTxMemPool::txiter>& sortedEntries);
-    /** Add descendants of given transactions to mapModifiedTx with ancestor
-      * state updated assuming given transactions are inBlock. Returns number
-      * of updated descendants. */
+
     int UpdatePackagesForAdded(const CTxMemPool::setEntries& alreadyAdded, indexed_modified_transaction_set &mapModifiedTx);
 };
 
-/** Run the miner threads */
 void GenerateLNCR(bool fGenerate, int nThreads, const CChainParams& chainparams);
-/** Generate a new block, without valid proof-of-work */
 
 CBlockTemplate* CreateNewBlock(const CChainParams& chainparams, const CScript& scriptPubKeyIn);
 
-/** Estimate local hashes per second */
 double EstimateMinerHashesPerSecond();
 
-/** Modify the extranonce in a block */
 void IncrementExtraNonce(CBlock* pblock, const CBlockIndex* pindexPrev, unsigned int& nExtraNonce);
 int64_t UpdateTime(CBlockHeader* pblock, const Consensus::Params& consensusParams, const CBlockIndex* pindexPrev);
 

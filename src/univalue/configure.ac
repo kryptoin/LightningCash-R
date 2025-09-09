@@ -13,7 +13,6 @@ m4_define([libunivalue_revision], [libunivalue_interface_age])
 m4_define([libunivalue_age], [m4_eval(libunivalue_binary_age - libunivalue_interface_age)])
 m4_define([libunivalue_version], [libunivalue_major_version().libunivalue_minor_version().libunivalue_micro_version()libunivalue_extraversion()])
 
-
 AC_INIT([univalue], [1.0.3],
         [http://github.com/jgarzik/univalue/])
 

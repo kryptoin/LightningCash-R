@@ -1,4 +1,4 @@
-// Copyright (c) 2009-2017 The Bitcoin Core developers
+// Copyright (c) 2009-2025 The Bitcoin Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -263,10 +263,10 @@ UniValue disconnectnode(const JSONRPCRequest& request)
     const UniValue &id_arg = request.params[1];
 
     if (!address_arg.isNull() && id_arg.isNull()) {
-        /* handle disconnect-by-address */
+
         success = g_connman->DisconnectNode(address_arg.get_str());
     } else if (!id_arg.isNull() && (address_arg.isNull() || (address_arg.isStr() && address_arg.get_str().empty()))) {
-        /* handle disconnect-by-id */
+
         NodeId nodeid = (NodeId) id_arg.get_int64();
         success = g_connman->DisconnectNode(nodeid);
     } else {

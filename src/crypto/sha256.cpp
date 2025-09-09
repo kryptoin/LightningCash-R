@@ -1,4 +1,4 @@
-// Copyright (c) 2014-2017 The Bitcoin Core developers
+// Copyright (c) 2014-2025 The Bitcoin Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -32,7 +32,6 @@ uint32_t inline Sigma1(uint32_t x) { return (x >> 6 | x << 26) ^ (x >> 11 | x <<
 uint32_t inline sigma0(uint32_t x) { return (x >> 7 | x << 25) ^ (x >> 18 | x << 14) ^ (x >> 3); }
 uint32_t inline sigma1(uint32_t x) { return (x >> 17 | x << 15) ^ (x >> 19 | x << 13) ^ (x >> 10); }
 
-/** One round of SHA-256. */
 void inline Round(uint32_t a, uint32_t b, uint32_t c, uint32_t& d, uint32_t e, uint32_t f, uint32_t g, uint32_t& h, uint32_t k, uint32_t w)
 {
     uint32_t t1 = h + Sigma1(e) + Ch(e, f, g) + k + w;
@@ -41,7 +40,6 @@ void inline Round(uint32_t a, uint32_t b, uint32_t c, uint32_t& d, uint32_t e, u
     h = t1 + t2;
 }
 
-/** Initialize SHA-256 state. */
 void inline Initialize(uint32_t* s)
 {
     s[0] = 0x6a09e667ul;
@@ -54,7 +52,6 @@ void inline Initialize(uint32_t* s)
     s[7] = 0x5be0cd19ul;
 }
 
-/** Perform a number of SHA-256 transformations, processing 64-byte chunks. */
 void Transform(uint32_t* s, const unsigned char* chunk, size_t blocks)
 {
     while (blocks--) {

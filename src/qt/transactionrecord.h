@@ -1,4 +1,4 @@
-// Copyright (c) 2011-2017 The Bitcoin Core developers
+// Copyright (c) 2011-2025 The Bitcoin Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -14,8 +14,6 @@
 class CWallet;
 class CWalletTx;
 
-/** UI model for transaction status. The transaction status is the part of a transaction that will change over time.
- */
 class TransactionStatus
 {
 public:
@@ -25,19 +23,30 @@ public:
     { }
 
     enum Status {
-        Confirmed,          /**< Have 6 or more confirmations (normal tx) or fully mature (mined tx) **/
+        Confirmed,
+
         /// Normal (sent/received) transactions
-        OpenUntilDate,      /**< Transaction not yet final, waiting for date */
-        OpenUntilBlock,     /**< Transaction not yet final, waiting for block */
-        Offline,            /**< Not sent to any other nodes **/
-        Unconfirmed,        /**< Not yet mined into a block **/
-        Confirming,         /**< Confirmed, but waiting for the recommended number of confirmations **/
-        Conflicted,         /**< Conflicts with other transaction or mempool **/
-        Abandoned,          /**< Abandoned from the wallet **/
+        OpenUntilDate,
+
+        OpenUntilBlock,
+
+        Offline,
+
+        Unconfirmed,
+
+        Confirming,
+
+        Conflicted,
+
+        Abandoned,
+
         /// Generated (mined) transactions
-        Immature,           /**< Mined but waiting for maturity */
-        MaturesWarning,     /**< Transaction will likely not mature because no nodes have confirmed */
-        NotAccepted         /**< Mined but not accepted */
+        Immature,
+
+        MaturesWarning,
+
+        NotAccepted
+
     };
 
     /// Transaction counts towards available balance
@@ -45,29 +54,21 @@ public:
     /// Sorting key based on status
     std::string sortKey;
 
-    /** @name Generated (mined) transactions
-       @{*/
-    int matures_in;
-    /**@}*/
 
-    /** @name Reported status
-       @{*/
+    int matures_in;
+
+
     Status status;
     qint64 depth;
-    qint64 open_for; /**< Timestamp if status==OpenUntilDate, otherwise number
-                      of additional blocks that need to be mined before
-                      finalization */
-    /**@}*/
+    qint64 open_for;
 
-    /** Current number of blocks (to know whether cached status is still valid) */
+
+
     int cur_num_blocks;
 
     bool needsUpdate;
 };
 
-/** UI model for a transaction. A core transaction can be represented by multiple UI transactions if it has
-    multiple outputs.
- */
 class TransactionRecord
 {
 public:
@@ -85,7 +86,7 @@ public:
         HiveHoney           // LightningCashr: Hive
     };
 
-    /** Number of confirmation recommended for accepting a transaction */
+
     static const int RecommendedNumConfirmations = 6;
 
     TransactionRecord():
@@ -107,42 +108,37 @@ public:
     {
     }
 
-    /** Decompose CWallet transaction to model transaction records.
-     */
+
     static bool showTransaction(const CWalletTx &wtx);
     static QList<TransactionRecord> decomposeTransaction(const CWallet *wallet, const CWalletTx &wtx);
 
-    /** @name Immutable transaction attributes
-      @{*/
+
     uint256 hash;
     qint64 time;
     Type type;
     std::string address;
     CAmount debit;
     CAmount credit;
-    /**@}*/
 
-    /** Subtransaction index, for sort key */
+
     int idx;
 
-    /** Status: can change with block chain update */
+
     TransactionStatus status;
 
-    /** Whether the transaction was sent/received with a watch-only address */
+
     bool involvesWatchAddress;
 
-    /** Return the unique identifier for this transaction (part) */
+
     QString getTxID() const;
 
-    /** Return the output index of the subtransaction  */
+
     int getOutputIndex() const;
 
-    /** Update status from core wallet tx.
-     */
+
     void updateStatus(const CWalletTx &wtx);
 
-    /** Return whether a status update is needed.
-     */
+
     bool statusUpdateNeeded() const;
 };
 

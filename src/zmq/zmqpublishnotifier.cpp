@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2017 The Bitcoin Core developers
+// Copyright (c) 2015-2025 The Bitcoin Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -133,14 +133,12 @@ bool CZMQAbstractPublishNotifier::SendMessage(const char *command, const void* d
 {
     assert(psocket);
 
-    /* send three parts, command & data & a LE 4byte sequence number */
     unsigned char msgseq[sizeof(uint32_t)];
     WriteLE32(&msgseq[0], nSequence);
     int rc = zmq_send_multipart(psocket, command, strlen(command), data, size, msgseq, (size_t)sizeof(uint32_t), nullptr);
     if (rc == -1)
         return false;
 
-    /* increment memory only sequence number after sending */
     nSequence++;
 
     return true;

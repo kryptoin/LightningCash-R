@@ -1,4 +1,4 @@
-// Copyright (c) 2011-2017 The Bitcoin Core developers
+// Copyright (c) 2011-2025 The Bitcoin Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -30,7 +30,6 @@
 #include <QTextCursor>
 #include <QVBoxLayout>
 
-/** "Help message" or "About" dialog box */
 HelpMessageDialog::HelpMessageDialog(QWidget *parent, bool about) :
     QDialog(parent),
     ui(new Ui::HelpMessageDialog)
@@ -38,9 +37,7 @@ HelpMessageDialog::HelpMessageDialog(QWidget *parent, bool about) :
     ui->setupUi(this);
 
     QString version = tr(PACKAGE_NAME) + " " + tr("version") + " " + QString::fromStdString(FormatFullVersion());
-    /* On x86 add a bit specifier to the version so that users can distinguish between
-     * 32 and 64 bit builds. On other architectures, 32/64 bit may be more ambiguous.
-     */
+
 #if defined(__x86_64__)
     version += " " + tr("(%1-bit)").arg(64);
 #elif defined(__i386__ )
@@ -159,8 +156,6 @@ void HelpMessageDialog::on_okButton_accepted()
     close();
 }
 
-
-/** "Shutdown" window */
 ShutdownWindow::ShutdownWindow(QWidget *parent, Qt::WindowFlags f):
     QWidget(parent, f)
 {

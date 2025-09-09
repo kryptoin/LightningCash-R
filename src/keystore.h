@@ -1,5 +1,5 @@
 // Copyright (c) 2009-2010 Satoshi Nakamoto
-// Copyright (c) 2009-2017 The Bitcoin Core developers
+// Copyright (c) 2009-2025 The Bitcoin Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -14,7 +14,6 @@
 
 #include <boost/signals2/signal.hpp>
 
-/** A virtual base class for key stores */
 class CKeyStore
 {
 protected:
@@ -51,7 +50,6 @@ typedef std::map<CKeyID, CPubKey> WatchKeyMap;
 typedef std::map<CScriptID, CScript > ScriptMap;
 typedef std::set<CScript> WatchOnlySet;
 
-/** Basic key store, that keeps keys in an address->secret map */
 class CBasicKeyStore : public CKeyStore
 {
 protected:
@@ -82,7 +80,6 @@ public:
 typedef std::vector<unsigned char, secure_allocator<unsigned char> > CKeyingMaterial;
 typedef std::map<CKeyID, std::pair<CPubKey, std::vector<unsigned char> > > CryptedKeyMap;
 
-/** Return the CKeyID of the key involved in a script (if there is a unique one). */
 CKeyID GetKeyForDestination(const CKeyStore& store, const CTxDestination& dest);
 
 #endif // BITCOIN_KEYSTORE_H

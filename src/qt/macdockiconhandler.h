@@ -1,4 +1,4 @@
-// Copyright (c) 2011-2015 The Bitcoin Core developers
+// Copyright (c) 2011-2025 The Bitcoin Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -14,8 +14,6 @@ class QMenu;
 class QWidget;
 QT_END_NAMESPACE
 
-/** Macintosh-specific dock icon handler.
- */
 class MacDockIconHandler : public QObject
 {
     Q_OBJECT

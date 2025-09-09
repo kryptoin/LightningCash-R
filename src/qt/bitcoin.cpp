@@ -1,4 +1,4 @@
-// Copyright (c) 2011-2017 The Bitcoin Core developers
+// Copyright (c) 2011-2025 The Bitcoin Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -86,9 +86,6 @@ static void InitMessage(const std::string &message)
     LogPrintf("init message: %s\n", message);
 }
 
-/*
-   Translate string to current locale using Qt.
- */
 static std::string Translate(const char* psz)
 {
     return QCoreApplication::translate("bitcoin-core", psz).toStdString();
@@ -109,7 +106,6 @@ static QString GetLangTerritory()
     return lang_territory;
 }
 
-/** Set up translations */
 static void initTranslations(QTranslator &qtTranslatorBase, QTranslator &qtTranslator, QTranslator &translatorBase, QTranslator &translator)
 {
     // Remove old translators
@@ -147,7 +143,6 @@ static void initTranslations(QTranslator &qtTranslatorBase, QTranslator &qtTrans
         QApplication::installTranslator(&translator);
 }
 
-/* qDebug() message handler --> debug.log */
 #if QT_VERSION < 0x050000
 void DebugMessageHandler(QtMsgType type, const char *msg)
 {
@@ -169,17 +164,12 @@ void DebugMessageHandler(QtMsgType type, const QMessageLogContext& context, cons
 }
 #endif
 
-/** Class encapsulating Bitcoin Core startup and shutdown.
- * Allows running startup and shutdown in a different thread from the UI thread.
- */
 class BitcoinCore: public QObject
 {
     Q_OBJECT
 public:
     explicit BitcoinCore();
-    /** Basic initialization, before starting initialization/shutdown thread.
-     * Return true on success.
-     */
+
     static bool baseInitialize();
 
 public Q_SLOTS:
@@ -197,7 +187,6 @@ private:
     void handleRunawayException(const std::exception *e);
 };
 
-/** Main Bitcoin application object */
 class BitcoinApplication: public QApplication
 {
     Q_OBJECT
@@ -408,13 +397,12 @@ void BitcoinApplication::startThread()
     BitcoinCore *executor = new BitcoinCore();
     executor->moveToThread(coreThread);
 
-    /*  communication to and from thread */
     connect(executor, SIGNAL(initializeResult(bool)), this, SLOT(initializeResult(bool)));
     connect(executor, SIGNAL(shutdownResult()), this, SLOT(shutdownResult()));
     connect(executor, SIGNAL(runawayException(QString)), this, SLOT(handleRunawayException(QString)));
     connect(this, SIGNAL(requestedInitialize()), executor, SLOT(initialize()));
     connect(this, SIGNAL(requestedShutdown()), executor, SLOT(shutdown()));
-    /*  make sure executor object is deleted in its own thread */
+
     connect(this, SIGNAL(stopThread()), executor, SLOT(deleteLater()));
     connect(this, SIGNAL(stopThread()), coreThread, SLOT(quit()));
 

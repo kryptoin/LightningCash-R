@@ -131,7 +131,6 @@ void TCONCAT(_Test_,name)::_Run()
 // invoked via the macro expansion of TEST.
 extern bool RegisterTest(const char* base, const char* name, void (*func)());
 
-
 }  // namespace test
 }  // namespace leveldb
 

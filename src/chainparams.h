@@ -1,5 +1,5 @@
 // Copyright (c) 2009-2010 Satoshi Nakamoto
-// Copyright (c) 2009-2017 The Bitcoin Core developers
+// Copyright (c) 2009-2025 The Bitcoin Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -31,13 +31,6 @@ struct ChainTxData {
     double dTxRate;
 };
 
-/**
- * CChainParams defines various tweakable parameters of a given instance of the
- * Bitcoin system. There are three: the main network on which people trade goods
- * and services, the public test network which gets reset from time to time and
- * a regression test mode which is intended for private networks only. It has
- * minimal difficulty to ensure that blocks can be found instantly.
- */
 class CChainParams
 {
 public:
@@ -57,16 +50,16 @@ public:
     int GetDefaultPort() const { return nDefaultPort; }
 
     const CBlock& GenesisBlock() const { return genesis; }
-    /** Default value for -checkmempool and -checkblockindex argument */
+
     bool DefaultConsistencyChecks() const { return fDefaultConsistencyChecks; }
-    /** Policy: Filter transactions that do not match well-defined patterns */
+
     bool RequireStandard() const { return fRequireStandard; }
     uint64_t PruneAfterHeight() const { return nPruneAfterHeight; }
-    /** Make miner stop after a block is found. In RPC, don't return until nGenProcLimit blocks are generated */
+
     bool MineBlocksOnDemand() const { return fMineBlocksOnDemand; }
-    /** Return the BIP70 network string (main, test or regtest) */
+
     std::string NetworkIDString() const { return strNetworkID; }
-    /** Return the list of hostnames to look up for DNS seeds */
+
     const std::vector<std::string>& DNSSeeds() const { return vSeeds; }
     const std::vector<unsigned char>& Base58Prefix(Base58Type type) const { return base58Prefixes[type]; }
     const std::string& Bech32HRP() const { return bech32_hrp; }
@@ -94,28 +87,12 @@ protected:
     ChainTxData chainTxData;
 };
 
-/**
- * Creates and returns a std::unique_ptr<CChainParams> of the chosen chain.
- * @returns a CChainParams* of the chosen chain.
- * @throws a std::runtime_error if the chain is not supported.
- */
 std::unique_ptr<CChainParams> CreateChainParams(const std::string& chain);
 
-/**
- * Return the currently selected parameters. This won't change after app
- * startup, except for unit tests.
- */
 const CChainParams &Params();
 
-/**
- * Sets the params returned by Params() to those for the given BIP70 chain name.
- * @throws std::runtime_error when the chain is not supported.
- */
 void SelectParams(const std::string& chain);
 
-/**
- * Allows modifying the Version Bits regtest parameters.
- */
 void UpdateVersionBitsParameters(Consensus::DeploymentPos d, int64_t nStartTime, int64_t nTimeout);
 
 #endif // BITCOIN_CHAINPARAMS_H

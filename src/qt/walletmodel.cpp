@@ -1,4 +1,4 @@
-// Copyright (c) 2011-2017 The Bitcoin Core developers
+// Copyright (c) 2011-2025 The Bitcoin Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -308,7 +308,7 @@ WalletModel::SendCoinsReturn WalletModel::prepareTransaction(WalletModelTransact
 
 WalletModel::SendCoinsReturn WalletModel::sendCoins(WalletModelTransaction &transaction)
 {
-    QByteArray transaction_array; /* store serialized transaction */
+    QByteArray transaction_array;
 
     {
         LOCK2(cs_main, wallet->cs_wallet);
@@ -610,7 +610,10 @@ void WalletModel::getOutputs(const std::vector<COutPoint>& vOutpoints, std::vect
         if (it == wallet->mapWallet.end()) continue;
         int nDepth = it->second.GetDepthInMainChain();
         if (nDepth < 0) continue;
-        COutput out(&it->second, outpoint.n, nDepth, true /* spendable */, true /* solvable */, true /* safe */);
+        COutput out(&it->second, outpoint.n, nDepth, true
+, true
+, true
+);
         vOutputs.push_back(out);
     }
 }
@@ -703,7 +706,6 @@ bool WalletModel::createBees(int beeCount, bool communityContrib, QWidget *paren
 		return false;
 	    }
     }
-
 
     if ((Params().GetConsensus().variableBeecost) && (((chainActive.Tip()->nHeight) - 1) >= (Params().GetConsensus().variableForkBlock)) && (((chainActive.Tip()->nHeight) - 1) >= (Params().GetConsensus().remvariableForkBlock)) && ((chainActive.Tip()->nHeight) < nSpeedFork)) {
 	   // LogPrintf("OK \n");
@@ -814,7 +816,8 @@ bool WalletModel::bumpFee(uint256 hash)
     CAmount old_fee;
     CAmount new_fee;
     CMutableTransaction mtx;
-    if (feebumper::CreateTransaction(wallet, hash, coin_control, 0 /* totalFee */, errors, old_fee, new_fee, mtx) != feebumper::Result::OK) {
+    if (feebumper::CreateTransaction(wallet, hash, coin_control, 0
+, errors, old_fee, new_fee, mtx) != feebumper::Result::OK) {
         QMessageBox::critical(0, tr("Fee bump error"), tr("Increasing transaction fee failed") + "<br />(" +
             (errors.size() ? QString::fromStdString(errors[0]) : "") +")");
          return false;

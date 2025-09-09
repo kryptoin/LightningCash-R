@@ -1,4 +1,4 @@
-// Copyright (c) 2011-2017 The Bitcoin Core developers
+// Copyright (c) 2011-2025 The Bitcoin Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -14,9 +14,6 @@
 #include <QKeyEvent>
 #include <QLineEdit>
 
-/** QSpinBox that uses fixed-point numbers internally and uses our own
- * formatting/parsing functions.
- */
 class AmountSpinBox: public QAbstractSpinBox
 {
     Q_OBJECT
@@ -38,7 +35,7 @@ public:
             return QValidator::Intermediate;
         bool valid = false;
         parse(text, &valid);
-        /* Make sure we return Intermediate so that fixup() is called on defocus */
+
         return valid ? QValidator::Intermediate : QValidator::Invalid;
     }
 
@@ -129,11 +126,6 @@ private:
     CAmount singleStep;
     mutable QSize cachedMinimumSizeHint;
 
-    /**
-     * Parse a string into a number of base monetary units and
-     * return validity.
-     * @note Must return 0 if !valid.
-     */
     CAmount parse(const QString &text, bool *valid_out=0) const
     {
         CAmount val = 0;

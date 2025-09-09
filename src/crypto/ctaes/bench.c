@@ -128,7 +128,6 @@ static void bench_AES256_init(void* data) {
     }
 }
 
-
 static void bench_AES256_encrypt_setup(void* data) {
     AES256_ctx* ctx = (AES256_ctx*)data;
     static const unsigned char key[16] = {0};

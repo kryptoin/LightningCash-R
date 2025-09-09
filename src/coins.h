@@ -1,5 +1,5 @@
 // Copyright (c) 2009-2010 Satoshi Nakamoto
-// Copyright (c) 2009-2017 The Bitcoin Core developers
+// Copyright (c) 2009-2025 The Bitcoin Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -19,13 +19,6 @@
 
 #include <unordered_map>
 
-/**
- * A UTXO entry.
- *
- * Serialized format:
- * - VARINT((coinbase ? 1 : 0) | (height << 1))
- * - the non-spent CTxOut (via CTxOutCompressor)
- */
 class Coin
 {
 public:
@@ -84,17 +77,12 @@ public:
 class SaltedOutpointHasher
 {
 private:
-    /** Salt */
+
     const uint64_t k0, k1;
 
 public:
     SaltedOutpointHasher();
 
-    /**
-     * This *must* return size_t. With Boost 1.46 on 32-bit systems the
-     * unordered_map will behave unpredictably if the custom hasher returns a
-     * uint64_t, resulting in failures when syncing the chain (#4634).
-     */
     size_t operator()(const COutPoint& id) const {
         return SipHashUint256Extra(k0, k1, id.hash, id.n);
     }
@@ -108,11 +96,7 @@ struct CCoinsCacheEntry
     enum Flags {
         DIRTY = (1 << 0), // This cache entry is potentially different from the version in the parent view.
         FRESH = (1 << 1), // The parent view does not have this entry (or it is pruned).
-        /* Note that FRESH is a performance optimization with which we can
-         * erase coins that are fully spent if we know we do not need to
-         * flush the changes to the parent cache.  It is always safe to
-         * not mark FRESH if that condition is not guaranteed.
-         */
+
     };
 
     CCoinsCacheEntry() : flags(0) {}
@@ -121,7 +105,6 @@ struct CCoinsCacheEntry
 
 typedef std::unordered_map<COutPoint, CCoinsCacheEntry, SaltedOutpointHasher> CCoinsMap;
 
-/** Cursor for iterating over CoinsView state */
 class CCoinsViewCursor
 {
 public:
@@ -141,14 +124,10 @@ private:
     uint256 hashBlock;
 };
 
-/** Abstract view on the open txout dataset. */
 class CCoinsView
 {
 public:
-    /** Retrieve the Coin (unspent transaction output) for a given outpoint.
-     *  Returns true only when an unspent coin was found, which is returned in coin.
-     *  When false is returned, coin's value is unspecified.
-     */
+
     virtual bool GetCoin(const COutPoint &outpoint, Coin &coin) const;
 
     //! Just check whether a given outpoint is unspent.
@@ -177,8 +156,6 @@ public:
     virtual size_t EstimateSize() const { return 0; }
 };
 
-
-/** CCoinsView backed by another CCoinsView */
 class CCoinsViewBacked : public CCoinsView
 {
 protected:
@@ -196,27 +173,18 @@ public:
     size_t EstimateSize() const override;
 };
 
-
-/** CCoinsView that adds a memory cache for transactions to another CCoinsView */
 class CCoinsViewCache : public CCoinsViewBacked
 {
 protected:
-    /**
-     * Make mutable so that we can "fill the cache" even from Get-methods
-     * declared as "const".  
-     */
+
     mutable uint256 hashBlock;
     mutable CCoinsMap cacheCoins;
 
-    /* Cached dynamic memory usage for the inner Coin objects. */
     mutable size_t cachedCoinsUsage;
 
 public:
     CCoinsViewCache(CCoinsView *baseIn);
 
-    /**
-     * By deleting the copy constructor, we prevent accidentally using it when one intends to create a cache on top of a base cache.
-     */
     CCoinsViewCache(const CCoinsViewCache &) = delete;
 
     // Standard CCoinsView methods
@@ -229,49 +197,16 @@ public:
         throw std::logic_error("CCoinsViewCache cursor iteration not supported.");
     }
 
-    /**
-     * Check if we have the given utxo already loaded in this cache.
-     * The semantics are the same as HaveCoin(), but no calls to
-     * the backing CCoinsView are made.
-     */
     bool HaveCoinInCache(const COutPoint &outpoint) const;
 
-    /**
-     * Return a reference to Coin in the cache, or a pruned one if not found. This is
-     * more efficient than GetCoin.
-     *
-     * Generally, do not hold the reference returned for more than a short scope.
-     * While the current implementation allows for modifications to the contents
-     * of the cache while holding the reference, this behavior should not be relied
-     * on! To be safe, best to not hold the returned reference through any other
-     * calls to this cache.
-     */
     const Coin& AccessCoin(const COutPoint &output) const;
 
-    /**
-     * Add a coin. Set potential_overwrite to true if a non-pruned version may
-     * already exist.
-     */
     void AddCoin(const COutPoint& outpoint, Coin&& coin, bool potential_overwrite);
 
-    /**
-     * Spend a coin. Pass moveto in order to get the deleted data.
-     * If no unspent output exists for the passed outpoint, this call
-     * has no effect.
-     */
     bool SpendCoin(const COutPoint &outpoint, Coin* moveto = nullptr);
 
-    /**
-     * Push the modifications applied to this cache to its base.
-     * Failure to call this method before destruction will cause the changes to be forgotten.
-     * If false is returned, the state of this cache (and its backing view) will be undefined.
-     */
     bool Flush();
 
-    /**
-     * Removes the UTXO with the given outpoint from the cache, if it is
-     * not modified.
-     */
     void Uncache(const COutPoint &outpoint);
 
     //! Calculate the size of the cache (in number of transaction outputs)
@@ -280,14 +215,6 @@ public:
     //! Calculate the size of the cache (in bytes)
     size_t DynamicMemoryUsage() const;
 
-    /** 
-     * Amount of bitcoins coming in to a transaction
-     * Note that lightweight clients may not know anything besides the hash of previous transactions,
-     * so may not be able to calculate this.
-     *
-     * @param[in] tx	transaction for which we are checking input total
-     * @return	Sum of value of all inputs (scriptSigs)
-     */
     CAmount GetValueIn(const CTransaction& tx) const;
 
     //! Check whether all prevouts of the transaction are present in the UTXO set represented by this view

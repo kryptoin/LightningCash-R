@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2017 The Bitcoin Core developers
+// Copyright (c) 2015-2025 The Bitcoin Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -19,7 +19,6 @@ CScheduler::~CScheduler()
 {
     assert(nThreadsServicingQueue == 0);
 }
-
 
 #if BOOST_VERSION < 105000
 static boost::system_time toPosixTime(const boost::chrono::system_clock::time_point& t)
@@ -144,7 +143,6 @@ bool CScheduler::AreThreadsServicingQueue() const {
     boost::unique_lock<boost::mutex> lock(newTaskMutex);
     return nThreadsServicingQueue;
 }
-
 
 void SingleThreadedSchedulerClient::MaybeScheduleProcessQueue() {
     {

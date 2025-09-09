@@ -1,4 +1,4 @@
-// Copyright (c) 2011-2015 The Bitcoin Core developers
+// Copyright (c) 2011-2025 The Bitcoin Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -38,13 +38,13 @@ private:
     const PlatformStyle *platformStyle;
 
 private Q_SLOTS:
-    /* sign message */
+
     void on_addressBookButton_SM_clicked();
     void on_pasteButton_SM_clicked();
     void on_signMessageButton_SM_clicked();
     void on_copySignatureButton_SM_clicked();
     void on_clearButton_SM_clicked();
-    /* verify message */
+
     void on_addressBookButton_VM_clicked();
     void on_verifyMessageButton_VM_clicked();
     void on_clearButton_VM_clicked();

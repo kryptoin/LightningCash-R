@@ -1,5 +1,5 @@
 // Copyright (c) 2009-2010 Satoshi Nakamoto
-// Copyright (c) 2009-2017 The Bitcoin Core developers
+// Copyright (c) 2009-2025 The Bitcoin Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -47,10 +47,6 @@ bool CastToBool(const valtype& vch)
     return false;
 }
 
-/**
- * Script is a stack machine (like Forth) that evaluates a predicate
- * returning a bool indicating valid or not.  There are no loops.
- */
 #define stacktop(i)  (stack.at(stack.size()+(i)))
 #define altstacktop(i)  (altstack.at(altstack.size()+(i)))
 static inline void popstack(std::vector<valtype>& stack)
@@ -94,16 +90,6 @@ bool static IsCompressedPubKey(const valtype &vchPubKey) {
     return true;
 }
 
-/**
- * A canonical signature exists of: <30> <total len> <02> <len R> <R> <02> <len S> <S> <hashtype>
- * Where R and S are not negative (their first byte has its highest bit not set), and not
- * excessively padded (do not start with a 0 byte, unless an otherwise negative number follows,
- * in which case a single 0 byte is necessary and even required).
- * 
- * See https://bitcointalk.org/index.php?topic=8392.msg127623#msg127623
- *
- * This function is consensus-critical since BIP66.
- */
 bool static IsValidSignatureEncoding(const std::vector<unsigned char> &sig) {
     // Format: 0x30 [total-length] 0x02 [R-length] [R] 0x02 [S-length] [S] [sighash]
     // * total-length: 1-byte length descriptor of everything that follows,
@@ -139,7 +125,7 @@ bool static IsValidSignatureEncoding(const std::vector<unsigned char> &sig) {
     // Verify that the length of the signature matches the sum of the length
     // of the elements.
     if ((size_t)(lenR + lenS + 7) != sig.size()) return false;
- 
+
     // Check whether the R element is an integer.
     if (sig[2] != 0x02) return false;
 
@@ -343,7 +329,6 @@ bool EvalScript(std::vector<std::vector<unsigned char> >& stack, const CScript& 
                 }
                 break;
 
-
                 //
                 // Control
                 //
@@ -491,7 +476,6 @@ bool EvalScript(std::vector<std::vector<unsigned char> >& stack, const CScript& 
                     return set_error(serror, SCRIPT_ERR_OP_RETURN);
                 }
                 break;
-
 
                 //
                 // Stack ops
@@ -691,7 +675,6 @@ bool EvalScript(std::vector<std::vector<unsigned char> >& stack, const CScript& 
                 }
                 break;
 
-
                 case OP_SIZE:
                 {
                     // (in -- in size)
@@ -701,7 +684,6 @@ bool EvalScript(std::vector<std::vector<unsigned char> >& stack, const CScript& 
                     stack.push_back(bn.getvch());
                 }
                 break;
-
 
                 //
                 // Bitwise logic
@@ -733,7 +715,6 @@ bool EvalScript(std::vector<std::vector<unsigned char> >& stack, const CScript& 
                     }
                 }
                 break;
-
 
                 //
                 // Numeric
@@ -836,7 +817,6 @@ bool EvalScript(std::vector<std::vector<unsigned char> >& stack, const CScript& 
                     stack.push_back(fValue ? vchTrue : vchFalse);
                 }
                 break;
-
 
                 //
                 // Crypto
@@ -1044,10 +1024,6 @@ bool EvalScript(std::vector<std::vector<unsigned char> >& stack, const CScript& 
 
 namespace {
 
-/**
- * Wrapper that serializes like CTransaction, but with the modifications
- *  required for the signature hash done in-place
- */
 class CTransactionSignatureSerializer {
 private:
     const CTransaction& txTo;  //!< reference to the spending transaction (the one being serialized)
@@ -1064,7 +1040,7 @@ public:
         fHashSingle((nHashTypeIn & 0x1f) == SIGHASH_SINGLE),
         fHashNone((nHashTypeIn & 0x1f) == SIGHASH_NONE) {}
 
-    /** Serialize the passed scriptCode, skipping OP_CODESEPARATORs */
+
     template<typename S>
     void SerializeScriptCode(S &s) const {
         CScript::const_iterator it = scriptCode.begin();
@@ -1087,7 +1063,7 @@ public:
             s.write((char*)&itBegin[0], it-itBegin);
     }
 
-    /** Serialize an input of txTo */
+
     template<typename S>
     void SerializeInput(S &s, unsigned int nInput) const {
         // In case of SIGHASH_ANYONECANPAY, only the input being signed is serialized
@@ -1109,7 +1085,7 @@ public:
             ::Serialize(s, txTo.vin[nInput].nSequence);
     }
 
-    /** Serialize an output of txTo */
+
     template<typename S>
     void SerializeOutput(S &s, unsigned int nOutput) const {
         if (fHashSingle && nOutput != nIn)
@@ -1119,7 +1095,7 @@ public:
             ::Serialize(s, txTo.vout[nOutput]);
     }
 
-    /** Serialize txTo */
+
     template<typename S>
     void Serialize(S &s) const {
         // Serialize nVersion
@@ -1193,7 +1169,6 @@ uint256 SignatureHash(const CScript& scriptCode, const CTransaction& txTo, unsig
         if (!(nHashType & SIGHASH_ANYONECANPAY) && (nHashType & 0x1f) != SIGHASH_SINGLE && (nHashType & 0x1f) != SIGHASH_NONE) {
             hashSequence = cacheready ? cache->hashSequence : GetSequenceHash(txTo);
         }
-
 
         if ((nHashType & 0x1f) != SIGHASH_SINGLE && (nHashType & 0x1f) != SIGHASH_NONE) {
             hashOutputs = cacheready ? cache->hashOutputs : GetOutputsHash(txTo);

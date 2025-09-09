@@ -1,10 +1,6 @@
-*.tar.gz
-
+# Compiled binaries and executables
 *.exe
-<<<<<<< HEAD
-=======
-
->>>>>>> lightningcashr2/master
+*.tar.gz
 src/lightningcashr
 src/lightningcashrd
 src/lightningcashr-cli
@@ -12,13 +8,13 @@ src/lightningcashr-tx
 src/test/test_lightningcashr
 src/test/test_lightningcashr_fuzzy
 src/qt/test/test_lightningcashr-qt
+lightningcashr-qt
+lightningcashr-Qt.app
+lightningcashr-qt_test
 
-<<<<<<< HEAD
-=======
-
->>>>>>> lightningcashr2/master
-# autoreconf
+# Build system generated files (autoreconf)
 Makefile.in
+Makefile
 aclocal.m4
 autom4te.cache/
 build-aux/config.guess
@@ -38,112 +34,104 @@ config.log
 config.status
 configure
 libtool
+libbitcoinconsensus.pc
+
+# Generated configuration files
 src/config/bitcoin-config.h
 src/config/bitcoin-config.h.in
 src/config/stamp-h1
 share/setup.nsi
 share/qt/Info.plist
 
+# Generated source files
 src/univalue/gen
+*.pb.cc
+*.pb.h
+*.json.h
+*.raw.h
 
+# Qt generated files
 src/qt/*.moc
 src/qt/moc_*.cpp
 src/qt/forms/ui_*.h
-
 src/qt/test/moc*.cpp
+qrc_*.cpp
 
+# Qt IDE files
 src/qt/bitcoin-qt.config
 src/qt/bitcoin-qt.creator
 src/qt/bitcoin-qt.creator.user
 src/qt/bitcoin-qt.files
 src/qt/bitcoin-qt.includes
 
+# Build artifacts and dependencies
 .deps
 .dirstamp
 .libs
+*.o
+*.o-*
+*.a
+*.lo
+*.la
+*.qm
+
+# Temporary and backup files
 .*.swp
 *.*~*
 *.bak
 *.rej
 *.orig
 *.pyc
-*.o
-*.o-*
 *.patch
-*.a
-*.pb.cc
-*.pb.h
 
+# Log and test files
 *.log
 *.trs
 *.dmg
 
-*.json.h
-*.raw.h
-
-#libtool object files
-*.lo
-*.la
-
-# Compilation and Qt preprocessor part
-*.qm
-Makefile
-<<<<<<< HEAD
-lightningcashr-qt
-lightningcashr-Qt.app
-=======
-
-lightningcashr-qt
-lightningcashr-Qt.app
-
->>>>>>> lightningcashr2/master
-background.tiff*
-
-# Unit-tests
-Makefile.test
-<<<<<<< HEAD
-lightningcashr-qt_test
-
-=======
-
-=======
-lightningcashr-qt_test
-
-
->>>>>>> lightningcashr2/master
-# Resources cpp
-qrc_*.cpp
 # Mac specific
 .DS_Store
-build
+background.tiff*
 
-#lcov
+# Unit test artifacts
+Makefile.test
+
+# Coverage files
 *.gcno
 *.gcda
 /*.info
-<<<<<<< HEAD
 test_lightningcashr.coverage/
-=======
-
-test_lightningcashr.coverage/
-
->>>>>>> lightningcashr2/master
 total.coverage/
 coverage_percent.txt
 
-#build tests
-linux-coverage-build
-linux-build
-win32-build
+# Build directories
+build/
+linux-coverage-build/
+linux-build/
+win32-build/
+
+# Test configuration and cache
 test/config.ini
+test/cache/
 test/cache/*
 
-!src/leveldb*/Makefile
-
+# Documentation
 /doc/doxygen/
 
-libbitcoinconsensus.pc
-contrib/devtools/split-debug.sh
+# IDE and editor files
 src/.vscode/
 .vscode/
+
+# Custom scripts (adjust as needed)
 just*.sh
+build.sh
+cleanup.sh
+
+# Contrib scripts that were deleted but might be regenerated
+contrib/devtools/split-debug.sh
+
+# Generated test files
+test.txt
+
+# Exception: Keep specific Makefiles that are tracked
+!src/leveldb*/Makefile

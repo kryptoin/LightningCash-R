@@ -1,4 +1,4 @@
-// Copyright (c) 2011-2017 The Bitcoin Core developers
+// Copyright (c) 2011-2025 The Bitcoin Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -16,12 +16,6 @@ QT_END_NAMESPACE
 extern const char *DEFAULT_GUI_PROXY_HOST;
 static constexpr unsigned short DEFAULT_GUI_PROXY_PORT = 9050;
 
-/** Interface from Qt to configuration data structure for Bitcoin client.
-   To Qt, the options are presented as a list with the different options
-   laid out vertically.
-   This can be changed to a tree once the settings become sufficiently
-   complex.
- */
 class OptionsModel : public QAbstractListModel
 {
     Q_OBJECT
@@ -61,10 +55,9 @@ public:
     int rowCount(const QModelIndex & parent = QModelIndex()) const;
     QVariant data(const QModelIndex & index, int role = Qt::DisplayRole) const;
     bool setData(const QModelIndex & index, const QVariant & value, int role = Qt::EditRole);
-    /** Updates current unit in memory, settings and emits displayUnitChanged(newUnit) signal */
+
     void setDisplayUnit(const QVariant &value);
 
-    /* Explicit getters */
     bool getHideTrayIcon() const { return fHideTrayIcon; }
     bool getMinimizeToTray() const { return fMinimizeToTray; }
     bool getMinimizeOnClose() const { return fMinimizeOnClose; }
@@ -74,12 +67,11 @@ public:
     bool getCoinControlFeatures() const { return fCoinControlFeatures; }
     const QString& getOverriddenByCommandLine() { return strOverriddenByCommandLine; }
 
-    /* Restart flag helper */
     void setRestartRequired(bool fRequired);
     bool isRestartRequired() const;
 
 private:
-    /* Qt-only settings */
+
     bool fHideTrayIcon;
     bool fMinimizeToTray;
     bool fMinimizeOnClose;
@@ -87,7 +79,7 @@ private:
     int nDisplayUnit;
     QString strThirdPartyTxUrls;
     bool fCoinControlFeatures;
-    /* settings that were overridden by command-line */
+
     QString strOverriddenByCommandLine;
 
     // Add option to list of GUI options overridden through command line/config file

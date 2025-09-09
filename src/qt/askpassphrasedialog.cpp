@@ -1,4 +1,4 @@
-// Copyright (c) 2011-2017 The Bitcoin Core developers
+// Copyright (c) 2011-2025 The Bitcoin Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -259,12 +259,7 @@ void AskPassphraseDialog::toggleShowPassword(bool show)
 
 bool AskPassphraseDialog::eventFilter(QObject *object, QEvent *event)
 {
-    /* Detect Caps Lock.
-     * There is no good OS-independent way to check a key state in Qt, but we
-     * can detect Caps Lock by checking for the following condition:
-     * Shift key is down and the result is a lower case character, or
-     * Shift key is not down and the result is an upper case character.
-     */
+
     if (event->type() == QEvent::KeyPress) {
         QKeyEvent *ke = static_cast<QKeyEvent *>(event);
         QString str = ke->text();

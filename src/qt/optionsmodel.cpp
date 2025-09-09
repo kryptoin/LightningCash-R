@@ -1,4 +1,4 @@
-// Copyright (c) 2011-2017 The Bitcoin Core developers
+// Copyright (c) 2011-2025 The Bitcoin Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -61,7 +61,7 @@ void OptionsModel::Init(bool resetSettings)
         settings.setValue("fHideTrayIcon", false);
     fHideTrayIcon = settings.value("fHideTrayIcon").toBool();
     Q_EMIT hideTrayIconChanged(fHideTrayIcon);
-    
+
     if (!settings.contains("fMinimizeToTray"))
         settings.setValue("fMinimizeToTray", false);
     fMinimizeToTray = settings.value("fMinimizeToTray").toBool() && !fHideTrayIcon;
@@ -169,9 +169,6 @@ void OptionsModel::Init(bool resetSettings)
     language = settings.value("language").toString();
 }
 
-/** Helper function to copy contents from one QSettings to another.
- * By using allKeys this also covers nested settings in a hierarchy.
- */
 static void CopySettings(QSettings& dst, const QSettings& src)
 {
     for (const QString& key : src.allKeys()) {
@@ -179,7 +176,6 @@ static void CopySettings(QSettings& dst, const QSettings& src)
     }
 }
 
-/** Back up a QSettings to an ini-formatted file. */
 static void BackupSettings(const fs::path& filename, const QSettings& src)
 {
     qWarning() << "Backing up GUI settings to" << GUIUtil::boostPathToQString(filename);
@@ -320,7 +316,8 @@ QVariant OptionsModel::data(const QModelIndex & index, int role) const
 // write QSettings values
 bool OptionsModel::setData(const QModelIndex & index, const QVariant & value, int role)
 {
-    bool successful = true; /* set to false on parse error */
+    bool successful = true;
+
     if(role == Qt::EditRole)
     {
         QSettings settings;
@@ -479,7 +476,6 @@ bool OptionsModel::setData(const QModelIndex & index, const QVariant & value, in
     return successful;
 }
 
-/** Updates current unit in memory, settings and emits displayUnitChanged(newUnit) signal */
 void OptionsModel::setDisplayUnit(const QVariant &value)
 {
     if (!value.isNull())

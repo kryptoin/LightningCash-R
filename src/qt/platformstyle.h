@@ -9,11 +9,10 @@
 #include <QPixmap>
 #include <QString>
 
-/* Coin network-specific GUI style information */
 class PlatformStyle
 {
 public:
-    /** Get style associated with provided platform name, or 0 if not known */
+
     static const PlatformStyle *instantiate(const QString &platformId);
 
     const QString &getName() const { return name; }
@@ -24,19 +23,14 @@ public:
     QColor TextColor() const { return textColor; }
     QColor SingleColor() const { return singleColor; }
 
-    /** Colorize an image (given filename) with the icon color */
     QImage SingleColorImage(const QString& filename) const;
 
-    /** Colorize an icon (given filename) with the icon color */
     QIcon SingleColorIcon(const QString& filename) const;
 
-    /** Colorize an icon (given object) with the icon color */
     QIcon SingleColorIcon(const QIcon& icon) const;
 
-    /** Colorize an icon (given filename) with the text color */
     QIcon TextColorIcon(const QString& filename) const;
 
-    /** Colorize an icon (given object) with the text color */
     QIcon TextColorIcon(const QIcon& icon) const;
 
 private:
@@ -48,7 +42,7 @@ private:
     bool useExtraSpacing;
     QColor singleColor;
     QColor textColor;
-    /* ... more to come later */
+
 };
 
 #endif // BITCOIN_QT_PLATFORMSTYLE_H

@@ -279,7 +279,8 @@ void DBIter::Seek(const Slice& target) {
       &saved_key_, ParsedInternalKey(target, sequence_, kValueTypeForSeek));
   iter_->Seek(saved_key_);
   if (iter_->Valid()) {
-    FindNextUserEntry(false, &saved_key_ /* temporary storage */);
+    FindNextUserEntry(false, &saved_key_
+);
   } else {
     valid_ = false;
   }
@@ -290,7 +291,8 @@ void DBIter::SeekToFirst() {
   ClearSavedValue();
   iter_->SeekToFirst();
   if (iter_->Valid()) {
-    FindNextUserEntry(false, &saved_key_ /* temporary storage */);
+    FindNextUserEntry(false, &saved_key_
+);
   } else {
     valid_ = false;
   }

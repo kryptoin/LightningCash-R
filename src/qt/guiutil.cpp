@@ -1,4 +1,4 @@
-// Copyright (c) 2011-2017 The Bitcoin Core developers
+// Copyright (c) 2011-2025 The Bitcoin Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -311,10 +311,9 @@ QString getSaveFileName(QWidget *parent, const QString &caption, const QString &
     {
         myDir = dir;
     }
-    /* Directly convert path to native OS path separators */
+
     QString result = QDir::toNativeSeparators(QFileDialog::getSaveFileName(parent, caption, myDir, filter, &selectedFilter));
 
-    /* Extract first suffix from filter pattern "Description (*.foo)" or "Description (*.foo *.bar ...) */
     QRegExp filter_re(".* \\(\\*\\.(.*)[ \\)]");
     QString selectedSuffix;
     if(filter_re.exactMatch(selectedFilter))
@@ -322,20 +321,18 @@ QString getSaveFileName(QWidget *parent, const QString &caption, const QString &
         selectedSuffix = filter_re.cap(1);
     }
 
-    /* Add suffix if needed */
     QFileInfo info(result);
     if(!result.isEmpty())
     {
         if(info.suffix().isEmpty() && !selectedSuffix.isEmpty())
         {
-            /* No suffix specified, add selected suffix */
+
             if(!result.endsWith("."))
                 result.append(".");
             result.append(selectedSuffix);
         }
     }
 
-    /* Return selected suffix if asked to */
     if(selectedSuffixOut)
     {
         *selectedSuffixOut = selectedSuffix;
@@ -361,12 +358,12 @@ QString getOpenFileName(QWidget *parent, const QString &caption, const QString &
     {
         myDir = dir;
     }
-    /* Directly convert path to native OS path separators */
+
     QString result = QDir::toNativeSeparators(QFileDialog::getOpenFileName(parent, caption, myDir, filter, &selectedFilter));
 
     if(selectedSuffixOut)
     {
-        /* Extract first suffix from filter pattern "Description (*.foo)" or "Description (*.foo *.bar ...) */
+
         QRegExp filter_re(".* \\(\\*\\.(.*)[ \\)]");
         QString selectedSuffix;
         if(filter_re.exactMatch(selectedFilter))
@@ -410,7 +407,6 @@ void openDebugLogfile()
 {
     fs::path pathDebug = GetDataDir() / "debug.log";
 
-    /* Open debug.log with the associated application */
     if (fs::exists(pathDebug))
         QDesktopServices::openUrl(QUrl::fromLocalFile(boostPathToQString(pathDebug)));
 }
@@ -419,15 +415,13 @@ bool openBitcoinConf()
 {
     boost::filesystem::path pathConfig = GetConfigFile(BITCOIN_CONF_FILENAME);
 
-    /* Create the file */
     boost::filesystem::ofstream configFile(pathConfig, std::ios_base::app);
-    
+
     if (!configFile.good())
         return false;
-    
+
     configFile.close();
-    
-    /* Open bitcoin.conf with the associated application */
+
     return QDesktopServices::openUrl(QUrl::fromLocalFile(boostPathToQString(pathConfig)));
 }
 
@@ -450,11 +444,11 @@ void SubstituteFonts(const QString& language)
     if (floor(NSAppKitVersionNumber) > NSAppKitVersionNumber10_8)
     {
         if (floor(NSAppKitVersionNumber) <= NSAppKitVersionNumber10_9)
-            /* On a 10.9 - 10.9.x system */
+
             QFont::insertSubstitution(".Lucida Grande UI", "Lucida Grande");
         else
         {
-            /* 10.10 or later system */
+
             if (language == "zh_CN" || language == "zh_TW" || language == "zh_HK") // traditional or simplified Chinese
               QFont::insertSubstitution(".Helvetica Neue DeskInterface", "Heiti SC");
             else if (language == "ja") // Japanese
@@ -592,10 +586,6 @@ void TableViewLastColumnResizingFixer::on_geometriesChanged()
     }
 }
 
-/**
- * Initializes all internal variables and prepares the
- * the resize modes of the last 2 columns of the table and
- */
 TableViewLastColumnResizingFixer::TableViewLastColumnResizingFixer(QTableView* table, int lastColMinimumWidth, int allColsMinimumWidth, QObject *parent) :
     QObject(parent),
     tableView(table),
@@ -769,7 +759,6 @@ bool SetStartOnSystemStartup(bool fAutoStart)
     return true;
 }
 
-
 #elif defined(Q_OS_MAC)
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wdeprecated-declarations"
@@ -785,7 +774,7 @@ LSSharedFileListItemRef findStartupItemInList(LSSharedFileListRef list, CFURLRef
     if (listSnapshot == nullptr) {
         return nullptr;
     }
-    
+
     // loop through the list of startup items and try to find the bitcoin app
     for(int i = 0; i < CFArrayGetCount(listSnapshot); i++) {
         LSSharedFileListItemRef item = (LSSharedFileListItemRef)CFArrayGetValueAtIndex(listSnapshot, i);
@@ -813,7 +802,7 @@ LSSharedFileListItemRef findStartupItemInList(LSSharedFileListRef list, CFURLRef
             CFRelease(currentItemURL);
         }
     }
-    
+
     CFRelease(listSnapshot);
     return nullptr;
 }
@@ -824,7 +813,7 @@ bool GetStartOnSystemStartup()
     if (bitcoinAppUrl == nullptr) {
         return false;
     }
-    
+
     LSSharedFileListRef loginItems = LSSharedFileListCreate(nullptr, kLSSharedFileListSessionLoginItems, nullptr);
     LSSharedFileListItemRef foundItem = findStartupItemInList(loginItems, bitcoinAppUrl);
 
@@ -838,7 +827,7 @@ bool SetStartOnSystemStartup(bool fAutoStart)
     if (bitcoinAppUrl == nullptr) {
         return false;
     }
-    
+
     LSSharedFileListRef loginItems = LSSharedFileListCreate(nullptr, kLSSharedFileListSessionLoginItems, nullptr);
     LSSharedFileListItemRef foundItem = findStartupItemInList(loginItems, bitcoinAppUrl);
 
@@ -850,7 +839,7 @@ bool SetStartOnSystemStartup(bool fAutoStart)
         // remove item
         LSSharedFileListItemRemove(loginItems, foundItem);
     }
-    
+
     CFRelease(bitcoinAppUrl);
     return true;
 }
@@ -1011,7 +1000,7 @@ void ClickableLabel::mouseReleaseEvent(QMouseEvent *event)
 {
     Q_EMIT clicked(event->pos());
 }
-    
+
 void ClickableProgressBar::mouseReleaseEvent(QMouseEvent *event)
 {
     Q_EMIT clicked(event->pos());

@@ -86,7 +86,6 @@ TEST(FindFileTest, Single) {
   ASSERT_TRUE(Overlaps(NULL, NULL));
 }
 
-
 TEST(FindFileTest, Multiple) {
   Add("150", "200");
   Add("200", "250");

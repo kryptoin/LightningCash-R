@@ -1,5 +1,5 @@
 // Copyright (c) 2009-2010 Satoshi Nakamoto
-// Copyright (c) 2009-2017 The Bitcoin Core developers
+// Copyright (c) 2009-2025 The Bitcoin Core developers
 // Copyright (c) 2017 The Zcash developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
@@ -16,7 +16,6 @@
 
 const unsigned int BIP32_EXTKEY_SIZE = 74;
 
-/** A reference to a CKey: the Hash160 of its serialized public key */
 class CKeyID : public uint160
 {
 public:
@@ -26,31 +25,21 @@ public:
 
 typedef uint256 ChainCode;
 
-/** An encapsulated public key. */
 class CPubKey
 {
 public:
-    /**
-     * secp256k1:
-     */
+
     static const unsigned int PUBLIC_KEY_SIZE             = 65;
     static const unsigned int COMPRESSED_PUBLIC_KEY_SIZE  = 33;
     static const unsigned int SIGNATURE_SIZE              = 72;
     static const unsigned int COMPACT_SIGNATURE_SIZE      = 65;
-    /**
-     * see www.keylength.com
-     * script supports up to 75 for single byte push
-     */
+
     static_assert(
         PUBLIC_KEY_SIZE >= COMPRESSED_PUBLIC_KEY_SIZE,
         "COMPRESSED_PUBLIC_KEY_SIZE is larger than PUBLIC_KEY_SIZE");
 
 private:
 
-    /**
-     * Just store the serialized data.
-     * Its length can very cheaply be computed from the first byte.
-     */
     unsigned char vch[PUBLIC_KEY_SIZE];
 
     //! Compute the length of a pubkey with a given first byte.
@@ -157,11 +146,6 @@ public:
         return Hash(vch, vch + size());
     }
 
-    /*
-     * Check syntactic correctness.
-     *
-     * Note that this is consensus critical as CheckSig() calls it!
-     */
     bool IsValid() const
     {
         return size() > 0;
@@ -176,15 +160,8 @@ public:
         return size() == COMPRESSED_PUBLIC_KEY_SIZE;
     }
 
-    /**
-     * Verify a DER signature (~72 bytes).
-     * If this public key is not fully valid, the return value will be false.
-     */
     bool Verify(const uint256& hash, const std::vector<unsigned char>& vchSig) const;
 
-    /**
-     * Check whether a signature is normalized (lower-S).
-     */
     static bool CheckLowS(const std::vector<unsigned char>& vchSig);
 
     //! Recover a public key from a compact signature.
@@ -243,8 +220,6 @@ struct CExtPubKey {
     }
 };
 
-/** Users of this module must hold an ECCVerifyHandle. The constructor and
- *  destructor of these are not allowed to run in parallel, though. */
 class ECCVerifyHandle
 {
     static int refcount;

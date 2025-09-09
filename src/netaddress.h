@@ -1,4 +1,4 @@
-// Copyright (c) 2009-2017 The Bitcoin Core developers
+// Copyright (c) 2009-2025 The Bitcoin Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -27,7 +27,6 @@ enum Network
     NET_MAX,
 };
 
-/** IP address (IPv6, or IPv4 using mapped IPv6 range (::FFFF:0:0/96)) */
 class CNetAddr
 {
     protected:
@@ -40,16 +39,10 @@ class CNetAddr
         void Init();
         void SetIP(const CNetAddr& ip);
 
-        /**
-         * Set raw IPv4 or IPv6 address (in network byte order)
-         * @note Only NET_IPV4 and NET_IPV6 are allowed for network.
-         */
+
         void SetRaw(Network network, const uint8_t *data);
 
-        /**
-          * Transform an arbitrary string into a non-routable ipv6 address.
-          * Useful for mapping resolved addresses back to their source.
-         */
+
         bool SetInternal(const std::string& name);
 
         bool SetSpecial(const std::string &strName); // for Tor addresses
@@ -136,7 +129,6 @@ class CSubNet
         }
 };
 
-/** A combination of a network address (CNetAddr) and a (TCP) port */
 class CService : public CNetAddr
 {
     protected:

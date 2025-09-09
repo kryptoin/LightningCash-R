@@ -1,4 +1,4 @@
-// Copyright (c) 2011-2017 The Bitcoin Core developers
+// Copyright (c) 2011-2025 The Bitcoin Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -25,9 +25,6 @@ class QSignalMapper;
 class QTableView;
 QT_END_NAMESPACE
 
-/** Widget showing the transaction list for a wallet, including a filter row.
-    Using the filter row, the user can view or export a subset of the transactions.
-  */
 class TransactionView : public QWidget
 {
     Q_OBJECT
@@ -105,7 +102,7 @@ private Q_SLOTS:
 Q_SIGNALS:
     void doubleClicked(const QModelIndex&);
 
-    /**  Fired when a message should be reported to the user */
+
     void message(const QString &title, const QString &message, unsigned int style);
 
 public Q_SLOTS:

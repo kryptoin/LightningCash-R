@@ -1,4 +1,4 @@
-// Copyright (c) 2011-2017 The Bitcoin Core developers
+// Copyright (c) 2011-2025 The Bitcoin Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -19,7 +19,7 @@ void PrintLockContention(const char* pszName, const char* pszFile, int nLine)
     LogPrintf("LOCKCONTENTION: %s\n", pszName);
     LogPrintf("Locker: %s:%d\n", pszFile, nLine);
 }
-#endif /* DEBUG_LOCKCONTENTION */
+#endif
 
 #ifdef DEBUG_LOCKORDER
 //
@@ -189,4 +189,5 @@ void DeleteLock(void* cs)
     }
 }
 
-#endif /* DEBUG_LOCKORDER */
+#endif
+

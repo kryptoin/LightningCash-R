@@ -1,4 +1,4 @@
-// Copyright (c) 2012-2017 The Bitcoin Core developers
+// Copyright (c) 2012-2025 The Bitcoin Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -73,7 +73,6 @@ struct UniqueCheck {
     void swap(UniqueCheck& x) { std::swap(x.check_id, check_id); };
 };
 
-
 struct MemoryCheck {
     static std::atomic<size_t> fake_allocated_memory;
     bool b {false};
@@ -142,10 +141,6 @@ typedef CCheckQueue<UniqueCheck> Unique_Queue;
 typedef CCheckQueue<MemoryCheck> Memory_Queue;
 typedef CCheckQueue<FrozenCleanupCheck> FrozenCleanup_Queue;
 
-
-/** This test case checks that the CCheckQueue works properly
- * with each specified size_t Checks pushed.
- */
 void Correct_Queue_range(std::vector<size_t> range)
 {
     auto small_queue = std::unique_ptr<Correct_Queue>(new Correct_Queue {QUEUE_BATCH_SIZE});
@@ -174,32 +169,27 @@ void Correct_Queue_range(std::vector<size_t> range)
     tg.join_all();
 }
 
-/** Test that 0 checks is correct
- */
 BOOST_AUTO_TEST_CASE(test_CheckQueue_Correct_Zero)
 {
     std::vector<size_t> range;
     range.push_back((size_t)0);
     Correct_Queue_range(range);
 }
-/** Test that 1 check is correct
- */
+
 BOOST_AUTO_TEST_CASE(test_CheckQueue_Correct_One)
 {
     std::vector<size_t> range;
     range.push_back((size_t)1);
     Correct_Queue_range(range);
 }
-/** Test that MAX check is correct
- */
+
 BOOST_AUTO_TEST_CASE(test_CheckQueue_Correct_Max)
 {
     std::vector<size_t> range;
     range.push_back(100000);
     Correct_Queue_range(range);
 }
-/** Test that random numbers of checks are correct
- */
+
 BOOST_AUTO_TEST_CASE(test_CheckQueue_Correct_Random)
 {
     std::vector<size_t> range;
@@ -209,8 +199,6 @@ BOOST_AUTO_TEST_CASE(test_CheckQueue_Correct_Random)
     Correct_Queue_range(range);
 }
 
-
-/** Test that failing checks are caught */
 BOOST_AUTO_TEST_CASE(test_CheckQueue_Catches_Failure)
 {
     auto fail_queue = std::unique_ptr<Failing_Queue>(new Failing_Queue {QUEUE_BATCH_SIZE});
@@ -302,7 +290,6 @@ BOOST_AUTO_TEST_CASE(test_CheckQueue_UniqueCheck)
     tg.join_all();
 }
 
-
 // Test that blocks which might allocate lots of memory free their memory aggressively.
 //
 // This test attempts to catch a pathological case where by lazily freeing
@@ -380,8 +367,6 @@ BOOST_AUTO_TEST_CASE(test_CheckQueue_FrozenCleanup)
     BOOST_REQUIRE(!fails);
 }
 
-
-/** Test that CCheckQueueControl is threadsafe */
 BOOST_AUTO_TEST_CASE(test_CheckQueueControl_Locks)
 {
     auto queue = std::unique_ptr<Standard_Queue>(new Standard_Queue{QUEUE_BATCH_SIZE});

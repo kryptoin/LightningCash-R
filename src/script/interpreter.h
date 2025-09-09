@@ -1,5 +1,5 @@
 // Copyright (c) 2009-2010 Satoshi Nakamoto
-// Copyright (c) 2009-2017 The Bitcoin Core developers
+// Copyright (c) 2009-2025 The Bitcoin Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -18,7 +18,6 @@ class CScript;
 class CTransaction;
 class uint256;
 
-/** Signature hash types/flags */
 enum
 {
     SIGHASH_ALL = 1,
@@ -27,11 +26,6 @@ enum
     SIGHASH_ANYONECANPAY = 0x80,
 };
 
-/** Script verification flags.
- *
- *  All flags are intended to be soft forks: the set of acceptable scripts under
- *  flags (A | B) is a subset of the acceptable scripts under flag (A).
- */
 enum
 {
     SCRIPT_VERIFY_NONE      = 0,

@@ -1,5 +1,5 @@
 // Copyright (c) 2009-2010 Satoshi Nakamoto
-// Copyright (c) 2009-2017 The Bitcoin Core developers
+// Copyright (c) 2009-2025 The Bitcoin Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -83,7 +83,6 @@ static enum RetFormat ParseDataFormat(std::string& param, const std::string& str
         if (suff == rf_names[i].name)
             return rf_names[i].rf;
 
-    /* If no suffix is found, return original string.  */
     param = strReq;
     return rf_names[0].rf;
 }

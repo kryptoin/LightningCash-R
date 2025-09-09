@@ -1,4 +1,4 @@
-// Copyright (c) 2011-2017 The Bitcoin Core developers
+// Copyright (c) 2011-2025 The Bitcoin Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -12,7 +12,6 @@
 #include <script/ismine.h>
 #include <uint256.h>
 #include <test/test_bitcoin.h>
-
 
 #include <boost/test/unit_test.hpp>
 
@@ -115,7 +114,6 @@ BOOST_AUTO_TEST_CASE(multisig_verify)
     BOOST_CHECK(!VerifyScript(s, a_or_b, nullptr, flags, MutableTransactionSignatureChecker(&txTo[1], 0, amount), &err));
     BOOST_CHECK_MESSAGE(err == SCRIPT_ERR_SIG_DER, ScriptErrorString(err));
 
-
     for (int i = 0; i < 4; i++)
         for (int j = 0; j < 4; j++)
         {
@@ -212,6 +210,5 @@ BOOST_AUTO_TEST_CASE(multisig_Sign)
         BOOST_CHECK_MESSAGE(SignSignature(keystore, txFrom, txTo[i], 0, SIGHASH_ALL | SIGHASH_FORKID), strprintf("SignSignature %d", i)); // LightningCashr Coin: Replay attack protection
     }
 }
-
 
 BOOST_AUTO_TEST_SUITE_END()

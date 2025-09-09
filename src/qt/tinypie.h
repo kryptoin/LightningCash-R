@@ -24,7 +24,7 @@ public:
 
 private:
     double normalisedVal;
-    
+
     QPainterPath HexPath(double scale, double centerX, double centerY);
 };
 

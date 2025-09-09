@@ -185,7 +185,6 @@ void leveldb_delete(
   SaveError(errptr, db->rep->Delete(options->rep, Slice(key, keylen)));
 }
 
-
 void leveldb_write(
     leveldb_t* db,
     const leveldb_writeoptions_t* options,

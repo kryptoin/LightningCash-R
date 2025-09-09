@@ -115,8 +115,10 @@ class LogTest {
  public:
   LogTest() : reading_(false),
               writer_(new Writer(&dest_)),
-              reader_(new Reader(&source_, &report_, true/*checksum*/,
-                      0/*initial_offset*/)) {
+              reader_(new Reader(&source_, &report_, true
+,
+                      0
+)) {
   }
 
   ~LogTest() {
@@ -202,14 +204,16 @@ class LogTest {
 
   void StartReadingAt(uint64_t initial_offset) {
     delete reader_;
-    reader_ = new Reader(&source_, &report_, true/*checksum*/, initial_offset);
+    reader_ = new Reader(&source_, &report_, true
+, initial_offset);
   }
 
   void CheckOffsetPastEndReturnsNoRecords(uint64_t offset_past_end) {
     WriteInitialOffsetLog();
     reading_ = true;
     source_.contents_ = Slice(dest_.contents_);
-    Reader* offset_reader = new Reader(&source_, &report_, true/*checksum*/,
+    Reader* offset_reader = new Reader(&source_, &report_, true
+,
                                        WrittenBytes() + offset_past_end);
     Slice record;
     std::string scratch;
@@ -222,7 +226,8 @@ class LogTest {
     WriteInitialOffsetLog();
     reading_ = true;
     source_.contents_ = Slice(dest_.contents_);
-    Reader* offset_reader = new Reader(&source_, &report_, true/*checksum*/,
+    Reader* offset_reader = new Reader(&source_, &report_, true
+,
                                        initial_offset);
 
     // Read all records from expected_record_offset through the last one.

@@ -1,4 +1,4 @@
-// Copyright (c) 2011-2017 The Bitcoin Core developers
+// Copyright (c) 2011-2025 The Bitcoin Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -29,8 +29,6 @@ class QUrl;
 class QWidget;
 QT_END_NAMESPACE
 
-/** Utility functions used by the Bitcoin Qt UI.
- */
 namespace GUIUtil
 {
     // Create human-readable string from date
@@ -56,55 +54,20 @@ namespace GUIUtil
     QString HtmlEscape(const QString& str, bool fMultiLine=false);
     QString HtmlEscape(const std::string& str, bool fMultiLine=false);
 
-    /** Copy a field of the currently selected entry of a view to the clipboard. Does nothing if nothing
-        is selected.
-       @param[in] column  Data column to extract from the model
-       @param[in] role    Data role to extract from the model
-       @see  TransactionView::copyLabel, TransactionView::copyAmount, TransactionView::copyAddress
-     */
     void copyEntryData(QAbstractItemView *view, int column, int role=Qt::EditRole);
 
-    /** Return a field of the currently selected entry as a QString. Does nothing if nothing
-        is selected.
-       @param[in] column  Data column to extract from the model
-       @see  TransactionView::copyLabel, TransactionView::copyAmount, TransactionView::copyAddress
-     */
     QList<QModelIndex> getEntryData(QAbstractItemView *view, int column);
 
     void setClipboard(const QString& str);
 
-    /** Get save filename, mimics QFileDialog::getSaveFileName, except that it appends a default suffix
-        when no suffix is provided by the user.
-
-      @param[in] parent  Parent window (or 0)
-      @param[in] caption Window caption (or empty, for default)
-      @param[in] dir     Starting directory (or empty, to default to documents directory)
-      @param[in] filter  Filter specification such as "Comma Separated Files (*.csv)"
-      @param[out] selectedSuffixOut  Pointer to return the suffix (file type) that was selected (or 0).
-                  Can be useful when choosing the save file format based on suffix.
-     */
     QString getSaveFileName(QWidget *parent, const QString &caption, const QString &dir,
         const QString &filter,
         QString *selectedSuffixOut);
 
-    /** Get open filename, convenience wrapper for QFileDialog::getOpenFileName.
-
-      @param[in] parent  Parent window (or 0)
-      @param[in] caption Window caption (or empty, for default)
-      @param[in] dir     Starting directory (or empty, to default to documents directory)
-      @param[in] filter  Filter specification such as "Comma Separated Files (*.csv)"
-      @param[out] selectedSuffixOut  Pointer to return the suffix (file type) that was selected (or 0).
-                  Can be useful when choosing the save file format based on suffix.
-     */
     QString getOpenFileName(QWidget *parent, const QString &caption, const QString &dir,
         const QString &filter,
         QString *selectedSuffixOut);
 
-    /** Get connection type to call object slot in GUI thread with invokeMethod. The call will be blocking.
-
-       @returns If called from the GUI thread, return a Qt::DirectConnection.
-                If called from another thread, return a Qt::BlockingQueuedConnection.
-    */
     Qt::ConnectionType blockingGUIThreadConnection();
 
     // Determine whether a widget is hidden behind other windows
@@ -119,10 +82,6 @@ namespace GUIUtil
     // Replace invalid default fonts with known good ones
     void SubstituteFonts(const QString& language);
 
-    /** Qt event filter that intercepts ToolTipChange events, and replaces the tooltip with a rich text
-      representation if needed. This assures that Qt can word-wrap long tooltip messages.
-      Tooltips longer than the provided size threshold (in characters) are wrapped.
-     */
     class ToolTipToRichTextFilter : public QObject
     {
         Q_OBJECT
@@ -137,16 +96,6 @@ namespace GUIUtil
         int size_threshold;
     };
 
-    /**
-     * Makes a QTableView last column feel as if it was being resized from its left border.
-     * Also makes sure the column widths are never larger than the table's viewport.
-     * In Qt, all columns are resizable from the right, but it's not intuitive resizing the last column from the right.
-     * Usually our second to last columns behave as if stretched, and when on strech mode, columns aren't resizable
-     * interactively or programmatically.
-     *
-     * This helper object takes care of this issue.
-     *
-     */
     class TableViewLastColumnResizingFixer: public QObject
     {
         Q_OBJECT
@@ -179,22 +128,16 @@ namespace GUIUtil
     bool GetStartOnSystemStartup();
     bool SetStartOnSystemStartup(bool fAutoStart);
 
-    /* Convert QString to OS specific boost path through UTF-8 */
     fs::path qstringToBoostPath(const QString &path);
 
-    /* Convert OS specific boost path to QString through UTF-8 */
     QString boostPathToQString(const fs::path &path);
 
-    /* Convert seconds into a QString with days, hours, mins, secs */
     QString formatDurationStr(int secs);
 
-    /* Format CNodeStats.nServices bitmask into a user-readable string */
     QString formatServicesStr(quint64 mask);
 
-    /* Format a CNodeCombinedStats.dPingTime into a user-readable string or display N/A, if 0*/
     QString formatPingTime(double dPingTime);
 
-    /* Format a CNodeCombinedStats.nTimeOffset into a user-readable string. */
     QString formatTimeOffset(int64_t nTimeOffset);
 
     QString formatNiceTimeOffset(qint64 secs);
@@ -208,22 +151,18 @@ namespace GUIUtil
         Q_OBJECT
 
     Q_SIGNALS:
-        /** Emitted when the label is clicked. The relative mouse coordinates of the click are
-         * passed to the signal.
-         */
+
         void clicked(const QPoint& point);
     protected:
         void mouseReleaseEvent(QMouseEvent *event);
     };
-    
+
     class ClickableProgressBar : public QProgressBar
     {
         Q_OBJECT
-        
+
     Q_SIGNALS:
-        /** Emitted when the progressbar is clicked. The relative mouse coordinates of the click are
-         * passed to the signal.
-         */
+
         void clicked(const QPoint& point);
     protected:
         void mouseReleaseEvent(QMouseEvent *event);

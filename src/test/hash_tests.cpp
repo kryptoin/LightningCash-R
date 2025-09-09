@@ -1,4 +1,4 @@
-// Copyright (c) 2013-2017 The Bitcoin Core developers
+// Copyright (c) 2013-2025 The Bitcoin Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -45,19 +45,6 @@ BOOST_AUTO_TEST_CASE(murmurhash3)
 #undef T
 }
 
-/*
-   SipHash-2-4 output with
-   k = 00 01 02 ...
-   and
-   in = (empty string)
-   in = 00 (1 byte)
-   in = 00 01 (2 bytes)
-   in = 00 01 02 (3 bytes)
-   ...
-   in = 00 01 02 ... 3e (63 bytes)
-
-   from: https://131002.net/siphash/siphash24.c
-*/
 uint64_t siphash_4_2_testvec[] = {
     0x726fdb47dd0e0e31, 0x74f839c593dc67fd, 0x0d6c8009d9a94f5a, 0x85676696d7fb7e2d,
     0xcf2794e0277187b7, 0x18765564cd99a68d, 0xcbc9466e58fee3ce, 0xab0200f58b01d137,

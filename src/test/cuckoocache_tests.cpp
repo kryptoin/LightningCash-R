@@ -1,4 +1,4 @@
-// Copyright (c) 2012-2017 The Bitcoin Core developers
+// Copyright (c) 2012-2025 The Bitcoin Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 #include <boost/test/unit_test.hpp>
@@ -8,26 +8,10 @@
 #include <random.h>
 #include <thread>
 
-/** Test Suite for CuckooCache
- *
- *  1) All tests should have a deterministic result (using insecure rand
- *  with deterministic seeds)
- *  2) Some test methods are templated to allow for easier testing
- *  against new versions / comparing
- *  3) Results should be treated as a regression test, i.e., did the behavior
- *  change significantly from what was expected. This can be OK, depending on
- *  the nature of the change, but requires updating the tests to reflect the new
- *  expected behavior. For example improving the hit rate may cause some tests
- *  using BOOST_CHECK_CLOSE to fail.
- *
- */
 FastRandomContext local_rand_ctx(true);
 
 BOOST_AUTO_TEST_SUITE(cuckoocache_tests);
 
-
-/** insecure_GetRandHash fills in a uint256 from local_rand_ctx
- */
 void insecure_GetRandHash(uint256& t)
 {
     uint32_t* ptr = (uint32_t*)t.begin();
@@ -35,12 +19,6 @@ void insecure_GetRandHash(uint256& t)
         *(ptr++) = local_rand_ctx.rand32();
 }
 
-
-
-/* Test that no values not inserted into the cache are read out of it.
- *
- * There are no repeats in the first 200000 insecure_GetRandHash calls
- */
 BOOST_AUTO_TEST_CASE(test_cuckoocache_no_fakes)
 {
     local_rand_ctx = FastRandomContext(true);
@@ -58,9 +36,6 @@ BOOST_AUTO_TEST_CASE(test_cuckoocache_no_fakes)
     }
 };
 
-/** This helper returns the hit rate when megabytes*load worth of entries are
- * inserted into a megabytes sized cache
- */
 template <typename Cache>
 double test_cache(size_t megabytes, double load)
 {
@@ -76,15 +51,12 @@ double test_cache(size_t megabytes, double load)
         for (uint8_t j = 0; j < 8; ++j)
             *(ptr++) = local_rand_ctx.rand32();
     }
-    /** We make a copy of the hashes because future optimizations of the
-     * cuckoocache may overwrite the inserted element, so the test is
-     * "future proofed".
-     */
+
     std::vector<uint256> hashes_insert_copy = hashes;
-    /** Do the insert */
+
     for (uint256& h : hashes_insert_copy)
         set.insert(h);
-    /** Count the hits */
+
     uint32_t count = 0;
     for (uint256& h : hashes)
         count += set.contains(h, false);
@@ -92,34 +64,14 @@ double test_cache(size_t megabytes, double load)
     return hit_rate;
 }
 
-/** The normalized hit rate for a given load.
- *
- * The semantics are a little confusing, so please see the below
- * explanation.
- *
- * Examples:
- *
- * 1) at load 0.5, we expect a perfect hit rate, so we multiply by
- * 1.0
- * 2) at load 2.0, we expect to see half the entries, so a perfect hit rate
- * would be 0.5. Therefore, if we see a hit rate of 0.4, 0.4*2.0 = 0.8 is the
- * normalized hit rate.
- *
- * This is basically the right semantics, but has a bit of a glitch depending on
- * how you measure around load 1.0 as after load 1.0 your normalized hit rate
- * becomes effectively perfect, ignoring freshness.
- */
 double normalize_hit_rate(double hits, double load)
 {
     return hits * std::max(load, 1.0);
 }
 
-/** Check the hit rate on loads ranging from 0.1 to 2.0 */
 BOOST_AUTO_TEST_CASE(cuckoocache_hit_rate_ok)
 {
-    /** Arbitrarily selected Hit Rate threshold that happens to work for this test
-     * as a lower bound on performance.
-     */
+
     double HitRateThresh = 0.98;
     size_t megabytes = 4;
     for (double load = 0.1; load < 2; load *= 2) {
@@ -128,9 +80,6 @@ BOOST_AUTO_TEST_CASE(cuckoocache_hit_rate_ok)
     }
 }
 
-
-/** This helper checks that erased elements are preferentially inserted onto and
- * that the hit rate of "fresher" keys is reasonable*/
 template <typename Cache>
 void test_cache_erase(size_t megabytes)
 {
@@ -147,27 +96,22 @@ void test_cache_erase(size_t megabytes)
         for (uint8_t j = 0; j < 8; ++j)
             *(ptr++) = local_rand_ctx.rand32();
     }
-    /** We make a copy of the hashes because future optimizations of the
-     * cuckoocache may overwrite the inserted element, so the test is
-     * "future proofed".
-     */
+
     std::vector<uint256> hashes_insert_copy = hashes;
 
-    /** Insert the first half */
     for (uint32_t i = 0; i < (n_insert / 2); ++i)
         set.insert(hashes_insert_copy[i]);
-    /** Erase the first quarter */
+
     for (uint32_t i = 0; i < (n_insert / 4); ++i)
         set.contains(hashes[i], true);
-    /** Insert the second half */
+
     for (uint32_t i = (n_insert / 2); i < n_insert; ++i)
         set.insert(hashes_insert_copy[i]);
 
-    /** elements that we marked erased but that are still there */
     size_t count_erased_but_contained = 0;
-    /** elements that we did not erase but are older */
+
     size_t count_stale = 0;
-    /** elements that were most recently inserted */
+
     size_t count_fresh = 0;
 
     for (uint32_t i = 0; i < (n_insert / 4); ++i)
@@ -210,28 +154,22 @@ void test_cache_erase_parallel(size_t megabytes)
         for (uint8_t j = 0; j < 8; ++j)
             *(ptr++) = local_rand_ctx.rand32();
     }
-    /** We make a copy of the hashes because future optimizations of the
-     * cuckoocache may overwrite the inserted element, so the test is
-     * "future proofed".
-     */
+
     std::vector<uint256> hashes_insert_copy = hashes;
     boost::shared_mutex mtx;
 
     {
-        /** Grab lock to make sure we release inserts */
+
         boost::unique_lock<boost::shared_mutex> l(mtx);
-        /** Insert the first half */
+
         for (uint32_t i = 0; i < (n_insert / 2); ++i)
             set.insert(hashes_insert_copy[i]);
     }
 
-    /** Spin up 3 threads to run contains with erase.
-     */
     std::vector<std::thread> threads;
-    /** Erase the first quarter */
+
     for (uint32_t x = 0; x < 3; ++x)
-        /** Each thread is emplaced with x copy-by-value
-        */
+
         threads.emplace_back([&, x] {
             boost::shared_lock<boost::shared_mutex> l(mtx);
             size_t ntodo = (n_insert/4)/3;
@@ -241,21 +179,18 @@ void test_cache_erase_parallel(size_t megabytes)
                 set.contains(hashes[i], true);
         });
 
-    /** Wait for all threads to finish
-     */
     for (std::thread& t : threads)
         t.join();
-    /** Grab lock to make sure we observe erases */
+
     boost::unique_lock<boost::shared_mutex> l(mtx);
-    /** Insert the second half */
+
     for (uint32_t i = (n_insert / 2); i < n_insert; ++i)
         set.insert(hashes_insert_copy[i]);
 
-    /** elements that we marked erased but that are still there */
     size_t count_erased_but_contained = 0;
-    /** elements that we did not erase but are older */
+
     size_t count_stale = 0;
-    /** elements that were most recently inserted */
+
     size_t count_fresh = 0;
 
     for (uint32_t i = 0; i < (n_insert / 4); ++i)
@@ -280,7 +215,6 @@ BOOST_AUTO_TEST_CASE(cuckoocache_erase_parallel_ok)
     size_t megabytes = 4;
     test_cache_erase_parallel<CuckooCache::cache<uint256, SignatureCacheHasher>>(megabytes);
 }
-
 
 template <typename Cache>
 void test_cache_generations()

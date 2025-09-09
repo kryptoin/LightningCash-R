@@ -1,4 +1,4 @@
-// Copyright (c) 2011-2017 The Bitcoin Core developers
+// Copyright (c) 2011-2025 The Bitcoin Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -123,7 +123,7 @@ SplashScreen::SplashScreen(Qt::WindowFlags f, const NetworkStyle *networkStyle) 
     // LightningCashr: Faster, stronger, better !
     pixPaint.setFont(QFont(font, 25*fontFactor));
     pixPaint.drawText(302, 180, "Faster, stronger, better !");
-    
+
     pixPaint.end();
 
     // Set window title
@@ -158,8 +158,6 @@ void SplashScreen::slotFinish(QWidget *mainWin)
 {
     Q_UNUSED(mainWin);
 
-    /* If the window is minimized, hide() will be ignored. */
-    /* Make sure we de-minimize the splashscreen window before hiding */
     if (isMinimized())
         showNormal();
     hide();

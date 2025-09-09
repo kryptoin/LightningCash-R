@@ -1,5 +1,5 @@
 // Copyright (c) 2009-2010 Satoshi Nakamoto
-// Copyright (c) 2009-2017 The Bitcoin Core developers
+// Copyright (c) 2009-2025 The Bitcoin Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -15,11 +15,7 @@
 #include <boost/thread.hpp>
 
 namespace {
-/**
- * Valid signature cache, to avoid doing expensive ECDSA signature checking
- * twice for every transaction (once when accepted into memory pool, and
- * again when accepted into the block chain)
- */
+
 class CSignatureCache
 {
 private:
@@ -59,12 +55,6 @@ public:
     }
 };
 
-/* In previous versions of this code, signatureCache was a local static variable
- * in CachingTransactionSignatureChecker::VerifySignature.  We initialize
- * signatureCache outside of VerifySignature to avoid the atomic operation per
- * call overhead associated with local static variables even though
- * signatureCache could be made local to VerifySignature.
-*/
 static CSignatureCache signatureCache;
 } // namespace
 

@@ -1,4 +1,4 @@
-// Copyright (c) 2012-2017 The Bitcoin Core developers
+// Copyright (c) 2012-2025 The Bitcoin Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -26,7 +26,6 @@ static const std::string addr1C = "CeGCRrDwqS9rZLCKzGmys6FLUede24ZV4o";
 static const std::string addr2C = "CTtcbLKQtFW3tR4x2ADdqrbiJVfZQD9cFm";
 
 static const std::string strAddressBad = "CYx2uePwFLYVqrxzRqz6ceWGPK5PmEWfWD";
-
 
 BOOST_FIXTURE_TEST_SUITE(key_tests, BasicTestingSetup)
 

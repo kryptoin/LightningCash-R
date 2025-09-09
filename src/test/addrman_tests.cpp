@@ -1,4 +1,4 @@
-// Copyright (c) 2012-2017 The Bitcoin Core developers
+// Copyright (c) 2012-2025 The Bitcoin Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 #include <addrman.h>
@@ -104,7 +104,6 @@ BOOST_AUTO_TEST_CASE(addrman_simple)
     BOOST_CHECK(!addrman.Add(CAddress(addr1_dup, NODE_NONE), source));
     BOOST_CHECK_EQUAL(addrman.size(), 1);
 
-
     // Test: New table has one addr and we add a diff addr we should
     //  have at least one addr.
     // Note that addrman's size cannot be tested reliably after insertion, as
@@ -157,7 +156,6 @@ BOOST_AUTO_TEST_CASE(addrman_ports)
     BOOST_CHECK_EQUAL(addr_ret3.ToString(), "250.1.1.1:62458");
 }
 
-
 BOOST_AUTO_TEST_CASE(addrman_select)
 {
     CAddrManTest addrman;
@@ -183,7 +181,6 @@ BOOST_AUTO_TEST_CASE(addrman_select)
     BOOST_CHECK_EQUAL(addr_ret3.ToString(), "250.1.1.1:62458");
 
     BOOST_CHECK_EQUAL(addrman.size(), 1);
-
 
     // Add three addresses to new table.
     CService addr2 = ResolveService("250.3.1.1", 62458);
@@ -322,7 +319,6 @@ BOOST_AUTO_TEST_CASE(addrman_create)
     BOOST_CHECK_EQUAL(info2->ToString(), "250.1.2.1:62458");
 }
 
-
 BOOST_AUTO_TEST_CASE(addrman_delete)
 {
     CAddrManTest addrman;
@@ -403,7 +399,6 @@ BOOST_AUTO_TEST_CASE(addrman_getaddr)
     BOOST_CHECK_EQUAL(addrman.size(), 2006);
 }
 
-
 BOOST_AUTO_TEST_CASE(caddrinfo_get_tried_bucket)
 {
     CAddrManTest addrman;
@@ -413,12 +408,10 @@ BOOST_AUTO_TEST_CASE(caddrinfo_get_tried_bucket)
 
     CNetAddr source1 = ResolveIP("250.1.1.1");
 
-
     CAddrInfo info1 = CAddrInfo(addr1, source1);
 
     uint256 nKey1 = (uint256)(CHashWriter(SER_GETHASH, 0) << 1).GetHash();
     uint256 nKey2 = (uint256)(CHashWriter(SER_GETHASH, 0) << 2).GetHash();
-
 
     BOOST_CHECK_EQUAL(info1.GetTriedBucket(nKey1), 62);
 

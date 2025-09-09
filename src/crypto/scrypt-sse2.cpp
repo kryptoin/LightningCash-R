@@ -1,31 +1,3 @@
-/*
- * Copyright 2009 Colin Percival, 2011 ArtForz, 2012-2013 pooler
- * All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions
- * are met:
- * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer.
- * 2. Redistributions in binary form must reproduce the above copyright
- *    notice, this list of conditions and the following disclaimer in the
- *    documentation and/or other materials provided with the distribution.
- *
- * THIS SOFTWARE IS PROVIDED BY THE AUTHOR AND CONTRIBUTORS ``AS IS'' AND
- * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
- * ARE DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE
- * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
- * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
- * OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
- * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
- * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
- * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
- * SUCH DAMAGE.
- *
- * This file was originally written by Colin Percival as part of the Tarsnap
- * online backup system.
- */
 
 #if defined(USE_SSE2)
 
@@ -49,7 +21,7 @@ static inline void xor_salsa8_sse2(__m128i B[4], const __m128i Bx[4])
 	X3 = B[3] = _mm_xor_si128(B[3], Bx[3]);
 
 	for (i = 0; i < 8; i += 2) {
-		/* Operate on "columns". */
+
 		T = _mm_add_epi32(X0, X3);
 		X1 = _mm_xor_si128(X1, _mm_slli_epi32(T, 7));
 		X1 = _mm_xor_si128(X1, _mm_srli_epi32(T, 25));
@@ -63,12 +35,10 @@ static inline void xor_salsa8_sse2(__m128i B[4], const __m128i Bx[4])
 		X0 = _mm_xor_si128(X0, _mm_slli_epi32(T, 18));
 		X0 = _mm_xor_si128(X0, _mm_srli_epi32(T, 14));
 
-		/* Rearrange data. */
 		X1 = _mm_shuffle_epi32(X1, 0x93);
 		X2 = _mm_shuffle_epi32(X2, 0x4E);
 		X3 = _mm_shuffle_epi32(X3, 0x39);
 
-		/* Operate on "rows". */
 		T = _mm_add_epi32(X0, X1);
 		X3 = _mm_xor_si128(X3, _mm_slli_epi32(T, 7));
 		X3 = _mm_xor_si128(X3, _mm_srli_epi32(T, 25));
@@ -82,7 +52,6 @@ static inline void xor_salsa8_sse2(__m128i B[4], const __m128i Bx[4])
 		X0 = _mm_xor_si128(X0, _mm_slli_epi32(T, 18));
 		X0 = _mm_xor_si128(X0, _mm_srli_epi32(T, 14));
 
-		/* Rearrange data. */
 		X1 = _mm_shuffle_epi32(X1, 0x39);
 		X2 = _mm_shuffle_epi32(X2, 0x4E);
 		X3 = _mm_shuffle_epi32(X3, 0x93);

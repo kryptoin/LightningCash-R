@@ -8,7 +8,6 @@
 #include <stdint.h>
 #include <stdlib.h>
 
-/** A PRNG class for ChaCha20. */
 class ChaCha20
 {
 private:

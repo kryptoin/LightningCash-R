@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2017 The Bitcoin Core developers
+// Copyright (c) 2015-2025 The Bitcoin Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -15,14 +15,11 @@
 #include <unordered_map>
 #include <unordered_set>
 
-
 namespace memusage
 {
 
-/** Compute the total memory used by allocating alloc bytes. */
 static size_t MallocUsage(size_t alloc);
 
-/** Dynamic memory usage for built-in types is zero. */
 static inline size_t DynamicUsage(const int8_t& v) { return 0; }
 static inline size_t DynamicUsage(const uint8_t& v) { return 0; }
 static inline size_t DynamicUsage(const int16_t& v) { return 0; }
@@ -35,14 +32,6 @@ static inline size_t DynamicUsage(const float& v) { return 0; }
 static inline size_t DynamicUsage(const double& v) { return 0; }
 template<typename X> static inline size_t DynamicUsage(X * const &v) { return 0; }
 template<typename X> static inline size_t DynamicUsage(const X * const &v) { return 0; }
-
-/** Compute the memory used for dynamically allocated but owned data structures.
- *  For generic data types, this is *not* recursive. DynamicUsage(vector<vector<int> >)
- *  will compute the memory used for the vector<int>'s, but not for the ints inside.
- *  This is for efficiency reasons, as these functions are intended to be fast. If
- *  application data structures require more accurate inner accounting, they should
- *  iterate themselves, or use more efficient caching + updating on modification.
- */
 
 static inline size_t MallocUsage(size_t alloc)
 {
@@ -73,8 +62,7 @@ private:
 
 struct stl_shared_counter
 {
-    /* Various platforms use different sized counters here.
-     * Conservatively assume that they won't be larger than size_t. */
+
     void* class_type;
     size_t use_count;
     size_t weak_count;

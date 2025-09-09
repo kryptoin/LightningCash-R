@@ -5,9 +5,6 @@
 #include "rpc/blockchain.cpp"
 #include "test/test_bitcoin.h"
 
-/* Equality between doubles is imprecise. Comparison should be done
- * with a small threshold of tolerance, rather than exact equality.
- */
 bool DoubleEquals(double a, double b, double epsilon)
 {
     return std::abs(a - b) < epsilon;
@@ -37,15 +34,10 @@ void RejectDifficultyMismatch(double difficulty, double expected_difficulty) {
             + " but was expected to be " + std::to_string(expected_difficulty));
 }
 
-/* Given a BlockIndex with the provided nbits,
- * verify that the expected difficulty results.
- */
 void TestDifficulty(uint32_t nbits, double expected_difficulty)
 {
     CBlockIndex* block_index = CreateBlockIndexWithNbits(nbits);
-    /* Since we are passing in block index explicitly,
-     * there is no need to set up anything within the chain itself.
-     */
+
     CChain chain;
 
     double difficulty = GetDifficulty(chain, block_index);
@@ -89,9 +81,6 @@ BOOST_AUTO_TEST_CASE(get_difficulty_for_null_tip)
     RejectDifficultyMismatch(difficulty, 1.0);
 }
 
-/* Verify that if difficulty is based upon the block index
- * in the chain, if no block index is explicitly specified.
- */
 BOOST_AUTO_TEST_CASE(get_difficulty_for_null_block_index)
 {
     CChain chain = CreateChainWithNbits(0x1df88f6f);
@@ -104,16 +93,10 @@ BOOST_AUTO_TEST_CASE(get_difficulty_for_null_block_index)
     RejectDifficultyMismatch(difficulty, expected_difficulty);
 }
 
-/* Verify that difficulty is based upon the explicitly specified
- * block index rather than being taken from the provided chain,
- * when both are present.
- */
 BOOST_AUTO_TEST_CASE(get_difficulty_for_block_index_overrides_tip)
 {
     CChain chain = CreateChainWithNbits(0x1df88f6f);
-    /* This block index's nbits should be used
-     * instead of the chain's when calculating difficulty.
-     */
+
     CBlockIndex* override_block_index = CreateBlockIndexWithNbits(0x12345678);
 
     double difficulty = GetDifficulty(chain, override_block_index);

@@ -1,5 +1,5 @@
 // Copyright (c) 2009-2010 Satoshi Nakamoto
-// Copyright (c) 2009-2017 The Bitcoin Core developers
+// Copyright (c) 2009-2025 The Bitcoin Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -29,7 +29,6 @@
 
 class CBlockIndex;
 
-/** Fake height value used in Coin to signify they are only in the memory pool (since 0.8) */
 static const uint32_t MEMPOOL_HEIGHT = 0x7FFFFFFF;
 
 struct LockPoints
@@ -48,18 +47,6 @@ struct LockPoints
 };
 
 class CTxMemPool;
-
-/** \class CTxMemPoolEntry
- *
- * CTxMemPoolEntry stores data about the corresponding transaction, as well
- * as data about all in-mempool transactions that depend on the transaction
- * ("descendant" transactions).
- *
- * When a new entry is added to the mempool, we update the descendant state
- * (nCountWithDescendants, nSizeWithDescendants, and nModFeesWithDescendants) for
- * all ancestors of the newly added transaction.
- *
- */
 
 class CTxMemPoolEntry
 {
@@ -197,10 +184,6 @@ struct mempoolentry_txid
     }
 };
 
-/** \class CompareTxMemPoolEntryByDescendantScore
- *
- *  Sort an entry by max(score/size of entry's tx, score/size with all descendants).
- */
 class CompareTxMemPoolEntryByDescendantScore
 {
 public:
@@ -239,10 +222,6 @@ public:
     }
 };
 
-/** \class CompareTxMemPoolEntryByScore
- *
- *  Sort by score of entry ((fee+delta)/size) in descending order
- */
 class CompareTxMemPoolEntryByScore
 {
 public:
@@ -266,10 +245,6 @@ public:
     }
 };
 
-/** \class CompareTxMemPoolEntryByAncestorScore
- *
- *  Sort an entry by min(score/size of entry's tx, score/size with all ancestors).
- */
 class CompareTxMemPoolEntryByAncestorFee
 {
 public:
@@ -317,27 +292,21 @@ struct ancestor_score {};
 
 class CBlockPolicyEstimator;
 
-/**
- * Information about a mempool transaction.
- */
 struct TxMempoolInfo
 {
-    /** The transaction itself */
+
     CTransactionRef tx;
 
-    /** Time the transaction entered the mempool. */
+
     int64_t nTime;
 
-    /** Feerate of the transaction. */
+
     CFeeRate feeRate;
 
-    /** The fee delta. */
+
     int64_t nFeeDelta;
 };
 
-/** Reason why a transaction was removed from the mempool,
- * this is passed to the notification signal.
- */
 enum class MemPoolRemovalReason {
     UNKNOWN = 0, //! Manually removed or unknown reason
     EXPIRY,      //! Expired from mempool
@@ -351,7 +320,7 @@ enum class MemPoolRemovalReason {
 class SaltedTxidHasher
 {
 private:
-    /** Salt */
+
     const uint64_t k0, k1;
 
 public:
@@ -362,77 +331,6 @@ public:
     }
 };
 
-/**
- * CTxMemPool stores valid-according-to-the-current-best-chain transactions
- * that may be included in the next block.
- *
- * Transactions are added when they are seen on the network (or created by the
- * local node), but not all transactions seen are added to the pool. For
- * example, the following new transactions will not be added to the mempool:
- * - a transaction which doesn't meet the minimum fee requirements.
- * - a new transaction that double-spends an input of a transaction already in
- * the pool where the new transaction does not meet the Replace-By-Fee
- * requirements as defined in BIP 125.
- * - a non-standard transaction.
- *
- * CTxMemPool::mapTx, and CTxMemPoolEntry bookkeeping:
- *
- * mapTx is a boost::multi_index that sorts the mempool on 4 criteria:
- * - transaction hash
- * - feerate [we use max(feerate of tx, feerate of tx with all descendants)]
- * - time in mempool
- *
- * Note: the term "descendant" refers to in-mempool transactions that depend on
- * this one, while "ancestor" refers to in-mempool transactions that a given
- * transaction depends on.
- *
- * In order for the feerate sort to remain correct, we must update transactions
- * in the mempool when new descendants arrive.  To facilitate this, we track
- * the set of in-mempool direct parents and direct children in mapLinks.  Within
- * each CTxMemPoolEntry, we track the size and fees of all descendants.
- *
- * Usually when a new transaction is added to the mempool, it has no in-mempool
- * children (because any such children would be an orphan).  So in
- * addUnchecked(), we:
- * - update a new entry's setMemPoolParents to include all in-mempool parents
- * - update the new entry's direct parents to include the new tx as a child
- * - update all ancestors of the transaction to include the new tx's size/fee
- *
- * When a transaction is removed from the mempool, we must:
- * - update all in-mempool parents to not track the tx in setMemPoolChildren
- * - update all ancestors to not include the tx's size/fees in descendant state
- * - update all in-mempool children to not include it as a parent
- *
- * These happen in UpdateForRemoveFromMempool().  (Note that when removing a
- * transaction along with its descendants, we must calculate that set of
- * transactions to be removed before doing the removal, or else the mempool can
- * be in an inconsistent state where it's impossible to walk the ancestors of
- * a transaction.)
- *
- * In the event of a reorg, the assumption that a newly added tx has no
- * in-mempool children is false.  In particular, the mempool is in an
- * inconsistent state while new transactions are being added, because there may
- * be descendant transactions of a tx coming from a disconnected block that are
- * unreachable from just looking at transactions in the mempool (the linking
- * transactions may also be in the disconnected block, waiting to be added).
- * Because of this, there's not much benefit in trying to search for in-mempool
- * children in addUnchecked().  Instead, in the special case of transactions
- * being added from a disconnected block, we require the caller to clean up the
- * state, to account for in-mempool, out-of-block descendants for all the
- * in-block transactions by calling UpdateTransactionsFromBlock().  Note that
- * until this is called, the mempool state is not consistent, and in particular
- * mapLinks may not be correct (and therefore functions like
- * CalculateMemPoolAncestors() and CalculateDescendants() that rely
- * on them to walk the mempool are not generally safe to use).
- *
- * Computational limits:
- *
- * Updating all in-mempool ancestors of a newly added transaction can be slow,
- * if no bound exists on how many in-mempool ancestors there may be.
- * CalculateMemPoolAncestors() takes configurable limits that are designed to
- * prevent these calculations from being too CPU intensive.
- *
- */
 class CTxMemPool
 {
 private:
@@ -514,16 +412,10 @@ public:
     indirectmap<COutPoint, const CTransaction*> mapNextTx;
     std::map<uint256, CAmount> mapDeltas;
 
-    /** Create a new CTxMemPool.
-     */
+
     explicit CTxMemPool(CBlockPolicyEstimator* estimator = nullptr);
 
-    /**
-     * If sanity-checking is turned on, check makes sure the pool is
-     * consistent (does not contain two transactions that spend the same inputs,
-     * all inputs are in the mapNextTx array). If sanity-checking is turned off,
-     * check does nothing.
-     */
+
     void check(const CCoinsViewCache *pcoins) const;
     void setSanityCheck(double dFrequency = 1.0) { nCheckFrequency = static_cast<uint32_t>(dFrequency * 4294967295.0); }
 
@@ -549,73 +441,37 @@ public:
     bool isSpent(const COutPoint& outpoint);
     unsigned int GetTransactionsUpdated() const;
     void AddTransactionsUpdated(unsigned int n);
-    /**
-     * Check that none of this transactions inputs are in the mempool, and thus
-     * the tx is not dependent on other mempool transactions to be included in a block.
-     */
+
     bool HasNoInputsOf(const CTransaction& tx) const;
 
-    /** Affect CreateNewBlock prioritisation of transactions */
+
     void PrioritiseTransaction(const uint256& hash, const CAmount& nFeeDelta);
     void ApplyDelta(const uint256 hash, CAmount &nFeeDelta) const;
     void ClearPrioritisation(const uint256 hash);
 
 public:
-    /** Remove a set of transactions from the mempool.
-     *  If a transaction is in this set, then all in-mempool descendants must
-     *  also be in the set, unless this transaction is being removed for being
-     *  in a block.
-     *  Set updateDescendants to true when removing a tx that was in a block, so
-     *  that any in-mempool descendants have their ancestor state updated.
-     */
+
     void RemoveStaged(setEntries &stage, bool updateDescendants, MemPoolRemovalReason reason = MemPoolRemovalReason::UNKNOWN);
 
-    /** When adding transactions from a disconnected block back to the mempool,
-     *  new mempool entries may have children in the mempool (which is generally
-     *  not the case when otherwise adding transactions).
-     *  UpdateTransactionsFromBlock() will find child transactions and update the
-     *  descendant state for each transaction in vHashesToUpdate (excluding any
-     *  child transactions present in vHashesToUpdate, which are already accounted
-     *  for).  Note: vHashesToUpdate should be the set of transactions from the
-     *  disconnected block that have been accepted back into the mempool.
-     */
+
     void UpdateTransactionsFromBlock(const std::vector<uint256> &vHashesToUpdate);
 
-    /** Try to calculate all in-mempool ancestors of entry.
-     *  (these are all calculated including the tx itself)
-     *  limitAncestorCount = max number of ancestors
-     *  limitAncestorSize = max size of ancestors
-     *  limitDescendantCount = max number of descendants any ancestor can have
-     *  limitDescendantSize = max size of descendants any ancestor can have
-     *  errString = populated with error reason if any limits are hit
-     *  fSearchForParents = whether to search a tx's vin for in-mempool parents, or
-     *    look up parents from mapLinks. Must be true for entries not in the mempool
-     */
+
     bool CalculateMemPoolAncestors(const CTxMemPoolEntry &entry, setEntries &setAncestors, uint64_t limitAncestorCount, uint64_t limitAncestorSize, uint64_t limitDescendantCount, uint64_t limitDescendantSize, std::string &errString, bool fSearchForParents = true) const;
 
-    /** Populate setDescendants with all in-mempool descendants of hash.
-     *  Assumes that setDescendants includes all in-mempool descendants of anything
-     *  already in it.  */
+
     void CalculateDescendants(txiter it, setEntries &setDescendants);
 
-    /** The minimum fee to get into the mempool, which may itself not be enough
-      *  for larger-sized transactions.
-      *  The incrementalRelayFee policy variable is used to bound the time it
-      *  takes the fee rate to go back down all the way to 0. When the feerate
-      *  would otherwise be half of this, it is set to 0 instead.
-      */
+
     CFeeRate GetMinFee(size_t sizelimit) const;
 
-    /** Remove transactions from the mempool until its dynamic size is <= sizelimit.
-      *  pvNoSpendsRemaining, if set, will be populated with the list of outpoints
-      *  which are not in mempool which no longer have any spends in this mempool.
-      */
+
     void TrimToSize(size_t sizelimit, std::vector<COutPoint>* pvNoSpendsRemaining=nullptr);
 
-    /** Expire all transaction (and their dependencies) in the mempool older than time. Return the number of removed transactions. */
+
     int Expire(int64_t time);
 
-    /** Returns false if the transaction is in the mempool and not within the chain limit specified. */
+
     bool TransactionWithinChainLimit(const uint256& txid, size_t chainLimit) const;
 
     unsigned long size()
@@ -646,55 +502,23 @@ public:
     boost::signals2::signal<void (CTransactionRef, MemPoolRemovalReason)> NotifyEntryRemoved;
 
 private:
-    /** UpdateForDescendants is used by UpdateTransactionsFromBlock to update
-     *  the descendants for a single transaction that has been added to the
-     *  mempool but may have child transactions in the mempool, eg during a
-     *  chain reorg.  setExclude is the set of descendant transactions in the
-     *  mempool that must not be accounted for (because any descendants in
-     *  setExclude were added to the mempool after the transaction being
-     *  updated and hence their state is already reflected in the parent
-     *  state).
-     *
-     *  cachedDescendants will be updated with the descendants of the transaction
-     *  being updated, so that future invocations don't need to walk the
-     *  same transaction again, if encountered in another transaction chain.
-     */
+
     void UpdateForDescendants(txiter updateIt,
             cacheMap &cachedDescendants,
             const std::set<uint256> &setExclude);
-    /** Update ancestors of hash to add/remove it as a descendant transaction. */
+
     void UpdateAncestorsOf(bool add, txiter hash, setEntries &setAncestors);
-    /** Set ancestor state for an entry */
+
     void UpdateEntryForAncestors(txiter it, const setEntries &setAncestors);
-    /** For each transaction being removed, update ancestors and any direct children.
-      * If updateDescendants is true, then also update in-mempool descendants'
-      * ancestor state. */
+
     void UpdateForRemoveFromMempool(const setEntries &entriesToRemove, bool updateDescendants);
-    /** Sever link between specified transaction and direct children. */
+
     void UpdateChildrenForRemoval(txiter entry);
 
-    /** Before calling removeUnchecked for a given transaction,
-     *  UpdateForRemoveFromMempool must be called on the entire (dependent) set
-     *  of transactions being removed at the same time.  We use each
-     *  CTxMemPoolEntry's setMemPoolParents in order to walk ancestors of a
-     *  given transaction that is removed, so we can't remove intermediate
-     *  transactions in a chain before we've updated all the state for the
-     *  removal.
-     */
+
     void removeUnchecked(txiter entry, MemPoolRemovalReason reason = MemPoolRemovalReason::UNKNOWN);
 };
 
-/** 
- * CCoinsView that brings transactions from a memorypool into view.
- * It does not check for spendings by memory pool transactions.
- * Instead, it provides access to all Coins which are either unspent in the
- * base CCoinsView, or are outputs from any mempool transaction!
- * This allows transaction replacement to work as expected, as you want to
- * have all inputs "available" to check signatures, and any cycles in the
- * dependency graph are checked directly in AcceptToMemoryPool.
- * It also allows you to sign a double-spend directly in signrawtransaction,
- * as long as the conflicting transaction is not yet confirmed.
- */
 class CCoinsViewMemPool : public CCoinsViewBacked
 {
 protected:
@@ -704,21 +528,6 @@ public:
     CCoinsViewMemPool(CCoinsView* baseIn, const CTxMemPool& mempoolIn);
     bool GetCoin(const COutPoint &outpoint, Coin &coin) const override;
 };
-
-/**
- * DisconnectedBlockTransactions
-
- * During the reorg, it's desirable to re-add previously confirmed transactions
- * to the mempool, so that anything not re-confirmed in the new chain is
- * available to be mined. However, it's more efficient to wait until the reorg
- * is complete and process all still-unconfirmed transactions at that time,
- * since we expect most confirmed transactions to (typically) still be
- * confirmed in the new chain, and re-accepting to the memory pool is expensive
- * (and therefore better to not do in the middle of reorg-processing).
- * Instead, store the disconnected transactions (in order!) as we go, remove any
- * that are included in blocks in the new chain, and then process the remaining
- * still-unconfirmed transactions at the end.
- */
 
 // multi_index tag names
 struct txid_index {};

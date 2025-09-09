@@ -1,5 +1,5 @@
 // Copyright (c) 2009-2010 Satoshi Nakamoto
-// Copyright (c) 2009-2017 The Bitcoin Core developers
+// Copyright (c) 2009-2025 The Bitcoin Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -827,7 +827,6 @@ bool CWalletDB::EraseDestData(const std::string &address, const std::string &key
 {
     return EraseIC(std::make_pair(std::string("destdata"), std::make_pair(address, key)));
 }
-
 
 bool CWalletDB::WriteHDChain(const CHDChain& chain)
 {

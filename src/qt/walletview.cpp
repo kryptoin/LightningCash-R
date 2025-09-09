@@ -1,4 +1,4 @@
-// Copyright (c) 2011-2017 The Bitcoin Core developers
+// Copyright (c) 2011-2025 The Bitcoin Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -161,7 +161,7 @@ void WalletView::setWalletModel(WalletModel *_walletModel)
 
         // Ask for passphrase if needed
         connect(_walletModel, SIGNAL(requireUnlock()), this, SLOT(unlockWallet()));
-		
+
 		// LightningCashr: Hive: Ask for passphrase if needed hive only
         connect(_walletModel, SIGNAL(requireUnlockHive()), this, SLOT(unlockWalletHive()));
 
@@ -170,7 +170,8 @@ void WalletView::setWalletModel(WalletModel *_walletModel)
     }
 }
 
-void WalletView::processNewTransaction(const QModelIndex& parent, int start, int /*end*/)
+void WalletView::processNewTransaction(const QModelIndex& parent, int start, int
+)
 {
     // Prevent balloon-spam when initial block download is in progress
     if (!walletModel || !clientModel || clientModel->inInitialBlockDownload())
@@ -213,7 +214,6 @@ void WalletView::gotoHivePage()
 	    //LogPrintf("NOT OK \n");
 	    hivePage->updateData();
     }
-
 
     setCurrentWidget(hivePage);
 }
@@ -455,13 +455,13 @@ void WalletView::importPrivateKey()
             }
 
             pwallet->UpdateTimeFirstKey(1); // Mark as rescan needed, even if we don't do it now (it'll happen next restart if not before)
-            
+
             QMessageBox msgBox;
             msgBox.setText(tr("Key successfully added to wallet."));
             msgBox.setInformativeText(tr("Rescan now? (Select No if you have more keys to import)"));
             msgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
             msgBox.setDefaultButton(QMessageBox::No);
-            
+
             if (msgBox.exec() == QMessageBox::Yes)
                 boost::thread t{WalletView::doRescan, pwallet, TIMESTAMP_MIN};                
         }

@@ -1,4 +1,4 @@
-// Copyright (c) 2011-2017 The Bitcoin Core developers
+// Copyright (c) 2011-2025 The Bitcoin Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -45,7 +45,7 @@ HiveDialog::HiveDialog(const PlatformStyle *_platformStyle, QWidget *parent) :
         ui->createBeesButton->setIcon(QIcon());
     else
         ui->createBeesButton->setIcon(_platformStyle->SingleColorIcon(":/icons/bee"));
-    
+
     beeCost = totalCost = rewardsPaid = cost = profit = 0;
     immature = mature = dead = blocksFound = 0;
     lastGlobalCheckHeight = 0;
@@ -91,7 +91,6 @@ void HiveDialog::setClientModel(ClientModel *_clientModel) {
 		connect(_clientModel, SIGNAL(numBlocksChanged(int,QDateTime,double,bool)), this, SLOT(updateData()));
 		connect(_clientModel, SIGNAL(numConnectionsChanged(int)), this, SLOT(updateData()));    // TODO: This may be too expensive to call here, and the only point is to update the hive status icon.
 	}
-	
 
     }
 }
@@ -107,7 +106,7 @@ void HiveDialog::setModel(WalletModel *_model) {
 
         setBalance(_model->getBalance(), _model->getUnconfirmedBalance(), _model->getImmatureBalance(), _model->getWatchBalance(), _model->getWatchUnconfirmedBalance(), _model->getWatchImmatureBalance());
         connect(_model, SIGNAL(balanceChanged(CAmount,CAmount,CAmount,CAmount,CAmount,CAmount)), this, SLOT(setBalance(CAmount,CAmount,CAmount,CAmount,CAmount,CAmount)));
-        
+
         if (_model->getEncryptionStatus() != WalletModel::Locked)
             ui->releaseSwarmButton->hide();
         connect(_model, SIGNAL(encryptionStatusChanged(int)), this, SLOT(setEncryptionStatus(int)));
@@ -209,20 +208,19 @@ QString HiveDialog::formatLargeNoLocale(int i) {
     return i_str;
 }
 
-
 void HiveDialog::updateData(bool forceGlobalSummaryUpdate) {
     if(IsInitialBlockDownload() || chainActive.Height() == 0) {
         ui->globalHiveSummary->hide();
         ui->globalHiveSummaryError->show();
         return;
     }
-    
+
     const Consensus::Params& consensusParams = Params().GetConsensus();
 
     if(model && model->getHiveTableModel()) {
         model->getHiveTableModel()->updateBCTs(ui->includeDeadBeesCheckbox->isChecked());
         model->getHiveTableModel()->getSummaryValues(immature, mature, dead, blocksFound, cost, rewardsPaid, profit);
-        
+
         // Update labels
         setAmountField(ui->rewardsPaidLabel, rewardsPaid);
         setAmountField(ui->costLabel, cost);
@@ -393,13 +391,12 @@ void HiveDialog::updateData(bool forceGlobalSummaryUpdate) {
         if (beePopIndex > 200) beePopIndex = 200;
         ui->beePopIndexLabel->setText(QString::number(floor(beePopIndex)));
         ui->beePopIndexPie->setValue(beePopIndex / 100);
-        
+
         lastGlobalCheckHeight = chainActive.Tip()->nHeight;
     }
 
     ui->blocksTillGlobalRefresh->setText(QString::number(10 - (chainActive.Tip()->nHeight - lastGlobalCheckHeight)));
 }
-
 
 void HiveDialog::updateData2(bool forceGlobalSummaryUpdate) {
     if(IsInitialBlockDownload() || chainActive.Height() == 0) {
@@ -407,13 +404,13 @@ void HiveDialog::updateData2(bool forceGlobalSummaryUpdate) {
         ui->globalHiveSummaryError->show();
         return;
     }
-    
+
     const Consensus::Params& consensusParams = Params().GetConsensus();
 
     if(model && model->getHiveTableModel()) {
         model->getHiveTableModel()->updateBCTs(ui->includeDeadBeesCheckbox->isChecked());
         model->getHiveTableModel()->getSummaryValues(immature, mature, dead, blocksFound, cost, rewardsPaid, profit);
-        
+
         // Update labels
         setAmountField(ui->rewardsPaidLabel, rewardsPaid);
         setAmountField(ui->costLabel, cost);
@@ -465,10 +462,10 @@ void HiveDialog::updateData2(bool forceGlobalSummaryUpdate) {
     //CBlockIndex* osti = chainActive.Genesis();
     //int mauditcaca = chainActive.GetBlockTime();
     int vadonchier = wototo; // matureBees
-    
+
     int superX = threshold; // # of bees for global index at 90
     //LogPrintf("is %i <= %i ??? if so, low cost !! \n", vadonchier, superX);
-    
+
     if (vadonchier <= superX) // if maturebees is under 90...
 	beeCost = 0.0004*(GetBlockSubsidy(HeightX, consensusParams));
     else                   // memory is impair
@@ -582,13 +579,6 @@ void HiveDialog::updateData2(bool forceGlobalSummaryUpdate) {
         double hiveWeight = mature / (double)flute;
         ui->localHiveWeightLabel->setText((mature == 0 || flute == 0) ? "0" : QString::number(hiveWeight, 'f', 3));
         ui->hiveWeightPie->setValue(hiveWeight);
-	/*LogPrintf("memory = %i \n", memory);
-	if ((!(memory % 2)) || (memory = 0))
-       		beePopIndex = (((0.0004*(GetBlockSubsidy(HeightX, consensusParams))) * flute) / (double)potentialRewards) * 100.0; // PROBLEM ---> want it to always be calculated according to base bee cost....
-	else
-		beePopIndex = (((0.0008*(GetBlockSubsidy(HeightX, consensusParams))) * flute) / (double)potentialRewards) * 100.0;
-	LogPrintf("beePopIndex = %i \n", beePopIndex);
-	//beePopIndex = (((0.0004*(GetBlockSubsidy(HeightX, consensusParams))) * flute) / (double)potentialRewards) * 100.0; // PROBLEM ---> want it to always be calculated according to base bee cost....*/
 
 	//beePopIndex = (flute*5) / (double)potentialRewards) * 100.0; // total global mature bees X ( 1 / basecost )
 
@@ -596,13 +586,12 @@ void HiveDialog::updateData2(bool forceGlobalSummaryUpdate) {
 
 	CAmount npotentialRewards = (consensusParams.beeLifespanBlocks * GetBlockSubsidy(chainActive.Tip()->nHeight, consensusParams)) / consensusParams.hiveBlockSpacingTarget; // to show Global Index based on NORMAL totalBeeLifespan
 
-
 	beePopIndex = (((0.0004*(GetBlockSubsidy(HeightX, consensusParams))) * flute) / (double)npotentialRewards) * 100.0; // low price times thematurebees.... on 
         LogPrintf("beePopIndex = %i \n", beePopIndex);
         if (beePopIndex > 200) beePopIndex = 200;
         ui->beePopIndexLabel->setText(QString::number(floor(beePopIndex)));
         ui->beePopIndexPie->setValue(beePopIndex / 100);
-        
+
         lastGlobalCheckHeight = chainActive.Tip()->nHeight;
     }
 
@@ -615,13 +604,13 @@ void HiveDialog::updateData3(bool forceGlobalSummaryUpdate) {
         ui->globalHiveSummaryError->show();
         return;
     }
-    
+
     const Consensus::Params& consensusParams = Params().GetConsensus();
 
     if(model && model->getHiveTableModel()) {
         model->getHiveTableModel()->updateBCTs(ui->includeDeadBeesCheckbox->isChecked());
         model->getHiveTableModel()->getSummaryValues(immature, mature, dead, blocksFound, cost, rewardsPaid, profit);
-        
+
         // Update labels
         setAmountField(ui->rewardsPaidLabel, rewardsPaid);
         setAmountField(ui->costLabel, cost);
@@ -705,7 +694,7 @@ void HiveDialog::updateData3(bool forceGlobalSummaryUpdate) {
         if (beePopIndex > 200) beePopIndex = 200;
         ui->beePopIndexLabel->setText(QString::number(floor(beePopIndex)));
         ui->beePopIndexPie->setValue(beePopIndex / 100);
-        
+
         lastGlobalCheckHeight = chainActive.Tip()->nHeight;
     }
 
@@ -731,7 +720,7 @@ void HiveDialog::updateTotalCostDisplay() {
 
     if(model && model->getOptionsModel()) {
         setAmountField(ui->totalCostLabel, totalCost);
-        
+
         if (totalCost > model->getBalance())
             ui->beeCountSpinner->setStyleSheet("QSpinBox{background:#FF8080;}");
         else
@@ -829,7 +818,7 @@ void HiveDialog::on_createBeesButton_clicked() {
 	//LogPrintf("NOT OK \n");
     	updateData(true);
     }
-    
+
     if (model) {
         if (totalCost > model->getBalance()) {
             QMessageBox::critical(this, tr("Error"), tr("Insufficient balance to create bees."));
@@ -891,7 +880,7 @@ void HiveDialog::initGraph() {
 
     globalMarkerLine = new QCPItemLine(ui->beePopGraph);
     globalMarkerLine->setPen(QPen(Qt::blue, 1, Qt::DashLine));
-    
+
     graphTracerImmature = new QCPItemTracer(ui->beePopGraph);
     graphTracerImmature->setGraph(ui->beePopGraph->graph(0));
     graphTracerMature = new QCPItemTracer(ui->beePopGraph);
@@ -914,9 +903,9 @@ void HiveDialog::updateGraph() {
         totalLifespan = consensusParams.beeGestationBlocks + consensusParams.beeLifespanBlocks2;
     if (chainActive.Height() < consensusParams.ratioForkBlock)
         totalLifespan = consensusParams.beeGestationBlocks + consensusParams.beeLifespanBlocks;
-    
-    
-    
+
+
+
     QVector<QCPGraphData> dataMature(totalLifespan);
     QVector<QCPGraphData> dataImmature(totalLifespan);
     for (int i = 0; i < totalLifespan; i++) { // PROBLEM
@@ -928,9 +917,8 @@ void HiveDialog::updateGraph() {
     }
     ui->beePopGraph->graph(0)->data()->set(dataImmature);
     ui->beePopGraph->graph(1)->data()->set(dataMature);
-    
-    int HeightXosti = (chainActive.Height() - 1);
 
+    int HeightXosti = (chainActive.Height() - 1);
 
     int beeCostStable = 0.0004*(GetBlockSubsidy(chainActive.Tip()->nHeight, consensusParams)); 
 
@@ -987,7 +975,7 @@ void HiveDialog::onMouseMove(QMouseEvent *event) {
     else
         pixelPos.setX(pixelPos.x() + xoffs);
 
-    
+
     graphMouseoverText->position->setPixelPosition(pixelPos);
 
     customPlot->replot();

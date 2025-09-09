@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2017 The Bitcoin Core developers
+// Copyright (c) 2015-2025 The Bitcoin Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -37,10 +37,8 @@
 #endif
 #endif
 
-/** Maximum size of http request (request line + headers) */
 static const size_t MAX_HEADERS_SIZE = 8192;
 
-/** HTTP request work item */
 class HTTPWorkItem final : public HTTPClosure
 {
 public:
@@ -60,14 +58,11 @@ private:
     HTTPRequestHandler func;
 };
 
-/** Simple work queue for distributing work over multiple threads.
- * Work items are simply callable objects.
- */
 template <typename WorkItem>
 class WorkQueue
 {
 private:
-    /** Mutex protects entire object */
+
     std::mutex cs;
     std::condition_variable cond;
     std::deque<std::unique_ptr<WorkItem>> queue;
@@ -79,12 +74,11 @@ public:
                                  maxDepth(_maxDepth)
     {
     }
-    /** Precondition: worker threads have all stopped (they have been joined).
-     */
+
     ~WorkQueue()
     {
     }
-    /** Enqueue a work item */
+
     bool Enqueue(WorkItem* item)
     {
         std::unique_lock<std::mutex> lock(cs);
@@ -95,7 +89,7 @@ public:
         cond.notify_one();
         return true;
     }
-    /** Thread function */
+
     void Run()
     {
         while (true) {
@@ -112,7 +106,7 @@ public:
             (*i)();
         }
     }
-    /** Interrupt and exit loops */
+
     void Interrupt()
     {
         std::unique_lock<std::mutex> lock(cs);
@@ -133,8 +127,6 @@ struct HTTPPathHandler
     HTTPRequestHandler handler;
 };
 
-/** HTTP module state */
-
 //! libevent event loop
 static struct event_base* eventBase = nullptr;
 //! HTTP server
@@ -148,7 +140,6 @@ std::vector<HTTPPathHandler> pathHandlers;
 //! Bound listening sockets
 std::vector<evhttp_bound_socket *> boundSockets;
 
-/** Check if a network address is allowed to access the HTTP server */
 static bool ClientAllowed(const CNetAddr& netaddr)
 {
     if (!netaddr.IsValid())
@@ -159,7 +150,6 @@ static bool ClientAllowed(const CNetAddr& netaddr)
     return false;
 }
 
-/** Initialize ACL list for HTTP server */
 static bool InitHTTPAllowList()
 {
     rpc_allow_subnets.clear();
@@ -187,7 +177,6 @@ static bool InitHTTPAllowList()
     return true;
 }
 
-/** HTTP request method as string - use for logging only */
 static std::string RequestMethodString(HTTPRequest::RequestMethod m)
 {
     switch (m) {
@@ -208,7 +197,6 @@ static std::string RequestMethodString(HTTPRequest::RequestMethod m)
     }
 }
 
-/** HTTP request callback */
 static void http_request_cb(struct evhttp_request* req, void* arg)
 {
     // Disable reading to work around a libevent bug, fixed in 2.2.0.
@@ -260,7 +248,8 @@ static void http_request_cb(struct evhttp_request* req, void* arg)
         std::unique_ptr<HTTPWorkItem> item(new HTTPWorkItem(std::move(hreq), path, i->handler));
         assert(workQueue);
         if (workQueue->Enqueue(item.get()))
-            item.release(); /* if true, queue took ownership */
+            item.release();
+
         else {
             LogPrintf("WARNING: request rejected because http work queue depth exceeded, it can be increased with the -rpcworkqueue= setting\n");
             item->req->WriteReply(HTTP_INTERNAL, "Work queue depth exceeded");
@@ -270,14 +259,12 @@ static void http_request_cb(struct evhttp_request* req, void* arg)
     }
 }
 
-/** Callback to reject HTTP requests after shutdown. */
 static void http_reject_request_cb(struct evhttp_request* req, void*)
 {
     LogPrint(BCLog::HTTP, "Rejecting request while shutting down\n");
     evhttp_send_error(req, HTTP_SERVUNAVAIL, nullptr);
 }
 
-/** Event dispatcher thread */
 static bool ThreadHTTP(struct event_base* base, struct evhttp* http)
 {
     RenameThread("lightningcashr-http");
@@ -288,7 +275,6 @@ static bool ThreadHTTP(struct event_base* base, struct evhttp* http)
     return event_base_got_break(base) == 0;
 }
 
-/** Bind HTTP server to specified addresses */
 static bool HTTPBindAddresses(struct evhttp* http)
 {
     int defaultPort = gArgs.GetArg("-rpcport", BaseParams().RPCPort());
@@ -326,14 +312,12 @@ static bool HTTPBindAddresses(struct evhttp* http)
     return !boundSockets.empty();
 }
 
-/** Simple wrapper to set thread name and run work queue */
 static void HTTPWorkQueueRun(WorkQueue<HTTPClosure>* queue)
 {
     RenameThread("lightningcashr-httpworker");
     queue->Run();
 }
 
-/** libevent event log callback */
 static void libevent_log_cb(int severity, const char *msg)
 {
 #ifndef EVENT_LOG_WARN
@@ -375,7 +359,6 @@ bool InitHTTPServer()
 
     raii_event_base base_ctr = obtain_event_base();
 
-    /* Create a new evhttp object to handle requests. */
     raii_evhttp http_ctr = obtain_evhttp(base_ctr.get());
     struct evhttp* http = http_ctr.get();
     if (!http) {
@@ -553,12 +536,7 @@ std::string HTTPRequest::ReadBody()
     if (!buf)
         return "";
     size_t size = evbuffer_get_length(buf);
-    /** Trivial implementation: if this is ever a performance bottleneck,
-     * internal copying can be avoided in multi-segment buffers by using
-     * evbuffer_peek and an awkward loop. Though in that case, it'd be even
-     * better to not copy into an intermediate string but use a stream
-     * abstraction to consume the evbuffer on the fly in the parsing algorithm.
-     */
+
     const char* data = (const char*)evbuffer_pullup(buf, size);
     if (!data) // returns nullptr in case of empty buffer
         return "";
@@ -574,11 +552,6 @@ void HTTPRequest::WriteHeader(const std::string& hdr, const std::string& value)
     evhttp_add_header(headers, hdr.c_str(), value.c_str());
 }
 
-/** Closure sent to main thread to request a reply to be sent to
- * a HTTP request.
- * Replies must be sent in the main loop in the main http thread,
- * this cannot be done from worker threads.
- */
 void HTTPRequest::WriteReply(int nStatus, const std::string& strReply)
 {
     assert(!replySent && req);

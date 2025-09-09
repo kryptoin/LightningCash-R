@@ -105,5 +105,4 @@ inline int Slice::compare(const Slice& b) const {
 
 }  // namespace leveldb
 
-
 #endif  // STORAGE_LEVELDB_INCLUDE_SLICE_H_

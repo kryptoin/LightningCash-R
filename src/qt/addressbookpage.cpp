@@ -1,4 +1,4 @@
-// Copyright (c) 2011-2017 The Bitcoin Core developers
+// Copyright (c) 2011-2025 The Bitcoin Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -300,7 +300,8 @@ void AddressBookPage::contextualMenu(const QPoint &point)
     }
 }
 
-void AddressBookPage::selectNewAddress(const QModelIndex &parent, int begin, int /*end*/)
+void AddressBookPage::selectNewAddress(const QModelIndex &parent, int begin, int
+)
 {
     QModelIndex idx = proxyModel->mapFromSource(model->index(begin, AddressTableModel::Address, parent));
     if(idx.isValid() && (idx.data(Qt::EditRole).toString() == newAddressToSelect))

@@ -1,5 +1,5 @@
 // Copyright (c) 2009-2010 Satoshi Nakamoto
-// Copyright (c) 2009-2017 The Bitcoin Core developers
+// Copyright (c) 2009-2025 The Bitcoin Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -10,13 +10,6 @@
 #include <serialize.h>
 #include <uint256.h>
 
-/** Nodes collect new transactions into a block, hash them into a hash tree,
- * and scan through nonce values to make the block's hash satisfy proof-of-work
- * requirements.  When they solve the proof-of-work, they broadcast the block
- * to everyone and the block is added to the block chain.  The first transaction
- * in the block is a special one that creates a new coin owned by the creator
- * of the block.
- */
 class CBlockHeader
 {
 public:
@@ -127,10 +120,6 @@ public:
     std::string ToString() const;
 };
 
-/** Describes a place in the block chain to another node such that if the
- * other node doesn't have the same branch, it can find a recent common trunk.
- * The further back it is, the further before the fork it may be.
- */
 struct CBlockLocator
 {
     std::vector<uint256> vHave;

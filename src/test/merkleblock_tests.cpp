@@ -1,4 +1,4 @@
-// Copyright (c) 2012-2017 The Bitcoin Core developers
+// Copyright (c) 2012-2025 The Bitcoin Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -8,13 +8,8 @@
 
 #include <boost/test/unit_test.hpp>
 
-
 BOOST_FIXTURE_TEST_SUITE(merkleblock_tests, BasicTestingSetup)
 
-/**
- * Create a CMerkleBlock using a list of txids which will be found in the
- * given block.
- */
 BOOST_AUTO_TEST_CASE(merkleblock_construct_from_txids_found)
 {
     CBlock block = getBlock13b8a();
@@ -51,11 +46,6 @@ BOOST_AUTO_TEST_CASE(merkleblock_construct_from_txids_found)
     BOOST_CHECK_EQUAL(vIndex[1], 8);
 }
 
-
-/**
- * Create a CMerkleBlock using a list of txids which will not be found in the
- * given block.
- */
 BOOST_AUTO_TEST_CASE(merkleblock_construct_from_txids_not_found)
 {
     CBlock block = getBlock13b8a();

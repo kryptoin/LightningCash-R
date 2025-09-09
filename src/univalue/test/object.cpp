@@ -1,5 +1,5 @@
 // Copyright (c) 2014 BitPay Inc.
-// Copyright (c) 2014-2016 The Bitcoin Core developers
+// Copyright (c) 2014-2025 The Bitcoin Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -364,10 +364,6 @@ BOOST_AUTO_TEST_CASE(univalue_readwrite)
     BOOST_CHECK(obj["key3"].isObject());
 
     BOOST_CHECK_EQUAL(strJson1, v.write());
-
-    /* Check for (correctly reporting) a parsing error if the initial
-       JSON construct is followed by more stuff.  Note that whitespace
-       is, of course, exempt.  */
 
     BOOST_CHECK(v.read("  {}\n  "));
     BOOST_CHECK(v.isObject());

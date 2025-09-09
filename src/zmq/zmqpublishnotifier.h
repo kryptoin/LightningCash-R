@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2017 The Bitcoin Core developers
+// Copyright (c) 2015-2025 The Bitcoin Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -16,12 +16,6 @@ private:
 
 public:
 
-    /* send zmq multipart message
-       parts:
-          * command
-          * data
-          * message sequence number
-    */
     bool SendMessage(const char *command, const void* data, size_t size);
 
     bool Initialize(void *pcontext) override;

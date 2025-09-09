@@ -1,4 +1,4 @@
-// Copyright (c) 2012-2017 The Bitcoin Core developers
+// Copyright (c) 2012-2025 The Bitcoin Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -168,10 +168,6 @@ const std::string CDBWrapper::OBFUSCATE_KEY_KEY("\000obfuscate_key", 14);
 
 const unsigned int CDBWrapper::OBFUSCATE_KEY_NUM_BYTES = 8;
 
-/**
- * Returns a string (consisting of 8 random bytes) suitable for use as an
- * obfuscating XOR key.
- */
 std::vector<unsigned char> CDBWrapper::CreateObfuscateKey() const
 {
     unsigned char buff[OBFUSCATE_KEY_NUM_BYTES];

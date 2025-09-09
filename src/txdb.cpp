@@ -1,5 +1,5 @@
 // Copyright (c) 2009-2010 Satoshi Nakamoto
-// Copyright (c) 2009-2017 The Bitcoin Core developers
+// Copyright (c) 2009-2025 The Bitcoin Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -173,9 +173,7 @@ bool CBlockTreeDB::ReadLastBlockFile(int &nFile) {
 CCoinsViewCursor *CCoinsViewDB::Cursor() const
 {
     CCoinsViewDBCursor *i = new CCoinsViewDBCursor(const_cast<CDBWrapper&>(db).NewIterator(), GetBestBlock());
-    /* It seems that there are no "const iterators" for LevelDB.  Since we
-       only need read operations on it, use a const-cast to get around
-       that restriction.  */
+
     i->pcursor->Seek(DB_COIN);
     // Cache key of first record
     if (i->pcursor->Valid()) {
@@ -363,10 +361,6 @@ public:
 
 }
 
-/** Upgrade the database from older formats.
- *
- * Currently implemented: from the per-tx utxo model (0.8..0.14.x) to per-txout.
- */
 bool CCoinsViewDB::Upgrade() {
     std::unique_ptr<CDBIterator> pcursor(db.NewIterator());
     pcursor->Seek(std::make_pair(DB_COINS, uint256()));

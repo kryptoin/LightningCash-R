@@ -1,4 +1,4 @@
-// Copyright (c) 2009-2017 The Bitcoin Core developers
+// Copyright (c) 2009-2025 The Bitcoin Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -15,22 +15,6 @@ const unsigned int WALLET_CRYPTO_KEY_SIZE = 32;
 const unsigned int WALLET_CRYPTO_SALT_SIZE = 8;
 const unsigned int WALLET_CRYPTO_IV_SIZE = 16;
 
-/**
- * Private key encryption is done based on a CMasterKey,
- * which holds a salt and random encryption key.
- *
- * CMasterKeys are encrypted using AES-256-CBC using a key
- * derived using derivation method nDerivationMethod
- * (0 == EVP_sha512()) and derivation iterations nDeriveIterations.
- * vchOtherDerivationParameters is provided for alternative algorithms
- * which may require more parameters (such as scrypt).
- *
- * Wallet Private Keys are then encrypted using AES-256-CBC
- * with the double-sha256 of the public key as the IV, and the
- * master key's key as the encryption key (see keystore.[ch]).
- */
-
-/** Master key for wallet encryption */
 class CMasterKey
 {
 public:
@@ -72,7 +56,6 @@ namespace wallet_crypto
     class TestCrypter;
 }
 
-/** Encryption/decryption context with key information */
 class CCrypter
 {
 friend class wallet_crypto::TestCrypter; // for test access to chKey/chIV
@@ -109,9 +92,6 @@ public:
     }
 };
 
-/** Keystore which keeps the private keys encrypted.
- * It derives from the basic key store, which is used if no encryption is active.
- */
 class CCryptoKeyStore : public CBasicKeyStore
 {
 private:
@@ -150,10 +130,7 @@ public:
     bool GetPubKey(const CKeyID &address, CPubKey& vchPubKeyOut) const override;
     std::set<CKeyID> GetKeys() const override;
 
-    /**
-     * Wallet status (encrypted, locked) changed.
-     * Note: Called without locks held.
-     */
+
     boost::signals2::signal<void (CCryptoKeyStore* wallet)> NotifyStatusChanged;
 };
 

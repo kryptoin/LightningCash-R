@@ -1,5 +1,5 @@
 // Copyright (c) 2009-2010 Satoshi Nakamoto
-// Copyright (c) 2009-2017 The Bitcoin Core developers
+// Copyright (c) 2009-2025 The Bitcoin Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -33,7 +33,6 @@
 #include <miniupnpc/upnperrors.h>
 #endif
 
-
 #include <math.h>
 
 // Dump addresses to peers.dat and banlist.dat every 15 minutes (900s)
@@ -62,7 +61,6 @@
 #endif
 #endif
 
-/** Used to pass flags to the Bind() function */
 enum BindFlags {
     BF_NONE         = 0,
     BF_EXPLICIT     = (1U << 0),
@@ -238,7 +236,6 @@ bool RemoveLocal(const CService& addr)
     return true;
 }
 
-/** Make a particular network entirely off-limits (no automatic connects to it) */
 void SetLimited(enum Network net, bool fLimited)
 {
     if (net == NET_UNROUTABLE || net == NET_INTERNAL)
@@ -258,7 +255,6 @@ bool IsLimited(const CNetAddr &addr)
     return IsLimited(addr.GetNetwork());
 }
 
-/** vote for a local address */
 bool SeenLocal(const CService& addr)
 {
     {
@@ -270,28 +266,23 @@ bool SeenLocal(const CService& addr)
     return true;
 }
 
-
-/** check whether a given address is potentially local */
 bool IsLocal(const CService& addr)
 {
     LOCK(cs_mapLocalHost);
     return mapLocalHost.count(addr) > 0;
 }
 
-/** check whether a given network is one we can probably connect to */
 bool IsReachable(enum Network net)
 {
     LOCK(cs_mapLocalHost);
     return !vfLimited[net];
 }
 
-/** check whether a given address is in a network we can probably connect to */
 bool IsReachable(const CNetAddr& addr)
 {
     enum Network net = addr.GetNetwork();
     return IsReachable(net);
 }
-
 
 CNode* CConnman::FindNode(const CNetAddr& ip)
 {
@@ -347,7 +338,6 @@ bool CConnman::CheckIncomingNonce(uint64_t nonce)
     return true;
 }
 
-/** Get the bind address for a socket as CAddress */
 static CAddress GetBindAddress(SOCKET sock)
 {
     CAddress addr_bind;
@@ -640,7 +630,6 @@ void CConnman::SetBannedSetDirty(bool dirty)
     setBannedIsDirty = dirty;
 }
 
-
 bool CConnman::IsWhitelistedRange(const CNetAddr &addr) {
     for (const CSubNet& subnet : vWhitelistedRange) {
         if (subnet.Match(addr))
@@ -812,7 +801,6 @@ int CNode::GetSendVersion() const
     return nSendVersion;
 }
 
-
 int CNetMessage::readHeader(const char *pch, unsigned int nBytes)
 {
     // copy data to temporary parsing buffer
@@ -868,14 +856,6 @@ const uint256& CNetMessage::GetMessageHash() const
         hasher.Finalize(data_hash.begin());
     return data_hash;
 }
-
-
-
-
-
-
-
-
 
 // requires LOCK(cs_vSend)
 size_t CConnman::SocketSendData(CNode *pnode) const
@@ -975,7 +955,6 @@ static bool CompareNodeTXTime(const NodeEvictionCandidate &a, const NodeEviction
     return a.nTimeConnected > b.nTimeConnected;
 }
 
-
 //! Sort an array by the specified comparator, then erase the last K elements.
 template<typename T, typename Comparator>
 static void EraseLastKElements(std::vector<T> &elements, Comparator comparator, size_t k)
@@ -985,14 +964,6 @@ static void EraseLastKElements(std::vector<T> &elements, Comparator comparator, 
     elements.erase(elements.end() - eraseSize, elements.end());
 }
 
-/** Try to find a connection to evict when the node is full.
- *  Extreme care must be taken to avoid opening the node to attacker
- *   triggered network partitioning.
- *  The strategy used here is to protect a small number of peers
- *   for each of several distinct characteristics which are difficult
- *   to forge.  In order to partition a node the attacker must be
- *   simultaneously better at all of them than honest peers.
- */
 bool CConnman::AttemptToEvictConnection()
 {
     std::vector<NodeEvictionCandidate> vEvictionCandidates;
@@ -1453,11 +1424,6 @@ void CConnman::WakeMessageHandler()
     condMsgProc.notify_one();
 }
 
-
-
-
-
-
 #ifdef USE_UPNP
 void ThreadMapPort()
 {
@@ -1468,14 +1434,14 @@ void ThreadMapPort()
     char lanaddr[64];
 
 #ifndef UPNPDISCOVER_SUCCESS
-    /* miniupnpc 1.5 */
+
     devlist = upnpDiscover(2000, multicastif, minissdpdpath, 0);
 #elif MINIUPNPC_API_VERSION < 14
-    /* miniupnpc 1.6 */
+
     int error = 0;
     devlist = upnpDiscover(2000, multicastif, minissdpdpath, 0, 0, &error);
 #else
-    /* miniupnpc 1.9.20150730 */
+
     int error = 0;
     devlist = upnpDiscover(2000, multicastif, minissdpdpath, 0, 0, 2, &error);
 #endif
@@ -1512,11 +1478,11 @@ void ThreadMapPort()
         try {
             while (true) {
 #ifndef UPNPDISCOVER_SUCCESS
-                /* miniupnpc 1.5 */
+
                 r = UPNP_AddPortMapping(urls.controlURL, data.first.servicetype,
                                     port.c_str(), port.c_str(), lanaddr, strDesc.c_str(), "TCP", 0);
 #else
-                /* miniupnpc 1.6 */
+
                 r = UPNP_AddPortMapping(urls.controlURL, data.first.servicetype,
                                     port.c_str(), port.c_str(), lanaddr, strDesc.c_str(), "TCP", 0, "0");
 #endif
@@ -1571,11 +1537,6 @@ void MapPort(bool)
     // Intentionally left blank.
 }
 #endif
-
-
-
-
-
 
 void CConnman::ThreadDNSAddressSeed()
 {
@@ -1640,17 +1601,6 @@ void CConnman::ThreadDNSAddressSeed()
 
     LogPrintf("%d addresses found from DNS seeds\n", found);
 }
-
-
-
-
-
-
-
-
-
-
-
 
 void CConnman::DumpAddresses()
 {
@@ -1883,7 +1833,6 @@ std::vector<AddedNodeInfo> CConnman::GetAddedNodeInfo()
         std::copy(vAddedNodes.cbegin(), vAddedNodes.cend(), std::back_inserter(lAddresses));
     }
 
-
     // Build a map of all already connected addresses (by IP:port and by name) to inbound/outbound and resolved CService
     std::map<CService, bool> mapConnected;
     std::map<std::string, std::pair<bool, CService>> mapConnectedByName;
@@ -2039,11 +1988,6 @@ void CConnman::ThreadMessageHandler()
         fMsgProcWake = false;
     }
 }
-
-
-
-
-
 
 bool CConnman::BindListenPort(const CService &addrBind, std::string& strError, bool fWhitelisted)
 {
@@ -2212,7 +2156,6 @@ NodeId CConnman::GetNewNodeId()
 {
     return nLastNodeId.fetch_add(1, std::memory_order_relaxed);
 }
-
 
 bool CConnman::Bind(const CService &addr, unsigned int flags) {
     if (!(flags & BF_EXPLICIT) && IsLimited(addr))
@@ -2848,7 +2791,8 @@ bool CConnman::ForNode(NodeId id, std::function<bool(CNode* pnode)> func)
 }
 
 int64_t PoissonNextSend(int64_t nNow, int average_interval_seconds) {
-    return nNow + (int64_t)(log1p(GetRand(1ULL << 48) * -0.0000000000000035527136788 /* -1/2^48 */) * average_interval_seconds * -1000000.0 + 0.5);
+    return nNow + (int64_t)(log1p(GetRand(1ULL << 48) * -0.0000000000000035527136788
+) * average_interval_seconds * -1000000.0 + 0.5);
 }
 
 CSipHasher CConnman::GetDeterministicRandomizer(uint64_t id) const

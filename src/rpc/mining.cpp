@@ -1,5 +1,5 @@
 // Copyright (c) 2010 Satoshi Nakamoto
-// Copyright (c) 2009-2017 The Bitcoin Core developers
+// Copyright (c) 2009-2025 The Bitcoin Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -42,11 +42,6 @@ unsigned int ParseConfirmTarget(const UniValue& value)
     return (unsigned int)target;
 }
 
-/**
- * Return average network hashes per second based on the last 'lookup' blocks,
- * or from the last difficulty change if 'lookup' is nonpositive.
- * If 'height' is nonnegative, compute the estimate at the time when a given block was found.
- */
 // LightningCashr: Hive: count hashes with dedicated function, dont use chainwork. GetNumHashes is Hive Aware.
 UniValue GetNetworkHashPS(int lookup, int height) {
     CBlockIndex *pb = chainActive.Tip();
@@ -70,11 +65,11 @@ UniValue GetNetworkHashPS(int lookup, int height) {
 //    int64_t minTime = pb0->GetBlockTime();
     int64_t minTime = pb->GetBlockTime();
     int64_t maxTime = minTime;
-	
+
 //	const Consensus::Params& consensusParams = Params().GetConsensus();					// LightningCashr Coin: Hive: Take into account hive blocks
 //	int nHiveBlocks = pb0->GetBlockHeader().IsHiveMined(consensusParams) ? 1 : 0;		// LightningCashr Coin: Hive: Take into account hive blocks
 	arith_uint256 workDiff = GetNumHashes(*pb);
-	
+
     for (int i = 0; i < lookup; i++) {
 //        pb0 = pb0->pprev;
 //        int64_t time = pb0->GetBlockTime();
@@ -94,12 +89,6 @@ UniValue GetNetworkHashPS(int lookup, int height) {
 //    arith_uint256 workDiff = pb->nChainWork - pb0->nChainWork;
     int64_t timeDiff = maxTime - minTime;
 
-/*	// The below calculation makes the (currently true) assumption that 
-	// hive blocks have the same chainwork as pow blocks.
-	// If this changes in future, this code should be revisited.
-	
-	// return workDiff.getdouble() / timeDiff;										// LightningCashr Coin: Hive
-    return workDiff.getdouble() * (1 - nHiveBlocks / (double)lookup) / timeDiff;	// LightningCashr Coin: Hive: Take into account hive blocks*/
 	return workDiff.getdouble() / timeDiff;
 }
 
@@ -151,8 +140,6 @@ UniValue gethiveparams(const JSONRPCRequest& request)
 
     return obj;
 }
-
-
 
 UniValue getnetworkhashps(const JSONRPCRequest& request)
 {
@@ -292,7 +279,6 @@ UniValue getmininginfo(const JSONRPCRequest& request)
             + HelpExampleRpc("getmininginfo", "")
         );
 
-
     LOCK(cs_main);
 
     UniValue obj(UniValue::VOBJ);
@@ -312,8 +298,6 @@ UniValue getmininginfo(const JSONRPCRequest& request)
     return obj;
 }
 
-
-
 UniValue setgenerate(const JSONRPCRequest& request)
 {
     if (request.fHelp || request.params.size() < 1 || request.params.size() > 2)
@@ -327,7 +311,7 @@ UniValue setgenerate(const JSONRPCRequest& request)
         );
 
     LOCK(cs_main);
-    
+
     int numCpus = -1;
     if (!request.params[1].isNull())
         numCpus = request.params[1].get_int();
@@ -338,7 +322,6 @@ UniValue setgenerate(const JSONRPCRequest& request)
     obj.push_back (Pair ("cpus", numCpus));
     return obj;
 }
-
 
 // NOTE: Unlike wallet RPC (which use BTC values), mining RPCs follow GBT (BIP 22) in using satoshi amounts
 UniValue prioritisetransaction(const JSONRPCRequest& request)
@@ -373,7 +356,6 @@ UniValue prioritisetransaction(const JSONRPCRequest& request)
     mempool.PrioritiseTransaction(hash, nAmount);
     return true;
 }
-
 
 // NOTE: Assumes a conclusive result; if result is inconclusive, it must be handled by caller
 static UniValue BIP22ValidationResult(const CValidationState& state)
@@ -496,7 +478,7 @@ UniValue getblocktemplate(const JSONRPCRequest& request)
             strMode = modeval.get_str();
         else if (modeval.isNull())
         {
-            /* Do nothing */
+
         }
         else
             throw JSONRPCError(RPC_INVALID_PARAMETER, "Invalid mode");

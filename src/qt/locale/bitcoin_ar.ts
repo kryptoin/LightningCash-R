@@ -486,7 +486,6 @@
 </source>
         <translation>التاريخ %1
 
-
 </translation>
     </message>
     <message>

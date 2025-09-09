@@ -1,5 +1,5 @@
 // Copyright (c) 2010 Satoshi Nakamoto
-// Copyright (c) 2009-2017 The Bitcoin Core developers
+// Copyright (c) 2009-2025 The Bitcoin Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -13,7 +13,8 @@
 #include <stdint.h>
 #include <string>
 
-#include <univalue.h>
+//#include <univalue.h>
+#include "univalue/include/univalue.h"
 
 //! HTTP status codes
 enum HTTPStatusCode
@@ -95,13 +96,12 @@ UniValue JSONRPCReplyObj(const UniValue& result, const UniValue& error, const Un
 std::string JSONRPCReply(const UniValue& result, const UniValue& error, const UniValue& id);
 UniValue JSONRPCError(int code, const std::string& message);
 
-/** Generate a new RPC authentication cookie and write it to disk */
 bool GenerateAuthCookie(std::string *cookie_out);
-/** Read the RPC authentication cookie from disk */
+
 bool GetAuthCookie(std::string *cookie_out);
-/** Delete RPC authentication cookie from disk */
+
 void DeleteAuthCookie();
-/** Parse JSON-RPC batch reply into a vector */
+
 std::vector<UniValue> JSONRPCProcessBatchReply(const UniValue &in, size_t num);
 
 #endif // BITCOIN_RPCPROTOCOL_H

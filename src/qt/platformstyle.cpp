@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2017 The Bitcoin Core developers
+// Copyright (c) 2015-2025 The Bitcoin Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -13,22 +13,21 @@
 
 static const struct {
     const char *platformId;
-    /** Show images on push buttons */
+
     const bool imagesOnButtons;
-    /** Colorize single-color icons */
+
     const bool colorizeIcons;
-    /** Extra padding/spacing in transactionview */
+
     const bool useExtraSpacing;
 } platform_styles[] = {
     {"macosx", false, false, true},
     {"windows", true, false, false},
-    /* Other: linux, unix, ... */
+
     {"other", true, true, false}
 };
 static const unsigned platform_styles_count = sizeof(platform_styles)/sizeof(*platform_styles);
 
 namespace {
-/* Local functions for colorizing single-color images */
 
 void MakeSingleColorImage(QImage& img, const QColor& colorbase)
 {
@@ -68,7 +67,6 @@ QIcon ColorizeIcon(const QString& filename, const QColor& colorbase)
 }
 
 }
-
 
 PlatformStyle::PlatformStyle(const QString &_name, bool _imagesOnButtons, bool _colorizeIcons, bool _useExtraSpacing):
     name(_name),

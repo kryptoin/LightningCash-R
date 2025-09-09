@@ -1,4 +1,4 @@
-// Copyright (c) 2012-2017 The Bitcoin Core developers
+// Copyright (c) 2012-2025 The Bitcoin Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -63,10 +63,6 @@ BOOST_AUTO_TEST_CASE(GetSigOpCount)
     BOOST_CHECK_EQUAL(p2sh.GetSigOpCount(scriptSig2), 3U);
 }
 
-/**
- * Verifies script execution of the zeroth scriptPubKey of tx output and
- * zeroth scriptSig and witness of tx input.
- */
 ScriptError VerifyWithFlag(const CTransaction& output, const CMutableTransaction& input, int flags)
 {
     ScriptError error;
@@ -77,11 +73,6 @@ ScriptError VerifyWithFlag(const CTransaction& output, const CMutableTransaction
     return error;
 }
 
-/**
- * Builds a creationTx from scriptPubKey and a spendingTx from scriptSig
- * and witness such that spendingTx spends output zero of creationTx.
- * Also inserts creationTx's output into the coins view.
- */
 void BuildTxs(CMutableTransaction& spendingTx, CCoinsViewCache& coins, CMutableTransaction& creationTx, const CScript& scriptPubKey, const CScript& scriptSig, const CScriptWitness& witness)
 {
     creationTx.nVersion = 1;
@@ -160,7 +151,6 @@ BOOST_AUTO_TEST_CASE(GetTxSigOpCost)
         CScriptWitness scriptWitness;
         scriptWitness.stack.push_back(std::vector<unsigned char>(0));
         scriptWitness.stack.push_back(std::vector<unsigned char>(0));
-
 
         BuildTxs(spendingTx, coins, creationTx, scriptPubKey, scriptSig, scriptWitness);
         assert(GetTransactionSigOpCost(CTransaction(spendingTx), coins, flags) == 1);

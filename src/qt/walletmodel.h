@@ -1,4 +1,4 @@
-// Copyright (c) 2011-2017 The Bitcoin Core developers
+// Copyright (c) 2011-2025 The Bitcoin Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -99,7 +99,6 @@ public:
     }
 };
 
-/** Interface to Bitcoin wallet from Qt view code. */
 class WalletModel : public QObject
 {
     Q_OBJECT
@@ -290,15 +289,15 @@ Q_SIGNALS:
     void newHiveSummaryAvailable();
 
 public Q_SLOTS:
-    /* Wallet status might have changed */
+
     void updateStatus();
-    /* New transaction, or transaction changed status */
+
     void updateTransaction();
-    /* New, updated or removed address book entry */
+
     void updateAddressBook(const QString &address, const QString &label, bool isMine, const QString &purpose, int status);
-    /* Watch-only added */
+
     void updateWatchOnlyFlag(bool fHaveWatchonly);
-    /* Current, immature or unconfirmed balance might have changed - emit 'balanceChanged' if so */
+
     void pollBalanceChanged();
 };
 

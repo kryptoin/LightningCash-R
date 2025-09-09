@@ -1,5 +1,5 @@
 // Copyright (c) 2009-2010 Satoshi Nakamoto
-// Copyright (c) 2009-2017 The Bitcoin Core developers
+// Copyright (c) 2009-2025 The Bitcoin Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -45,7 +45,6 @@ typedef enum bitcoinconsensus_error_t
     bitcoinconsensus_ERR_INVALID_FLAGS,
 } bitcoinconsensus_error;
 
-/** Script verification flags */
 enum
 {
     bitcoinconsensus_SCRIPT_FLAGS_VERIFY_NONE                = 0,

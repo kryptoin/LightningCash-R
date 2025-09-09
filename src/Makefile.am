@@ -1,4 +1,4 @@
-# Copyright (c) 2013-2016 The Bitcoin Core developers
+# Copyright (c) 2013-2025 The Bitcoin Core developers
 # Distributed under the MIT software license, see the accompanying
 # file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -64,13 +64,8 @@ noinst_PROGRAMS =
 TESTS =
 BENCHMARKS =
 
-if BUILD_BITCOIND
-  bin_PROGRAMS += lightningcashrd
-endif
-
-if BUILD_BITCOIN_UTILS
-  bin_PROGRAMS += lightningcashr-cli lightningcashr-tx
-endif
+bin_PROGRAMS += lightningcashrd
+bin_PROGRAMS += lightningcashr-cli lightningcashr-tx
 
 .PHONY: FORCE check-symbols check-security
 # bitcoin core #

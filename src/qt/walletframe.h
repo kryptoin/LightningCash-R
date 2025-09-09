@@ -1,4 +1,4 @@
-// Copyright (c) 2011-2016 The Bitcoin Core developers
+// Copyright (c) 2011-2025 The Bitcoin Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -19,13 +19,6 @@ QT_BEGIN_NAMESPACE
 class QStackedWidget;
 QT_END_NAMESPACE
 
-/**
- * A container for embedding all wallet-related
- * controls into BitcoinGUI. The purpose of this class is to allow future
- * refinements of the wallet controls with minimal need for further
- * modifications to BitcoinGUI, thus greatly simplifying merges while
- * reducing the risk of breaking top-level stuff.
- */
 class WalletFrame : public QFrame
 {
     Q_OBJECT
@@ -46,7 +39,7 @@ public:
     void showOutOfSyncWarning(bool fShow);
 
 Q_SIGNALS:
-    /** Notify that the user has requested more information about the out-of-sync warning */
+
     void requestedSyncWarningInfo();
 
 private:
@@ -62,13 +55,13 @@ private:
     WalletView *currentWalletView();
 
 public Q_SLOTS:
-    /** Switch to overview (home) page */
+
     void gotoOverviewPage();
-    /** Switch to history (transactions) page */
+
     void gotoHistoryPage();
-    /** Switch to receive coins page */
+
     void gotoReceiveCoinsPage();
-    /** Switch to send coins page */
+
     void gotoSendCoinsPage(QString addr = "");
 
     // LightningCashr: Switch to hive page
@@ -77,25 +70,25 @@ public Q_SLOTS:
     // LightningCashr: Key import helper
     void importPrivateKey();
 
-    /** Show Sign/Verify Message dialog and switch to sign message tab */
+
     void gotoSignMessageTab(QString addr = "");
-    /** Show Sign/Verify Message dialog and switch to verify message tab */
+
     void gotoVerifyMessageTab(QString addr = "");
 
-    /** Encrypt the wallet */
+
     void encryptWallet(bool status);
-    /** Backup the wallet */
+
     void backupWallet();
-    /** Change encrypted wallet passphrase */
+
     void changePassphrase();
-    /** Ask for passphrase to unlock wallet temporarily */
+
     void unlockWallet();
 
-    /** Show used sending addresses */
+
     void usedSendingAddresses();
-    /** Show used receiving addresses */
+
     void usedReceivingAddresses();
-    /** Pass on signal over requested out-of-sync-warning information */
+
     void outOfSyncWarningClicked();
 };
 

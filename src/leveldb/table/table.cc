@@ -254,7 +254,6 @@ Status Table::InternalGet(const ReadOptions& options, const Slice& k,
   return s;
 }
 
-
 uint64_t Table::ApproximateOffsetOf(const Slice& key) const {
   Iterator* index_iter =
       rep_->index_block->NewIterator(rep_->options.comparator);

@@ -1,4 +1,4 @@
-// Copyright (c) 2014-2017 The Bitcoin Core developers
+// Copyright (c) 2014-2025 The Bitcoin Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -14,10 +14,6 @@ static const int64_t DEFAULT_MAX_TIME_ADJUSTMENT = 35 * 60;
 
 class CNetAddr;
 
-/** 
- * Median filter over a stream of values.
- * Returns the median of the last N numbers
- */
 template <typename T>
 class CMedianFilter
 {
@@ -70,7 +66,6 @@ public:
     }
 };
 
-/** Functions to keep track of adjusted P2P time */
 int64_t GetTimeOffset();
 int64_t GetAdjustedTime();
 void AddTimeData(const CNetAddr& ip, int64_t nTime);

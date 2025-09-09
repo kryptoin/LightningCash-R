@@ -1,4 +1,4 @@
-// Copyright (c) 2011-2017 The Bitcoin Core developers
+// Copyright (c) 2011-2025 The Bitcoin Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -277,7 +277,7 @@ void OverviewPage::updateHiveSummary() {
         ui->matureLabel->setText(HiveDialog::formatLargeNoLocale(mature));
         ui->immatureLabel->setText(HiveDialog::formatLargeNoLocale(immature));
         ui->blocksFoundLabel->setText(HiveDialog::formatLargeNoLocale(blocksFound));
-        
+
         if (dead > 0) {
             ui->deadLabel->setText(HiveDialog::formatLargeNoLocale(dead));
             ui->deadLabel->setVisible(true);

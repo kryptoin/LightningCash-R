@@ -1,5 +1,5 @@
 // Copyright (c) 2009-2010 Satoshi Nakamoto
-// Copyright (c) 2009-2017 The Bitcoin Core developers
+// Copyright (c) 2009-2025 The Bitcoin Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -16,7 +16,7 @@ static const std::string CHARS_ALPHA_NUM = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJ
 
 static const std::string SAFE_CHARS[] =
 {
-    CHARS_ALPHA_NUM + " .,;-_/:?@()", // SAFE_CHARS_DEFAULT
+    CHARS_ALPHA_NUM + " .,;-_/:?@()", // SAFE_CHARS_DEFAULT_
     CHARS_ALPHA_NUM + " .,;-_?@", // SAFE_CHARS_UA_COMMENT
     CHARS_ALPHA_NUM + ".-_", // SAFE_CHARS_FILENAME
 };
@@ -525,7 +525,6 @@ bool ParseUInt64(const std::string& str, uint64_t *out)
         n <= std::numeric_limits<uint64_t>::max();
 }
 
-
 bool ParseDouble(const std::string& str, double *out)
 {
     if (!ParsePrechecks(str))
@@ -614,17 +613,8 @@ int atoi(const std::string& str)
     return atoi(str.c_str());
 }
 
-/** Upper bound for mantissa.
- * 10^18-1 is the largest arbitrary decimal that will fit in a signed 64-bit integer.
- * Larger integers cannot consist of arbitrary combinations of 0-9:
- *
- *   999999999999999999  1^18-1
- *  9223372036854775807  (1<<63)-1  (max int64_t)
- *  9999999999999999999  1^19-1     (would overflow)
- */
 static const int64_t UPPER_BOUND = 1000000000000000000LL - 1LL;
 
-/** Helper function for ParseFixedPoint */
 static inline bool ProcessMantissaDigit(char ch, int64_t &mantissa, int &mantissa_tzeros)
 {
     if(ch == '0')
@@ -632,7 +622,8 @@ static inline bool ProcessMantissaDigit(char ch, int64_t &mantissa, int &mantiss
     else {
         for (int i=0; i<=mantissa_tzeros; ++i) {
             if (mantissa > (UPPER_BOUND / 10LL))
-                return false; /* overflow */
+                return false;
+
             mantissa *= 10;
         }
         mantissa += ch - '0';
@@ -659,16 +650,19 @@ bool ParseFixedPoint(const std::string &val, int decimals, int64_t *amount_out)
     if (ptr < end)
     {
         if (val[ptr] == '0') {
-            /* pass single 0 */
+
             ++ptr;
         } else if (val[ptr] >= '1' && val[ptr] <= '9') {
             while (ptr < end && val[ptr] >= '0' && val[ptr] <= '9') {
                 if (!ProcessMantissaDigit(val[ptr], mantissa, mantissa_tzeros))
-                    return false; /* overflow */
+                    return false;
+
                 ++ptr;
             }
-        } else return false; /* missing expected digit */
-    } else return false; /* empty string or loose '-' */
+        } else return false;
+
+    } else return false;
+
     if (ptr < end && val[ptr] == '.')
     {
         ++ptr;
@@ -676,11 +670,13 @@ bool ParseFixedPoint(const std::string &val, int decimals, int64_t *amount_out)
         {
             while (ptr < end && val[ptr] >= '0' && val[ptr] <= '9') {
                 if (!ProcessMantissaDigit(val[ptr], mantissa, mantissa_tzeros))
-                    return false; /* overflow */
+                    return false;
+
                 ++ptr;
                 ++point_ofs;
             }
-        } else return false; /* missing expected digit */
+        } else return false;
+
     }
     if (ptr < end && (val[ptr] == 'e' || val[ptr] == 'E'))
     {
@@ -694,38 +690,39 @@ bool ParseFixedPoint(const std::string &val, int decimals, int64_t *amount_out)
         if (ptr < end && val[ptr] >= '0' && val[ptr] <= '9') {
             while (ptr < end && val[ptr] >= '0' && val[ptr] <= '9') {
                 if (exponent > (UPPER_BOUND / 10LL))
-                    return false; /* overflow */
+                    return false;
+
                 exponent = exponent * 10 + val[ptr] - '0';
                 ++ptr;
             }
-        } else return false; /* missing expected digit */
+        } else return false;
+
     }
     if (ptr != end)
-        return false; /* trailing garbage */
+        return false;
 
-    /* finalize exponent */
     if (exponent_sign)
         exponent = -exponent;
     exponent = exponent - point_ofs + mantissa_tzeros;
 
-    /* finalize mantissa */
     if (mantissa_sign)
         mantissa = -mantissa;
 
-    /* convert to one 64-bit fixed-point value */
     exponent += decimals;
     if (exponent < 0)
-        return false; /* cannot represent values smaller than 10^-decimals */
+        return false;
+
     if (exponent >= 18)
-        return false; /* cannot represent values larger than or equal to 10^(18-decimals) */
+        return false;
 
     for (int i=0; i < exponent; ++i) {
         if (mantissa > (UPPER_BOUND / 10LL) || mantissa < -(UPPER_BOUND / 10LL))
-            return false; /* overflow */
+            return false;
+
         mantissa *= 10;
     }
     if (mantissa > UPPER_BOUND || mantissa < -UPPER_BOUND)
-        return false; /* overflow */
+        return false;
 
     if (amount_out)
         *amount_out = mantissa;

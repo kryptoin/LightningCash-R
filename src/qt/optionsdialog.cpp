@@ -1,4 +1,4 @@
-// Copyright (c) 2011-2017 The Bitcoin Core developers
+// Copyright (c) 2011-2025 The Bitcoin Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -32,7 +32,6 @@ OptionsDialog::OptionsDialog(QWidget *parent, bool enableWallet) :
 {
     ui->setupUi(this);
 
-    /* Main elements init */
     ui->databaseCache->setMinimum(nMinDbCache);
     ui->databaseCache->setMaximum(nMaxDbCache);
     ui->threadsScriptVerif->setMinimum(-GetNumCores());
@@ -41,7 +40,6 @@ OptionsDialog::OptionsDialog(QWidget *parent, bool enableWallet) :
   // LightningCashr: Hive: Mining optimisations
     ui->hiveCheckThreads->setMaximum(GetNumVirtualCores());
 
-    /* Network elements init */
 #ifndef USE_UPNP
     ui->mapPortUpnp->setEnabled(false);
 #endif
@@ -62,18 +60,15 @@ OptionsDialog::OptionsDialog(QWidget *parent, bool enableWallet) :
     connect(ui->connectSocksTor, SIGNAL(toggled(bool)), ui->proxyPortTor, SLOT(setEnabled(bool)));
     connect(ui->connectSocksTor, SIGNAL(toggled(bool)), this, SLOT(updateProxyValidationState()));
 
-    /* Window elements init */
 #ifdef Q_OS_MAC
-    /* remove Window tab on Mac */
+
     ui->tabWidget->removeTab(ui->tabWidget->indexOf(ui->tabWindow));
 #endif
 
-    /* remove Wallet tab in case of -disablewallet */
     if (!enableWallet) {
         ui->tabWidget->removeTab(ui->tabWidget->indexOf(ui->tabWallet));
     }
 
-    /* Display elements init */
     QDir translations(":translations");
 
     ui->bitcoinAtStartup->setToolTip(ui->bitcoinAtStartup->toolTip().arg(tr(PACKAGE_NAME)));
@@ -87,24 +82,23 @@ OptionsDialog::OptionsDialog(QWidget *parent, bool enableWallet) :
     {
         QLocale locale(langStr);
 
-        /** check if the locale name consists of 2 parts (language_country) */
         if(langStr.contains("_"))
         {
 #if QT_VERSION >= 0x040800
-            /** display language strings as "native language - native country (locale name)", e.g. "Deutsch - Deutschland (de)" */
+
             ui->lang->addItem(locale.nativeLanguageName() + QString(" - ") + locale.nativeCountryName() + QString(" (") + langStr + QString(")"), QVariant(langStr));
 #else
-            /** display language strings as "language - country (locale name)", e.g. "German - Germany (de)" */
+
             ui->lang->addItem(QLocale::languageToString(locale.language()) + QString(" - ") + QLocale::countryToString(locale.country()) + QString(" (") + langStr + QString(")"), QVariant(langStr));
 #endif
         }
         else
         {
 #if QT_VERSION >= 0x040800
-            /** display language strings as "native language (locale name)", e.g. "Deutsch (de)" */
+
             ui->lang->addItem(locale.nativeLanguageName() + QString(" (") + langStr + QString(")"), QVariant(langStr));
 #else
-            /** display language strings as "language (locale name)", e.g. "German (de)" */
+
             ui->lang->addItem(QLocale::languageToString(locale.language()) + QString(" (") + langStr + QString(")"), QVariant(langStr));
 #endif
         }
@@ -115,12 +109,10 @@ OptionsDialog::OptionsDialog(QWidget *parent, bool enableWallet) :
 
     ui->unit->setModel(new BitcoinUnits(this));
 
-    /* Widget-to-option mapper */
     mapper = new QDataWidgetMapper(this);
     mapper->setSubmitPolicy(QDataWidgetMapper::ManualSubmit);
     mapper->setOrientation(Qt::Vertical);
 
-    /* setup/change UI elements when proxy IPs are invalid/valid */
     ui->proxyIp->setCheckValidator(new ProxyAddressValidator(parent));
     ui->proxyIpTor->setCheckValidator(new ProxyAddressValidator(parent));
     connect(ui->proxyIp, SIGNAL(validationDidChange(QValidatedLineEdit *)), this, SLOT(updateProxyValidationState()));
@@ -140,7 +132,7 @@ void OptionsDialog::setModel(OptionsModel *_model)
 
     if(_model)
     {
-        /* check if client restart is needed and show persistent message */
+
         if (_model->isRestartRequired())
             showRestartWarning(true);
 
@@ -156,30 +148,26 @@ void OptionsDialog::setModel(OptionsModel *_model)
         updateDefaultProxyNets();
     }
 
-    /* warn when one of the following settings changes by user action (placed here so init via mapper doesn't trigger them) */
-
-    /* Main */
     connect(ui->databaseCache, SIGNAL(valueChanged(int)), this, SLOT(showRestartWarning()));
     connect(ui->threadsScriptVerif, SIGNAL(valueChanged(int)), this, SLOT(showRestartWarning()));
-    /* Wallet */
+
     connect(ui->spendZeroConfChange, SIGNAL(clicked(bool)), this, SLOT(showRestartWarning()));
-    /* Network */
+
     connect(ui->allowIncoming, SIGNAL(clicked(bool)), this, SLOT(showRestartWarning()));
     connect(ui->connectSocks, SIGNAL(clicked(bool)), this, SLOT(showRestartWarning()));
     connect(ui->connectSocksTor, SIGNAL(clicked(bool)), this, SLOT(showRestartWarning()));
-    /* Display */
+
     connect(ui->lang, SIGNAL(valueChanged()), this, SLOT(showRestartWarning()));
     connect(ui->thirdPartyTxUrls, SIGNAL(textChanged(const QString &)), this, SLOT(showRestartWarning()));
 }
 
 void OptionsDialog::setMapper()
 {
-    /* Main */
+
     mapper->addMapping(ui->bitcoinAtStartup, OptionsModel::StartAtStartup);
     mapper->addMapping(ui->threadsScriptVerif, OptionsModel::ThreadsScriptVerif);
     mapper->addMapping(ui->databaseCache, OptionsModel::DatabaseCache);
 
-    /* Wallet */
     mapper->addMapping(ui->spendZeroConfChange, OptionsModel::SpendZeroConfChange);
     mapper->addMapping(ui->coinControlFeatures, OptionsModel::CoinControlFeatures);
 
@@ -188,7 +176,6 @@ void OptionsDialog::setMapper()
     mapper->addMapping(ui->hiveCheckDelay, OptionsModel::HiveCheckDelay);
     mapper->addMapping(ui->hiveCheckEarlyOut, OptionsModel::HiveCheckEarlyOut);
 
-    /* Network */
     mapper->addMapping(ui->mapPortUpnp, OptionsModel::MapPortUPnP);
     mapper->addMapping(ui->allowIncoming, OptionsModel::Listen);
 
@@ -200,14 +187,12 @@ void OptionsDialog::setMapper()
     mapper->addMapping(ui->proxyIpTor, OptionsModel::ProxyIPTor);
     mapper->addMapping(ui->proxyPortTor, OptionsModel::ProxyPortTor);
 
-    /* Window */
 #ifndef Q_OS_MAC
     mapper->addMapping(ui->hideTrayIcon, OptionsModel::HideTrayIcon);
     mapper->addMapping(ui->minimizeToTray, OptionsModel::MinimizeToTray);
     mapper->addMapping(ui->minimizeOnClose, OptionsModel::MinimizeOnClose);
 #endif
 
-    /* Display */
     mapper->addMapping(ui->lang, OptionsModel::Language);
     mapper->addMapping(ui->unit, OptionsModel::DisplayUnit);
     mapper->addMapping(ui->thirdPartyTxUrls, OptionsModel::ThirdPartyTxUrls);
@@ -230,7 +215,6 @@ void OptionsDialog::on_resetButton_clicked()
         if(btnRetVal == QMessageBox::Cancel)
             return;
 
-        /* reset all options and close GUI */
         model->Reset();
         QApplication::quit();
     }
@@ -238,12 +222,11 @@ void OptionsDialog::on_resetButton_clicked()
 
 void OptionsDialog::on_openBitcoinConfButton_clicked()
 {
-    /* explain the purpose of the config file */
+
     QMessageBox::information(this, tr("Configuration options"),
         tr("The configuration file is used to specify advanced user options which override GUI settings. "
            "Additionally, any command-line options will override this configuration file."));
 
-    /* show an error if there was some problem opening the file */
     if (!GUIUtil::openBitcoinConf())
         QMessageBox::critical(this, tr("Error"), tr("The configuration file could not be opened."));
 }

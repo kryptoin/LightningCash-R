@@ -1,4 +1,4 @@
-// Copyright (c) 2016-2017 The Bitcoin Core developers
+// Copyright (c) 2016-2025 The Bitcoin Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -6,9 +6,6 @@
 
 #if defined(__i386__) || defined(__x86_64__)
 
-/* These architectures support querying the cycle counter
- * from user space, no need for any syscall overhead.
- */
 void perf_init(void) { }
 void perf_fini(void) { }
 
@@ -44,7 +41,7 @@ uint64_t perf_cpucycles(void)
     return result;
 }
 
-#else /* Unhandled platform */
+#else
 
 void perf_init(void) { }
 void perf_fini(void) { }

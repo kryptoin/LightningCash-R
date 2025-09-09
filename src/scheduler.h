@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2017 The Bitcoin Core developers
+// Copyright (c) 2015-2025 The Bitcoin Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -84,12 +84,6 @@ private:
     bool shouldStop() const { return stopRequested || (stopWhenEmpty && taskQueue.empty()); }
 };
 
-/**
- * Class used by CScheduler clients which may schedule multiple jobs
- * which are required to be run serially. Does not require such jobs
- * to be executed on the same thread, but no two jobs will be executed
- * at the same time.
- */
 class SingleThreadedSchedulerClient {
 private:
     CScheduler *m_pscheduler;

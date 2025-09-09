@@ -1,5 +1,5 @@
 // Copyright (c) 2009-2010 Satoshi Nakamoto
-// Copyright (c) 2009-2017 The Bitcoin Core developers
+// Copyright (c) 2009-2025 The Bitcoin Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -131,11 +131,6 @@ bool ShutdownRequested()
     return fRequestShutdown;
 }
 
-/**
- * This is a minimally invasive approach to shutdown on LevelDB read errors from the
- * chainstate, while keeping user interface out of the common library, which is shared
- * between bitcoind, and bitcoin-qt and non-server tools.
-*/
 class CCoinsViewErrorCatcher final : public CCoinsViewBacked
 {
 public:
@@ -282,11 +277,6 @@ void Shutdown()
     LogPrintf("%s: done\n", __func__);
 }
 
-/**
- * Signal handlers are very limited in what they are allowed to do.
- * The execution context the handler is invoked in is not guaranteed,
- * so we restrict handler operations to just touching variables:
- */
 static void HandleSIGTERM(int)
 {
     fRequestShutdown = true;
@@ -587,7 +577,6 @@ struct CImportingNow
     }
 };
 
-
 // If we're using -prune with -reindex, then delete block files that will be ignored by the
 // reindex.  Since reindexing works by starting at block file 0 and looping until a blockfile
 // is missing, do the same here to delete any later block files after a gap.  Also delete all
@@ -703,10 +692,6 @@ void ThreadImport(std::vector<fs::path> vImportFiles)
     }
 }
 
-/** Sanity checks
- *  Ensure that Bitcoin is running in a usable environment with all
- *  necessary library support.
- */
 bool InitSanityCheck(void)
 {
     if(!ECC_InitSanityCheck()) {
@@ -1261,19 +1246,11 @@ bool AppInitMain()
     GetMainSignals().RegisterBackgroundSignalScheduler(scheduler);
     GetMainSignals().RegisterWithMempoolSignals(mempool);
 
-    /* Register RPC commands regardless of -server setting so they will be
-     * available in the GUI RPC console even if external calls are disabled.
-     */
     RegisterAllCoreRPCCommands(tableRPC);
 #ifdef ENABLE_WALLET
     RegisterWalletRPC(tableRPC);
 #endif
 
-    /* Start the RPC server already.  It will be started in "warmup" mode
-     * and not really process calls already (but it will signify connections
-     * that the server is there and will be ready later).  Warmup mode will
-     * be disabled when initialisation is finished.
-     */
     if (gArgs.GetBoolArg("-server", false))
     {
         uiInterface.InitMessage.connect(SetRPCWarmupStatus);

@@ -255,7 +255,6 @@ class Logger {
   void operator=(const Logger&);
 };
 
-
 // Identifies a locked file.
 class FileLock {
  public:

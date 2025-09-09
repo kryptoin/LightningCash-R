@@ -106,7 +106,6 @@ class StringSink: public WritableFile {
   std::string contents_;
 };
 
-
 class StringSource: public RandomAccessFile {
  public:
   StringSource(const Slice& contents)

@@ -7,7 +7,6 @@
 
 #include <boost/test/unit_test.hpp>
 
-
 BOOST_FIXTURE_TEST_SUITE(torcontrol_tests, BasicTestingSetup)
 
 void CheckSplitTorReplyLine(std::string input, std::string command, std::string args)

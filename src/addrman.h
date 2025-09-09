@@ -1,5 +1,5 @@
 // Copyright (c) 2012 Pieter Wuille
-// Copyright (c) 2012-2017 The Bitcoin Core developers
+// Copyright (c) 2012-2025 The Bitcoin Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -18,12 +18,8 @@
 #include <stdint.h>
 #include <vector>
 
-/**
- * Extended statistics about a CAddress
- */
 class CAddrInfo : public CAddress
 {
-
 
 public:
     //! last try whatsoever by us (memory only)
@@ -109,32 +105,6 @@ public:
 
 };
 
-/** Stochastic address manager
- *
- * Design goals:
- *  * Keep the address tables in-memory, and asynchronously dump the entire table to peers.dat.
- *  * Make sure no (localized) attacker can fill the entire table with his nodes/addresses.
- *
- * To that end:
- *  * Addresses are organized into buckets.
- *    * Addresses that have not yet been tried go into 1024 "new" buckets.
- *      * Based on the address range (/16 for IPv4) of the source of information, 64 buckets are selected at random.
- *      * The actual bucket is chosen from one of these, based on the range in which the address itself is located.
- *      * One single address can occur in up to 8 different buckets to increase selection chances for addresses that
- *        are seen frequently. The chance for increasing this multiplicity decreases exponentially.
- *      * When adding a new address to a full bucket, a randomly chosen entry (with a bias favoring less recently seen
- *        ones) is removed from it first.
- *    * Addresses of nodes that are known to be accessible go into 256 "tried" buckets.
- *      * Each address range selects at random 8 of these buckets.
- *      * The actual bucket is chosen from one of these, based on the full address.
- *      * When adding a new good address to a full bucket, a randomly chosen entry (with a bias favoring less recently
- *        tried ones) is evicted from it, back to the "new" buckets.
- *    * Bucket selection is based on cryptographic hashing, using a randomly-generated 256-bit key, which should not
- *      be observable by adversaries.
- *    * Several indexes are kept for high performance. Defining DEBUG_ADDRMAN will introduce frequent (and expensive)
- *      consistency checks for the entire data structure.
- */
-
 //! total number of buckets for tried addresses
 #define ADDRMAN_TRIED_BUCKET_COUNT_LOG2 8
 
@@ -176,9 +146,6 @@ public:
 #define ADDRMAN_NEW_BUCKET_COUNT (1 << ADDRMAN_NEW_BUCKET_COUNT_LOG2)
 #define ADDRMAN_BUCKET_SIZE (1 << ADDRMAN_BUCKET_SIZE_LOG2)
 
-/** 
- * Stochastical (IP) address manager 
- */
 class CAddrMan
 {
 private:
@@ -268,35 +235,7 @@ protected:
     void SetServices_(const CService &addr, ServiceFlags nServices);
 
 public:
-    /**
-     * serialized format:
-     * * version byte (currently 1)
-     * * 0x20 + nKey (serialized as if it were a vector, for backward compatibility)
-     * * nNew
-     * * nTried
-     * * number of "new" buckets XOR 2**30
-     * * all nNew addrinfos in vvNew
-     * * all nTried addrinfos in vvTried
-     * * for each bucket:
-     *   * number of elements
-     *   * for each element: index
-     *
-     * 2**30 is xorred with the number of buckets to make addrman deserializer v0 detect it
-     * as incompatible. This is necessary because it did not check the version number on
-     * deserialization.
-     *
-     * Notice that vvTried, mapAddr and vVector are never encoded explicitly;
-     * they are instead reconstructed from the other information.
-     *
-     * vvNew is serialized, but only used if ADDRMAN_UNKNOWN_BUCKET_COUNT didn't change,
-     * otherwise it is reconstructed as well.
-     *
-     * This format is more complex, but significantly smaller (at most 1.5 MiB), and supports
-     * changes to the ADDRMAN_ parameters without breaking the on-disk structure.
-     *
-     * We don't use ADD_SERIALIZE_METHODS since the serialization and deserialization code has
-     * very little in common.
-     */
+
     template<typename Stream>
     void Serialize(Stream &s) const
     {
@@ -554,9 +493,7 @@ public:
         Check();
     }
 
-    /**
-     * Choose an address to connect to.
-     */
+
     CAddrInfo Select(bool newOnly = false)
     {
         CAddrInfo addrRet;

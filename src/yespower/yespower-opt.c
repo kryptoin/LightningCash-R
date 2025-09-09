@@ -1,54 +1,10 @@
-/*-
- * Copyright 2009 Colin Percival
- * Copyright 2012-2018 Alexander Peslyak
- * All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions
- * are met:
- * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer.
- * 2. Redistributions in binary form must reproduce the above copyright
- *    notice, this list of conditions and the following disclaimer in the
- *    documentation and/or other materials provided with the distribution.
- *
- * THIS SOFTWARE IS PROVIDED BY THE AUTHOR AND CONTRIBUTORS ``AS IS'' AND
- * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
- * ARE DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE
- * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
- * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
- * OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
- * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
- * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
- * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
- * SUCH DAMAGE.
- *
- * This file was originally written by Colin Percival as part of the Tarsnap
- * online backup system.
- *
- * This is a proof-of-work focused fork of yescrypt, including optimized and
- * cut-down implementation of the obsolete yescrypt 0.5 (based off its first
- * submission to PHC back in 2014) and a new proof-of-work specific variation
- * known as yespower 1.0.  The former is intended as an upgrade for
- * cryptocurrencies that already use yescrypt 0.5 and the latter may be used
- * as a further upgrade (hard fork) by those and other cryptocurrencies.  The
- * version of algorithm to use is requested through parameters, allowing for
- * both algorithms to co-exist in client and miner implementations (such as in
- * preparation for a hard-fork).
- */
 
 #ifndef _YESPOWER_OPT_C_PASS_
 #define _YESPOWER_OPT_C_PASS_ 1
 #endif
 
 #if _YESPOWER_OPT_C_PASS_ == 1
-/*
- * AVX and especially XOP speed up Salsa20 a lot, but needlessly result in
- * extra instruction prefixes for pwxform (which we make more use of).  While
- * no slowdown from the prefixes is generally observed on AMD CPUs supporting
- * XOP, some slowdown is sometimes observed on Intel CPUs with AVX.
- */
+
 #ifdef __XOP__
 #warning "Note: XOP is enabled.  That's great."
 #elif defined(__AVX__)
@@ -61,22 +17,10 @@
 #warning "Note: building generic code for non-x86.  That's OK."
 #endif
 
-/*
- * The SSE4 code version has fewer instructions than the generic SSE2 version,
- * but all of the instructions are SIMD, thereby wasting the scalar execution
- * units.  Thus, the generic SSE2 version below actually runs faster on some
- * CPUs due to its balanced mix of SIMD and scalar instructions.
- */
 #undef USE_SSE4_FOR_32BIT
 
 #ifdef __SSE2__
-/*
- * GCC before 4.9 would by default unnecessarily use store/load (without
- * SSE4.1) or (V)PEXTR (with SSE4.1 or AVX) instead of simply (V)MOV.
- * This was tracked as GCC bug 54349.
- * "-mtune=corei7" works around this, but is only supported for GCC 4.6+.
- * We use inline asm for pre-4.6 GCC, further down this file.
- */
+
 #if __GNUC__ == 4 && __GNUC_MINOR__ >= 6 && __GNUC_MINOR__ < 9 && \
     !defined(__clang__) && !defined(__ICC)
 #pragma GCC target ("tune=corei7")
@@ -103,7 +47,7 @@
 #include "yespower-platform.c"
 
 #if __STDC_VERSION__ >= 199901L
-/* Have restrict */
+
 #elif defined(__GNUC__)
 #define restrict __restrict
 #else
@@ -185,28 +129,29 @@ static inline void salsa20_simd_unshuffle(const salsa20_blk_t *Bin,
 #endif
 
 #define SALSA20_2ROUNDS \
-	/* Operate on "columns" */ \
+
+ \
 	ARX(X1, X0, X3, 7) \
 	ARX(X2, X1, X0, 9) \
 	ARX(X3, X2, X1, 13) \
 	ARX(X0, X3, X2, 18) \
-	/* Rearrange data */ \
+
+ \
 	X1 = _mm_shuffle_epi32(X1, 0x93); \
 	X2 = _mm_shuffle_epi32(X2, 0x4E); \
 	X3 = _mm_shuffle_epi32(X3, 0x39); \
-	/* Operate on "rows" */ \
+
+ \
 	ARX(X3, X0, X1, 7) \
 	ARX(X2, X3, X0, 9) \
 	ARX(X1, X2, X3, 13) \
 	ARX(X0, X1, X2, 18) \
-	/* Rearrange data */ \
+
+ \
 	X1 = _mm_shuffle_epi32(X1, 0x39); \
 	X2 = _mm_shuffle_epi32(X2, 0x4E); \
 	X3 = _mm_shuffle_epi32(X3, 0x93);
 
-/**
- * Apply the Salsa20 core to the block provided in (X0 ... X3).
- */
 #define SALSA20_wrapper(out, rounds) { \
 	__m128i Z0 = X0, Z1 = X1, Z2 = X2, Z3 = X3; \
 	rounds \
@@ -216,18 +161,12 @@ static inline void salsa20_simd_unshuffle(const salsa20_blk_t *Bin,
 	(out).q[3] = X3 = _mm_add_epi32(X3, Z3); \
 }
 
-/**
- * Apply the Salsa20/2 core to the block provided in X.
- */
 #define SALSA20_2(out) \
 	SALSA20_wrapper(out, SALSA20_2ROUNDS)
 
 #define SALSA20_8ROUNDS \
 	SALSA20_2ROUNDS SALSA20_2ROUNDS SALSA20_2ROUNDS SALSA20_2ROUNDS
 
-/**
- * Apply the Salsa20/8 core to the block provided in X.
- */
 #define SALSA20_8(out) \
 	SALSA20_wrapper(out, SALSA20_8ROUNDS)
 
@@ -255,7 +194,7 @@ static inline void salsa20_simd_unshuffle(const salsa20_blk_t *Bin,
 
 #define INTEGERIFY _mm_cvtsi128_si32(X0)
 
-#else /* !defined(__SSE2__) */
+#else
 
 #define DECL_X \
 	salsa20_blk_t X;
@@ -275,10 +214,6 @@ static inline void salsa20_simd_unshuffle(const salsa20_blk_t *Bin,
 #define READ_X(in) COPY(X, in)
 #define WRITE_X(out) COPY(out, X)
 
-/**
- * salsa20(B):
- * Apply the Salsa20 core to the provided block.
- */
 static inline void salsa20(salsa20_blk_t *restrict B,
     salsa20_blk_t *restrict Bout, uint32_t doublerounds)
 {
@@ -289,7 +224,7 @@ static inline void salsa20(salsa20_blk_t *restrict B,
 
 	do {
 #define R(a,b) (((a) << (b)) | ((a) >> (32 - (b))))
-		/* Operate on columns */
+
 		x[ 4] ^= R(x[ 0]+x[12], 7);  x[ 8] ^= R(x[ 4]+x[ 0], 9);
 		x[12] ^= R(x[ 8]+x[ 4],13);  x[ 0] ^= R(x[12]+x[ 8],18);
 
@@ -302,7 +237,6 @@ static inline void salsa20(salsa20_blk_t *restrict B,
 		x[ 3] ^= R(x[15]+x[11], 7);  x[ 7] ^= R(x[ 3]+x[15], 9);
 		x[11] ^= R(x[ 7]+x[ 3],13);  x[15] ^= R(x[11]+x[ 7],18);
 
-		/* Operate on rows */
 		x[ 1] ^= R(x[ 0]+x[ 3], 7);  x[ 2] ^= R(x[ 1]+x[ 0], 9);
 		x[ 3] ^= R(x[ 2]+x[ 1],13);  x[ 0] ^= R(x[ 3]+x[ 2],18);
 
@@ -330,15 +264,9 @@ static inline void salsa20(salsa20_blk_t *restrict B,
 	}
 }
 
-/**
- * Apply the Salsa20/2 core to the block provided in X.
- */
 #define SALSA20_2(out) \
 	salsa20(&X, &out, 1);
 
-/**
- * Apply the Salsa20/8 core to the block provided in X.
- */
 #define SALSA20_8(out) \
 	salsa20(&X, &out, 4);
 
@@ -362,24 +290,17 @@ static inline void salsa20(salsa20_blk_t *restrict B,
 #define INTEGERIFY (uint32_t)X.d[0]
 #endif
 
-/**
- * Apply the Salsa20 core to the block provided in X ^ in.
- */
 #define SALSA20_XOR_MEM(in, out) \
 	XOR_X(in) \
 	SALSA20(out)
 
 #define SALSA20 SALSA20_8
-#else /* pass 2 */
+#else
+
 #undef SALSA20
 #define SALSA20 SALSA20_2
 #endif
 
-/**
- * blockmix_salsa(Bin, Bout):
- * Compute Bout = BlockMix_{salsa20, 1}(Bin).  The input Bin must be 128
- * bytes in length; the output Bout must also be the same size.
- */
 static inline void blockmix_salsa(const salsa20_blk_t *restrict Bin,
     salsa20_blk_t *restrict Bout)
 {
@@ -405,25 +326,20 @@ static inline uint32_t blockmix_salsa_xor(const salsa20_blk_t *restrict Bin1,
 }
 
 #if _YESPOWER_OPT_C_PASS_ == 1
-/* This is tunable, but it is part of what defines a yespower version */
-/* Version 0.5 */
+
 #define Swidth_0_5 8
-/* Version 1.0 */
+
 #define Swidth_1_0 11
 
-/* Not tunable in this implementation, hard-coded in a few places */
 #define PWXsimple 2
 #define PWXgather 4
 
-/* Derived value.  Not tunable on its own. */
 #define PWXbytes (PWXgather * PWXsimple * 8)
 
-/* (Maybe-)runtime derived values.  Not tunable on their own. */
 #define Swidth_to_Sbytes1(Swidth) ((1 << (Swidth)) * PWXsimple * 8)
 #define Swidth_to_Smask(Swidth) (((1 << (Swidth)) - 1) * PWXsimple * 8)
 #define Smask_to_Smask2(Smask) (((uint64_t)(Smask) << 32) | (Smask))
 
-/* These should be compile-time derived */
 #define Smask2_0_5 Smask_to_Smask2(Swidth_to_Smask(Swidth_0_5))
 #define Smask2_1_0 Smask_to_Smask2(Swidth_to_Smask(Swidth_1_0))
 
@@ -433,23 +349,17 @@ typedef struct {
 	uint32_t Sbytes;
 } pwxform_ctx_t;
 
-#define DECL_SMASK2REG /* empty */
-#define MAYBE_MEMORY_BARRIER /* empty */
+#define DECL_SMASK2REG
+
+#define MAYBE_MEMORY_BARRIER
 
 #ifdef __SSE2__
-/*
- * (V)PSRLDQ and (V)PSHUFD have higher throughput than (V)PSRLQ on some CPUs
- * starting with Sandy Bridge.  Additionally, PSHUFD uses separate source and
- * destination registers, whereas the shifts would require an extra move
- * instruction for our code when building without AVX.  Unfortunately, PSHUFD
- * is much slower on Conroe (4 cycles latency vs. 1 cycle latency for PSRLQ)
- * and somewhat slower on some non-Intel CPUs (luckily not including AMD
- * Bulldozer and Piledriver).
- */
+
 #ifdef __AVX__
 #define HI32(X) \
 	_mm_srli_si128((X), 4)
-#elif 1 /* As an option, check for __SSE4_1__ here not to hurt Conroe */
+#elif 1
+
 #define HI32(X) \
 	_mm_shuffle_epi32((X), _MM_SHUFFLE(2,3,0,1))
 #else
@@ -462,8 +372,7 @@ typedef struct {
 #ifdef __AVX__
 #define MOVQ "vmovq"
 #else
-/* "movq" would be more correct, but "movd" is supported by older binutils
- * due to an error in AMD's spec for x86-64. */
+
 #define MOVQ "movd"
 #endif
 #define EXTRACT64(X) ({ \
@@ -472,37 +381,34 @@ typedef struct {
 	result; \
 })
 #elif defined(__x86_64__) && !defined(_MSC_VER) && !defined(__OPEN64__)
-/* MSVC and Open64 had bugs */
+
 #define EXTRACT64(X) _mm_cvtsi128_si64(X)
 #elif defined(__x86_64__) && defined(__SSE4_1__)
-/* No known bugs for this intrinsic */
+
 #include <smmintrin.h>
 #define EXTRACT64(X) _mm_extract_epi64((X), 0)
 #elif defined(USE_SSE4_FOR_32BIT) && defined(__SSE4_1__)
-/* 32-bit */
+
 #include <smmintrin.h>
 #if 0
-/* This is currently unused by the code below, which instead uses these two
- * intrinsics explicitly when (!defined(__x86_64__) && defined(__SSE4_1__)) */
+
 #define EXTRACT64(X) \
 	((uint64_t)(uint32_t)_mm_cvtsi128_si32(X) | \
 	((uint64_t)(uint32_t)_mm_extract_epi32((X), 1) << 32))
 #endif
 #else
-/* 32-bit or compilers with known past bugs in _mm_cvtsi128_si64() */
+
 #define EXTRACT64(X) \
 	((uint64_t)(uint32_t)_mm_cvtsi128_si32(X) | \
 	((uint64_t)(uint32_t)_mm_cvtsi128_si32(HI32(X)) << 32))
 #endif
 
 #if defined(__x86_64__) && (defined(__AVX__) || !defined(__GNUC__))
-/* 64-bit with AVX */
-/* Force use of 64-bit AND instead of two 32-bit ANDs */
+
 #undef DECL_SMASK2REG
 #if defined(__GNUC__) && !defined(__ICC)
 #define DECL_SMASK2REG uint64_t Smask2reg = Smask2;
-/* Force use of lower-numbered registers to reduce number of prefixes, relying
- * on out-of-order execution and register renaming. */
+
 #define FORCE_REGALLOC_1 \
 	__asm__("" : "=a" (x), "+d" (Smask2reg), "+S" (S0), "+D" (S1));
 #define FORCE_REGALLOC_2 \
@@ -510,8 +416,10 @@ typedef struct {
 #else
 static volatile uint64_t Smask2var = Smask2;
 #define DECL_SMASK2REG uint64_t Smask2reg = Smask2var;
-#define FORCE_REGALLOC_1 /* empty */
-#define FORCE_REGALLOC_2 /* empty */
+#define FORCE_REGALLOC_1
+
+#define FORCE_REGALLOC_2
+
 #endif
 #define PWXFORM_SIMD(X) { \
 	uint64_t x; \
@@ -524,9 +432,7 @@ static volatile uint64_t Smask2var = Smask2;
 	X = _mm_xor_si128(X, *(__m128i *)(S1 + hi)); \
 }
 #elif defined(__x86_64__)
-/* 64-bit without AVX.  This relies on out-of-order execution and register
- * renaming.  It may actually be fastest on CPUs with AVX(2) as well - e.g.,
- * it runs great on Haswell. */
+
 #warning "Note: using x86-64 inline assembly for pwxform.  That's great."
 #undef MAYBE_MEMORY_BARRIER
 #define MAYBE_MEMORY_BARRIER \
@@ -547,7 +453,7 @@ static volatile uint64_t Smask2var = Smask2;
 	    : "cc", "ax", "cx"); \
 }
 #elif defined(USE_SSE4_FOR_32BIT) && defined(__SSE4_1__)
-/* 32-bit with SSE4.1 */
+
 #define PWXFORM_SIMD(X) { \
 	__m128i x = _mm_and_si128(X, _mm_set1_epi64x(Smask2)); \
 	__m128i s0 = *(__m128i *)(S0 + (uint32_t)_mm_cvtsi128_si32(x)); \
@@ -557,7 +463,7 @@ static volatile uint64_t Smask2var = Smask2;
 	X = _mm_xor_si128(X, s1); \
 }
 #else
-/* 32-bit without SSE4.1 */
+
 #define PWXFORM_SIMD(X) { \
 	uint64_t x = EXTRACT64(X) & Smask2; \
 	__m128i s0 = *(__m128i *)(S0 + (uint32_t)x); \
@@ -595,7 +501,7 @@ static volatile uint64_t Smask2var = Smask2;
 	PWXFORM_SIMD(X2) \
 	PWXFORM_SIMD(X3)
 
-#else /* !defined(__SSE2__) */
+#else
 
 #define PWXFORM_SIMD(x0, x1) { \
 	uint64_t x = x0 & Smask2; \
@@ -638,7 +544,7 @@ static volatile uint64_t Smask2var = Smask2;
 
 #define Smask2 Smask2_0_5
 
-#else /* pass 2 */
+#else
 
 #undef PWXFORM
 #define PWXFORM \
@@ -656,11 +562,6 @@ static volatile uint64_t Smask2var = Smask2;
 
 #endif
 
-/**
- * blockmix_pwxform(Bin, Bout, r, S):
- * Compute Bout = BlockMix_pwxform{salsa20, r, S}(Bin).  The input Bin must
- * be 128r bytes in length; the output Bout must also be the same size.
- */
 static void blockmix(const salsa20_blk_t *restrict Bin,
     salsa20_blk_t *restrict Bout, size_t r, pwxform_ctx_t *restrict ctx)
 {
@@ -677,7 +578,6 @@ static void blockmix(const salsa20_blk_t *restrict Bin,
 	size_t i;
 	DECL_X
 
-	/* Convert count of 128-byte blocks to max index of 64-byte block */
 	r = r * 2 - 1;
 
 	READ_X(Bin[r])
@@ -717,7 +617,6 @@ static uint32_t blockmix_xor(const salsa20_blk_t *restrict Bin1,
 	size_t i;
 	DECL_X
 
-	/* Convert count of 128-byte blocks to max index of 64-byte block */
 	r = r * 2 - 1;
 
 #ifdef PREFETCH
@@ -775,7 +674,6 @@ static uint32_t blockmix_xor_save(salsa20_blk_t *restrict Bin1out,
 	DECL_X
 	DECL_Y
 
-	/* Convert count of 128-byte blocks to max index of 64-byte block */
 	r = r * 2 - 1;
 
 #ifdef PREFETCH
@@ -819,29 +717,14 @@ static uint32_t blockmix_xor_save(salsa20_blk_t *restrict Bin1out,
 }
 
 #if _YESPOWER_OPT_C_PASS_ == 1
-/**
- * integerify(B, r):
- * Return the result of parsing B_{2r-1} as a little-endian integer.
- */
+
 static inline uint32_t integerify(const salsa20_blk_t *B, size_t r)
 {
-/*
- * Our 64-bit words are in host byte order, which is why we don't just read
- * w[0] here (would be wrong on big-endian).  Also, our 32-bit words are
- * SIMD-shuffled, but we only care about the least significant 32 bits anyway.
- */
+
 	return (uint32_t)B[2 * r - 1].d[0];
 }
 #endif
 
-/**
- * smix1(B, r, N, V, XY, S):
- * Compute first loop of B = SMix_r(B, N).  The input B must be 128r bytes in
- * length; the temporary storage V must be 128rN bytes in length; the temporary
- * storage XY must be 128r+64 bytes in length.  N must be even and at least 4.
- * The array V must be aligned to a multiple of 64 bytes, and arrays B and XY
- * to a multiple of at least 16 bytes.
- */
 static void smix1(uint8_t *B, size_t r, uint32_t N,
     salsa20_blk_t *V, salsa20_blk_t *XY, pwxform_ctx_t *ctx)
 {
@@ -911,14 +794,6 @@ static void smix1(uint8_t *B, size_t r, uint32_t N,
 	}
 }
 
-/**
- * smix2(B, r, N, Nloop, V, XY, S):
- * Compute second loop of B = SMix_r(B, N).  The input B must be 128r bytes in
- * length; the temporary storage V must be 128rN bytes in length; the temporary
- * storage XY must be 256r bytes in length.  N must be a power of 2 and at
- * least 2.  Nloop must be even.  The array V must be aligned to a multiple of
- * 64 bytes, and arrays B and XY to a multiple of at least 16 bytes.
- */
 static void smix2(uint8_t *B, size_t r, uint32_t N, uint32_t Nloop,
     salsa20_blk_t *V, salsa20_blk_t *XY, pwxform_ctx_t *ctx)
 {
@@ -969,32 +844,29 @@ static void smix2(uint8_t *B, size_t r, uint32_t N, uint32_t Nloop,
 	}
 }
 
-/**
- * smix(B, r, N, V, XY, S):
- * Compute B = SMix_r(B, N).  The input B must be 128rp bytes in length; the
- * temporary storage V must be 128rN bytes in length; the temporary storage
- * XY must be 256r bytes in length.  N must be a power of 2 and at least 16.
- * The array V must be aligned to a multiple of 64 bytes, and arrays B and XY
- * to a multiple of at least 16 bytes (aligning them to 64 bytes as well saves
- * cache lines, but it might also result in cache bank conflicts).
- */
 static void smix(uint8_t *B, size_t r, uint32_t N,
     salsa20_blk_t *V, salsa20_blk_t *XY, pwxform_ctx_t *ctx)
 {
 #if _YESPOWER_OPT_C_PASS_ == 1
-	uint32_t Nloop_all = (N + 2) / 3; /* 1/3, round up */
+	uint32_t Nloop_all = (N + 2) / 3;
+
 	uint32_t Nloop_rw = Nloop_all;
 
-	Nloop_all++; Nloop_all &= ~(uint32_t)1; /* round up to even */
-	Nloop_rw &= ~(uint32_t)1; /* round down to even */
+	Nloop_all++; Nloop_all &= ~(uint32_t)1;
+
+	Nloop_rw &= ~(uint32_t)1;
+
 #else
-	uint32_t Nloop_rw = (N + 2) / 3; /* 1/3, round up */
-	Nloop_rw++; Nloop_rw &= ~(uint32_t)1; /* round up to even */
+	uint32_t Nloop_rw = (N + 2) / 3;
+
+	Nloop_rw++; Nloop_rw &= ~(uint32_t)1;
+
 #endif
 
 	smix1(B, 1, ctx->Sbytes / 128, (salsa20_blk_t *)ctx->S0, XY, NULL);
 	smix1(B, r, N, V, XY, ctx);
-	smix2(B, r, N, Nloop_rw /* must be > 2 */, V, XY, ctx);
+	smix2(B, r, N, Nloop_rw
+, V, XY, ctx);
 #if _YESPOWER_OPT_C_PASS_ == 1
 	if (Nloop_all > Nloop_rw)
 		smix2(B, r, N, 2, V, XY, ctx);
@@ -1015,14 +887,6 @@ static void smix(uint8_t *B, size_t r, uint32_t N,
 #include "yespower-opt.c"
 #undef smix
 
-/**
- * yespower(local, src, srclen, params, dst):
- * Compute yespower(src[0 .. srclen - 1], N, r), to be checked for "< target".
- * local is the thread-local data structure, allowing to preserve and reuse a
- * memory allocation across calls, thereby reducing its overhead.
- *
- * Return 0 on success; or -1 on error.
- */
 int yespower(yespower_local_t *local,
     const uint8_t *src, size_t srclen,
     const yespower_params_t *params,
@@ -1040,7 +904,6 @@ int yespower(yespower_local_t *local,
 	pwxform_ctx_t ctx;
 	uint8_t sha256[32];
 
-	/* Sanity-check parameters */
 	if ((version != YESPOWER_0_5 && version != YESPOWER_1_0) ||
 	    N < 1024 || N > 512 * 1024 || r < 8 || r > 32 ||
 	    (N & (N - 1)) != 0 ||
@@ -1049,7 +912,6 @@ int yespower(yespower_local_t *local,
 		return -1;
 	}
 
-	/* Allocate memory */
 	B_size = (size_t)128 * r;
 	V_size = B_size * N;
 	if (version == YESPOWER_0_5) {
@@ -1108,17 +970,9 @@ int yespower(yespower_local_t *local,
 		    sha256, sizeof(sha256), (uint8_t *)dst);
 	}
 
-	/* Success! */
 	return 0;
 }
 
-/**
- * yespower_tls(src, srclen, params, dst):
- * Compute yespower(src[0 .. srclen - 1], N, r), to be checked for "< target".
- * The memory allocation is maintained internally using thread-local storage.
- *
- * Return 0 on success; or -1 on error.
- */
 int yespower_tls(const uint8_t *src, size_t srclen,
     const yespower_params_t *params, yespower_binary_t *dst)
 {

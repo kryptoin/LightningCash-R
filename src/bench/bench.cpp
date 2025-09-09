@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2017 The Bitcoin Core developers
+// Copyright (c) 2015-2025 The Bitcoin Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -81,7 +81,6 @@ void benchmark::PlotlyPrinter::footer()
               << "Plotly.newPlot('myDiv', data, layout);"
               << "</script></body></html>";
 }
-
 
 benchmark::BenchRunner::BenchmarkMap& benchmark::BenchRunner::benchmarks()
 {

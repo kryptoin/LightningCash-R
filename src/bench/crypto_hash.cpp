@@ -1,4 +1,4 @@
-// Copyright (c) 2016-2017 The Bitcoin Core developers
+// Copyright (c) 2016-2025 The Bitcoin Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -15,7 +15,6 @@
 #include <crypto/sha256.h>
 #include <crypto/sha512.h>
 
-/* Number of bytes to hash per iteration */
 static const uint64_t BUFFER_SIZE = 1000*1000;
 
 static void RIPEMD160(benchmark::State& state)

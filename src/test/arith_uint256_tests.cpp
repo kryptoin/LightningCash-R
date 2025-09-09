@@ -1,4 +1,4 @@
-// Copyright (c) 2011-2017 The Bitcoin Core developers
+// Copyright (c) 2011-2025 The Bitcoin Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -217,7 +217,6 @@ BOOST_AUTO_TEST_CASE( unaryOperators ) // !    ~    -
         BOOST_CHECK(-(OneL<<i) == (MaxL << i));
 }
 
-
 // Check if doing _A_ _OP_ _B_ results in the same as applying _OP_ onto each
 // element of Aarray and Barray, and then converting the result into an arith_uint256.
 #define CHECKBITWISEOPERATOR(_A_,_B_,_OP_)                              \
@@ -367,7 +366,6 @@ BOOST_AUTO_TEST_CASE( divide )
     BOOST_CHECK(MaxL / R2L == 1);
     BOOST_CHECK_THROW(R2L / ZeroL, uint_error);
 }
-
 
 bool almostEqual(double d1, double d2)
 {
@@ -536,7 +534,6 @@ BOOST_AUTO_TEST_CASE(bignum_SetCompact)
     BOOST_CHECK_EQUAL(fNegative, false);
     BOOST_CHECK_EQUAL(fOverflow, true);
 }
-
 
 BOOST_AUTO_TEST_CASE( getmaxcoverage ) // some more tests just to get 100% coverage
 {

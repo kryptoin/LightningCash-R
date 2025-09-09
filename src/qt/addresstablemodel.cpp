@@ -1,4 +1,4 @@
-// Copyright (c) 2011-2017 The Bitcoin Core developers
+// Copyright (c) 2011-2025 The Bitcoin Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -9,7 +9,6 @@
 
 #include <base58.h>
 #include <wallet/wallet.h>
-
 
 #include <QFont>
 #include <QDebug>
@@ -22,7 +21,8 @@ struct AddressTableEntry
     enum Type {
         Sending,
         Receiving,
-        Hidden /* QSortFilterProxyModel will filter these out */
+        Hidden
+
     };
 
     Type type;
@@ -50,7 +50,6 @@ struct AddressTableEntryLessThan
     }
 };
 
-/* Determine address type from address purpose */
 static AddressTableEntry::Type translateTransactionType(const QString &strPurpose, bool isMine)
 {
     AddressTableEntry::Type addressType = AddressTableEntry::Hidden;
@@ -245,7 +244,8 @@ bool AddressTableModel::setData(const QModelIndex &index, const QVariant &value,
 
     if(role == Qt::EditRole)
     {
-        LOCK(wallet->cs_wallet); /* For SetAddressBook / DelAddressBook */
+        LOCK(wallet->cs_wallet);
+
         CTxDestination curAddress = DecodeDestination(rec->address.toStdString());
         if(index.column() == Label)
         {
@@ -418,8 +418,6 @@ bool AddressTableModel::removeRows(int row, int count, const QModelIndex &parent
     return true;
 }
 
-/* Look up label for address in address book, if not found return empty string.
- */
 QString AddressTableModel::labelForAddress(const QString &address) const
 {
     {

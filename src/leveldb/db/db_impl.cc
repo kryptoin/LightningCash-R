@@ -399,8 +399,10 @@ Status DBImpl::RecoverLogFile(uint64_t log_number, bool last_log,
   // paranoid_checks==false so that corruptions cause entire commits
   // to be skipped instead of propagating bad information (like overly
   // large sequence numbers).
-  log::Reader reader(file, &reporter, true/*checksum*/,
-                     0/*initial_offset*/);
+  log::Reader reader(file, &reporter, true
+,
+                     0
+);
   Log(options_.info_log, "Recovering log #%llu",
       (unsigned long long) log_number);
 
@@ -509,7 +511,6 @@ Status DBImpl::WriteLevel0Table(MemTable* mem, VersionEdit* edit,
       s.ToString().c_str());
   delete iter;
   pending_outputs_.erase(meta.number);
-
 
   // Note that if file_size is zero, the file has been deleted and
   // should not be added to the manifest.
@@ -861,7 +862,6 @@ Status DBImpl::FinishCompactionOutputFile(CompactionState* compact,
   }
   return s;
 }
-
 
 Status DBImpl::InstallCompactionResults(CompactionState* compact) {
   mutex_.AssertHeld();

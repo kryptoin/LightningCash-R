@@ -1,5 +1,5 @@
 // Copyright (c) 2009-2010 Satoshi Nakamoto
-// Copyright (c) 2009-2017 The Bitcoin Core developers
+// Copyright (c) 2009-2025 The Bitcoin Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -12,7 +12,6 @@
 
 namespace {
 
-/** A class that deserializes a single CTransaction one time. */
 class TxInputStream
 {
 public:
@@ -70,7 +69,6 @@ struct ECCryptoClosure
 ECCryptoClosure instance_of_eccryptoclosure;
 } // namespace
 
-/** Check that all specified flags are part of the libconsensus interface. */
 static bool verify_flags(unsigned int flags)
 {
     return (flags & ~(bitcoinconsensus_SCRIPT_FLAGS_VERIFY_ALL)) == 0;
@@ -108,7 +106,6 @@ int bitcoinconsensus_verify_script_with_amount(const unsigned char *scriptPubKey
     CAmount am(amount);
     return ::verify_script(scriptPubKey, scriptPubKeyLen, am, txTo, txToLen, nIn, flags, err);
 }
-
 
 int bitcoinconsensus_verify_script(const unsigned char *scriptPubKey, unsigned int scriptPubKeyLen,
                                    const unsigned char *txTo        , unsigned int txToLen,

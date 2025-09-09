@@ -1,4 +1,4 @@
-// Copyright (c) 2011-2016 The Bitcoin Core developers
+// Copyright (c) 2011-2025 The Bitcoin Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -17,10 +17,6 @@ namespace Ui {
     class Intro;
 }
 
-/** Introduction screen (pre-GUI startup).
-  Allows the user to choose a data directory,
-  in which the wallet and block chain will be stored.
- */
 class Intro : public QDialog
 {
     Q_OBJECT
@@ -32,20 +28,10 @@ public:
     QString getDataDirectory();
     void setDataDirectory(const QString &dataDir);
 
-    /**
-     * Determine data directory. Let the user choose if the current one doesn't exist.
-     *
-     * @returns true if a data directory was selected, false if the user cancelled the selection
-     * dialog.
-     *
-     * @note do NOT call global GetDataDir() before calling this function, this
-     * will cause the wrong path to be cached.
-     */
+
     static bool pickDataDirectory();
 
-    /**
-     * Determine default data directory for operating system.
-     */
+
     static QString getDefaultDataDirectory();
 
 Q_SIGNALS:

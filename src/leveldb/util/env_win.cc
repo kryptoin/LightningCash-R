@@ -7,7 +7,6 @@
 #if defined(LEVELDB_PLATFORM_WINDOWS)
 #include <map>
 
-
 #include "leveldb/env.h"
 
 #include "port/port.h"
@@ -308,7 +307,6 @@ size_t GetPageSize()
 }
 
 const size_t g_PageSize = GetPageSize();
-
 
 Win32SequentialFile::Win32SequentialFile( const std::string& fname ) :
     _filename(fname),_hFile(NULL)
@@ -649,7 +647,6 @@ void Win32Env::SleepForMicroseconds( int micros )
     ::Sleep((micros + 999) /1000);
 }
 
-
 Status Win32Env::DeleteFile( const std::string& fname )
 {
     Status sRet;
@@ -880,7 +877,6 @@ Win32Env::~Win32Env()
 {
 
 }
-
 
 }  // Win32 namespace
 

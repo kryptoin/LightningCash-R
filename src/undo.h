@@ -1,5 +1,5 @@
 // Copyright (c) 2009-2010 Satoshi Nakamoto
-// Copyright (c) 2009-2017 The Bitcoin Core developers
+// Copyright (c) 2009-2025 The Bitcoin Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -11,13 +11,6 @@
 #include <primitives/transaction.h>
 #include <serialize.h>
 
-/** Undo information for a CTxIn
- *
- *  Contains the prevout's CTxOut being spent, and its metadata as well
- *  (coinbase or not, height). The serialization contains a dummy value of
- *  zero. This is be compatible with older versions which expect to see
- *  the transaction version there.
- */
 class TxInUndoSerializer
 {
     const Coin* txout;
@@ -63,7 +56,6 @@ public:
 static const size_t MIN_TRANSACTION_INPUT_WEIGHT = WITNESS_SCALE_FACTOR * ::GetSerializeSize(CTxIn(), SER_NETWORK, PROTOCOL_VERSION);
 static const size_t MAX_INPUTS_PER_BLOCK = MAX_BLOCK_WEIGHT / MIN_TRANSACTION_INPUT_WEIGHT;
 
-/** Undo information for a CTransaction */
 class CTxUndo
 {
 public:
@@ -95,7 +87,6 @@ public:
     }
 };
 
-/** Undo information for a CBlock */
 class CBlockUndo
 {
 public:

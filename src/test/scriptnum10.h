@@ -1,5 +1,5 @@
 // Copyright (c) 2009-2010 Satoshi Nakamoto
-// Copyright (c) 2009-2017 The Bitcoin Core developers
+// Copyright (c) 2009-2025 The Bitcoin Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -22,9 +22,7 @@ public:
 
 class CScriptNum10
 {
-/**
- * The ScriptNum implementation from Bitcoin Core 0.10.0, for cross-comparison.
- */
+
 public:
 
     explicit CScriptNum10(const int64_t& n)
@@ -178,6 +176,5 @@ private:
 
     int64_t m_value;
 };
-
 
 #endif // BITCOIN_TEST_BIGNUM_H

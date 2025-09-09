@@ -1,5 +1,5 @@
 // Copyright (c) 2009-2010 Satoshi Nakamoto
-// Copyright (c) 2009-2017 The Bitcoin Core developers
+// Copyright (c) 2009-2025 The Bitcoin Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -14,37 +14,15 @@ class CKeyID;
 class CPubKey;
 class CScriptID;
 
-/** Compact serializer for scripts.
- *
- *  It detects common cases and encodes them much more efficiently.
- *  3 special cases are defined:
- *  * Pay to pubkey hash (encoded as 21 bytes)
- *  * Pay to script hash (encoded as 21 bytes)
- *  * Pay to pubkey starting with 0x02, 0x03 or 0x04 (encoded as 33 bytes)
- *
- *  Other scripts up to 121 bytes require 1 byte + script length. Above
- *  that, scripts up to 16505 bytes require 2 bytes + script length.
- */
 class CScriptCompressor
 {
 private:
-    /**
-     * make this static for now (there are only 6 special scripts defined)
-     * this can potentially be extended together with a new nVersion for
-     * transactions, in which case this value becomes dependent on nVersion
-     * and nHeight of the enclosing transaction.
-     */
+
     static const unsigned int nSpecialScripts = 6;
 
     CScript &script;
 protected:
-    /**
-     * These check for scripts for which a special case with a shorter encoding is defined.
-     * They are implemented separately from the CScript test, as these test for exact byte
-     * sequence correspondences, and are more strict. For example, IsToPubKey also verifies
-     * whether the public key is valid (as invalid ones cannot be represented in compressed
-     * form).
-     */
+
     bool IsToKeyID(CKeyID &hash) const;
     bool IsToScriptID(CScriptID &hash) const;
     bool IsToPubKey(CPubKey &pubkey) const;
@@ -89,7 +67,6 @@ public:
     }
 };
 
-/** wrapper for CTxOut that provides a more compact serialization */
 class CTxOutCompressor
 {
 private:

@@ -1,4 +1,4 @@
-// Copyright (c) 2011-2017 The Bitcoin Core developers
+// Copyright (c) 2011-2025 The Bitcoin Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -143,7 +143,7 @@ void ReceiveCoinsDialog::on_receiveButton_clicked()
 
     QString address;
     QString label = ui->reqLabel->text();
-    /* Generate new receiving address */
+
     OutputType address_type = model->getDefaultAddressType();
     if (address_type != OUTPUT_TYPE_LEGACY) {
         address_type = ui->useBech32->isChecked() ? OUTPUT_TYPE_BECH32 : OUTPUT_TYPE_P2SH_SEGWIT;
@@ -158,7 +158,6 @@ void ReceiveCoinsDialog::on_receiveButton_clicked()
     dialog->show();
     clear();
 
-    /* Store request for later reference */
     model->getRecentRequestsTableModel()->addNewRequest(info);
 }
 

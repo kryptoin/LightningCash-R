@@ -1,4 +1,4 @@
-// Copyright (c) 2009-2017 The Bitcoin Core developers
+// Copyright (c) 2009-2025 The Bitcoin Core developers
 // Copyright (c) 2017 The Zcash developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
@@ -10,20 +10,10 @@
 
 namespace
 {
-/* Global secp256k1_context object used for verification. */
+
 secp256k1_context* secp256k1_context_verify = nullptr;
 } // namespace
 
-/** This function is taken from the libsecp256k1 distribution and implements
- *  DER parsing for ECDSA signatures, while supporting an arbitrary subset of
- *  format violations.
- *
- *  Supported violations include negative integers, excessive padding, garbage
- *  at the end, and overly long length descriptors. This is safe to use in
- *  Bitcoin because since the activation of BIP66, signatures are verified to be
- *  strict DER before being passed to this module, and we know it supports all
- *  violations present in the blockchain before that point.
- */
 static int ecdsa_signature_parse_der_lax(const secp256k1_context* ctx, secp256k1_ecdsa_signature* sig, const unsigned char *input, size_t inputlen) {
     size_t rpos, rlen, spos, slen;
     size_t pos = 0;
@@ -31,16 +21,13 @@ static int ecdsa_signature_parse_der_lax(const secp256k1_context* ctx, secp256k1
     unsigned char tmpsig[64] = {0};
     int overflow = 0;
 
-    /* Hack to initialize sig with a correctly-parsed but invalid signature. */
     secp256k1_ecdsa_signature_parse_compact(ctx, sig, tmpsig);
 
-    /* Sequence tag byte */
     if (pos == inputlen || input[pos] != 0x30) {
         return 0;
     }
     pos++;
 
-    /* Sequence length bytes */
     if (pos == inputlen) {
         return 0;
     }
@@ -53,13 +40,11 @@ static int ecdsa_signature_parse_der_lax(const secp256k1_context* ctx, secp256k1
         pos += lenbyte;
     }
 
-    /* Integer tag byte for R */
     if (pos == inputlen || input[pos] != 0x02) {
         return 0;
     }
     pos++;
 
-    /* Integer length for R */
     if (pos == inputlen) {
         return 0;
     }
@@ -92,13 +77,11 @@ static int ecdsa_signature_parse_der_lax(const secp256k1_context* ctx, secp256k1
     rpos = pos;
     pos += rlen;
 
-    /* Integer tag byte for S */
     if (pos == inputlen || input[pos] != 0x02) {
         return 0;
     }
     pos++;
 
-    /* Integer length for S */
     if (pos == inputlen) {
         return 0;
     }
@@ -130,24 +113,22 @@ static int ecdsa_signature_parse_der_lax(const secp256k1_context* ctx, secp256k1
     }
     spos = pos;
 
-    /* Ignore leading zeroes in R */
     while (rlen > 0 && input[rpos] == 0) {
         rlen--;
         rpos++;
     }
-    /* Copy R value */
+
     if (rlen > 32) {
         overflow = 1;
     } else {
         memcpy(tmpsig + 32 - rlen, input + rpos, rlen);
     }
 
-    /* Ignore leading zeroes in S */
     while (slen > 0 && input[spos] == 0) {
         slen--;
         spos++;
     }
-    /* Copy S value */
+
     if (slen > 32) {
         overflow = 1;
     } else {
@@ -158,8 +139,7 @@ static int ecdsa_signature_parse_der_lax(const secp256k1_context* ctx, secp256k1
         overflow = !secp256k1_ecdsa_signature_parse_compact(ctx, sig, tmpsig);
     }
     if (overflow) {
-        /* Overwrite the result again with a correctly-parsed but invalid
-           signature if parsing failed. */
+
         memset(tmpsig, 0, 64);
         secp256k1_ecdsa_signature_parse_compact(ctx, sig, tmpsig);
     }
@@ -177,8 +157,7 @@ bool CPubKey::Verify(const uint256 &hash, const std::vector<unsigned char>& vchS
     if (!ecdsa_signature_parse_der_lax(secp256k1_context_verify, &sig, vchSig.data(), vchSig.size())) {
         return false;
     }
-    /* libsecp256k1's ECDSA verification requires lower-S signatures, which have
-     * not historically been enforced in Bitcoin, so normalize them first. */
+
     secp256k1_ecdsa_signature_normalize(secp256k1_context_verify, &sig, &sig);
     return secp256k1_ecdsa_verify(secp256k1_context_verify, &sig, hash.begin(), &pubkey);
 }
@@ -271,7 +250,7 @@ bool CExtPubKey::Derive(CExtPubKey &out, unsigned int _nChild) const {
     return pubkey.Derive(out.pubkey, out.chaincode, _nChild, chaincode);
 }
 
-/* static */ bool CPubKey::CheckLowS(const std::vector<unsigned char>& vchSig) {
+ bool CPubKey::CheckLowS(const std::vector<unsigned char>& vchSig) {
     secp256k1_ecdsa_signature sig;
     if (!ecdsa_signature_parse_der_lax(secp256k1_context_verify, &sig, vchSig.data(), vchSig.size())) {
         return false;
@@ -279,7 +258,7 @@ bool CExtPubKey::Derive(CExtPubKey &out, unsigned int _nChild) const {
     return (!secp256k1_ecdsa_signature_normalize(secp256k1_context_verify, nullptr, &sig));
 }
 
-/* static */ int ECCVerifyHandle::refcount = 0;
+ int ECCVerifyHandle::refcount = 0;
 
 ECCVerifyHandle::ECCVerifyHandle()
 {

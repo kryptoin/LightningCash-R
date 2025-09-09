@@ -1,4 +1,4 @@
-// Copyright (c) 2012-2017 The Bitcoin Core developers
+// Copyright (c) 2012-2025 The Bitcoin Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -125,17 +125,7 @@ BOOST_AUTO_TEST_CASE(doubles_conversion)
     BOOST_CHECK_EQUAL(ser_double_to_uint64(4.0), 0x4010000000000000ULL);
     BOOST_CHECK_EQUAL(ser_double_to_uint64(785.066650390625), 0x4088888880000000ULL);
 }
-/*
-Python code to generate the below hashes:
 
-    def reversed_hex(x):
-        return binascii.hexlify(''.join(reversed(x)))
-    def dsha256(x):
-        return hashlib.sha256(hashlib.sha256(x).digest()).digest()
-
-    reversed_hex(dsha256(''.join(struct.pack('<f', x) for x in range(0,1000)))) == '8e8b4cf3e4df8b332057e3e23af42ebc663b61e0495d5e7e32d85099d7f3fe0c'
-    reversed_hex(dsha256(''.join(struct.pack('<d', x) for x in range(0,1000)))) == '43d0c82591953c4eafe114590d392676a01585d25b25d433557f0d7878b23f96'
-*/
 BOOST_AUTO_TEST_CASE(floats)
 {
     CDataStream ss(SER_DISK, 0);
@@ -252,7 +242,6 @@ static bool isCanonicalException(const std::ios_base::failure& ex)
     // the expected explanatory string returned by the exception instance. 
     return strcmp(expectedException.what(), ex.what()) == 0;
 }
-
 
 BOOST_AUTO_TEST_CASE(noncanonical)
 {

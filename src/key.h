@@ -1,5 +1,5 @@
 // Copyright (c) 2009-2010 Satoshi Nakamoto
-// Copyright (c) 2009-2017 The Bitcoin Core developers
+// Copyright (c) 2009-2025 The Bitcoin Core developers
 // Copyright (c) 2017 The Zcash developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
@@ -15,27 +15,15 @@
 #include <stdexcept>
 #include <vector>
 
-
-/**
- * secure_allocator is defined in allocators.h
- * CPrivKey is a serialized private key, with all parameters included
- * (PRIVATE_KEY_SIZE bytes)
- */
 typedef std::vector<unsigned char, secure_allocator<unsigned char> > CPrivKey;
 
-/** An encapsulated private key. */
 class CKey
 {
 public:
-    /**
-     * secp256k1:
-     */
+
     static const unsigned int PRIVATE_KEY_SIZE            = 279;
     static const unsigned int COMPRESSED_PRIVATE_KEY_SIZE = 214;
-    /**
-     * see www.keylength.com
-     * script supports up to 75 for single byte push
-     */
+
     static_assert(
         PRIVATE_KEY_SIZE >= COMPRESSED_PRIVATE_KEY_SIZE,
         "COMPRESSED_PRIVATE_KEY_SIZE is larger than PRIVATE_KEY_SIZE");
@@ -98,40 +86,22 @@ public:
     //! Generate a new private key using a cryptographic PRNG.
     void MakeNewKey(bool fCompressed);
 
-    /**
-     * Convert the private key to a CPrivKey (serialized OpenSSL private key data).
-     * This is expensive.
-     */
+
     CPrivKey GetPrivKey() const;
 
-    /**
-     * Compute the public key from a private key.
-     * This is expensive.
-     */
+
     CPubKey GetPubKey() const;
 
-    /**
-     * Create a DER-serialized signature.
-     * The test_case parameter tweaks the deterministic nonce.
-     */
+
     bool Sign(const uint256& hash, std::vector<unsigned char>& vchSig, uint32_t test_case = 0) const;
 
-    /**
-     * Create a compact signature (65 bytes), which allows reconstructing the used public key.
-     * The format is one header byte, followed by two times 32 bytes for the serialized r and s values.
-     * The header byte: 0x1B = first key with even y, 0x1C = first key with odd y,
-     *                  0x1D = second key with even y, 0x1E = second key with odd y,
-     *                  add 0x04 for compressed keys.
-     */
+
     bool SignCompact(const uint256& hash, std::vector<unsigned char>& vchSig) const;
 
     //! Derive BIP32 child key.
     bool Derive(CKey& keyChild, ChainCode &ccChild, unsigned int nChild, const ChainCode& cc) const;
 
-    /**
-     * Verify thoroughly whether a private key and a public key match.
-     * This is done using a different mechanism than just regenerating it.
-     */
+
     bool VerifyPubKey(const CPubKey& vchPubKey) const;
 
     //! Load private key and check that public key matches.
@@ -180,13 +150,10 @@ struct CExtKey {
     }
 };
 
-/** Initialize the elliptic curve support. May not be called twice without calling ECC_Stop first. */
 void ECC_Start(void);
 
-/** Deinitialize the elliptic curve support. No-op if ECC_Start wasn't called first. */
 void ECC_Stop(void);
 
-/** Check that required EC support is available at runtime. */
 bool ECC_InitSanityCheck(void);
 
 #endif // BITCOIN_KEY_H

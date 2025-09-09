@@ -1,5 +1,5 @@
 // Copyright (c) 2009-2010 Satoshi Nakamoto
-// Copyright (c) 2009-2017 The Bitcoin Core developers
+// Copyright (c) 2009-2025 The Bitcoin Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -11,7 +11,6 @@
 #include <primitives/transaction.h>
 #include <script/standard.h>
 #include <uint256.h>
-
 
 typedef std::vector<unsigned char> valtype;
 
@@ -57,12 +56,6 @@ static bool SignN(const std::vector<valtype>& multisigdata, const BaseSignatureC
     return nSigned==nRequired;
 }
 
-/**
- * Sign scriptPubKey using signature made with creator.
- * Signatures are returned in scriptSigRet (or returns false if scriptPubKey can't be signed),
- * unless whichTypeRet is TX_SCRIPTHASH, in which case scriptSigRet is the redemption script.
- * Returns false if scriptPubKey could not be completely satisfied.
- */
 static bool SignStep(const BaseSignatureCreator& creator, const CScript& scriptPubKey,
                      std::vector<valtype>& ret, txnouttype& whichTypeRet, SigVersion sigversion)
 {
@@ -388,7 +381,7 @@ SignatureData CombineSignatures(const CScript& scriptPubKey, const BaseSignature
 }
 
 namespace {
-/** Dummy signature checker which accepts all signatures. */
+
 class DummySignatureChecker : public BaseSignatureChecker
 {
 public:

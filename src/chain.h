@@ -1,5 +1,5 @@
 // Copyright (c) 2009-2010 Satoshi Nakamoto
-// Copyright (c) 2009-2017 The Bitcoin Core developers
+// Copyright (c) 2009-2025 The Bitcoin Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -15,18 +15,8 @@
 #include <vector>
 #include <consensus/params.h>
 
-/**
- * Maximum amount of time that a block timestamp is allowed to exceed the
- * current network-adjusted time before the block will be accepted.
- */
 static const int64_t MAX_FUTURE_BLOCK_TIME = 8 * 60;
 
-/**
- * Timestamp window used as a grace period by code that compares external
- * timestamps (such as timestamps passed to RPCs, or wallet key creation times)
- * to block timestamps. This should be set at least as high as
- * MAX_FUTURE_BLOCK_TIME.
- */
 static const int64_t TIMESTAMP_WINDOW = MAX_FUTURE_BLOCK_TIME;
 
 class CBlockFileInfo
@@ -69,7 +59,7 @@ public:
 
      std::string ToString() const;
 
-     /** update statistics (does not update nSize) */
+
      void AddBlock(unsigned int nHeightIn, uint64_t nTimeIn) {
          if (nBlocks==0 || nHeightFirst > nHeightIn)
              nHeightFirst = nHeightIn;
@@ -134,11 +124,7 @@ enum BlockStatus: uint32_t {
     //! are also at least TREE.
     BLOCK_VALID_TREE         =    2,
 
-    /**
-     * Only first tx is coinbase, 2 <= coinbase input script length <= 100, transactions valid, no duplicate txids,
-     * sigops, size, merkle root. Implies all parents are at least TREE but not necessarily TRANSACTIONS. When all
-     * parent blocks also have TRANSACTIONS, CBlockIndex::nChainTx will be set.
-     */
+
     BLOCK_VALID_TRANSACTIONS =    3,
 
     //! Outputs do not overspend inputs, no double spends, coinbase output ok, no immature coinbase spends, BIP30.
@@ -163,11 +149,6 @@ enum BlockStatus: uint32_t {
     BLOCK_OPT_WITNESS       =   128, //!< block data in blk*.data was received with a witness-enforcing client
 };
 
-/** The block chain is a tree shaped structure starting with the
- * genesis block at the root, with each block potentially having multiple
- * candidates to be the next block. A blockindex may have multiple pprev pointing
- * to it, but at most one of them can be part of the currently active branch.
- */
 class CBlockIndex
 {
 public:
@@ -367,13 +348,11 @@ public:
 
 arith_uint256 GetBlockProof(const CBlockIndex& block);
 arith_uint256 GetNumHashes(const CBlockIndex& block);       // LightningCashr: Hive: Reimplement un-boosted GetBlockProof for getnetworkhashps estimation.
-/** Return the time it would take to redo the work difference between from and to, assuming the current hashrate corresponds to the difficulty at tip, in seconds. */
+
 int64_t GetBlockProofEquivalentTime(const CBlockIndex& to, const CBlockIndex& from, const CBlockIndex& tip, const Consensus::Params&);
-/** Find the forking point between two chain tips. */
+
 const CBlockIndex* LastCommonAncestor(const CBlockIndex* pa, const CBlockIndex* pb);
 
-
-/** Used to marshal pointers into hashes for db storage. */
 class CDiskBlockIndex : public CBlockIndex
 {
 public:
@@ -426,7 +405,6 @@ public:
         return block.GetHash();
     }
 
-
     std::string ToString() const
     {
         std::string str = "CDiskBlockIndex(";
@@ -438,46 +416,45 @@ public:
     }
 };
 
-/** An in-memory indexed chain of blocks. */
 class CChain {
 private:
     std::vector<CBlockIndex*> vChain;
 
 public:
-    /** Returns the index entry for the genesis block of this chain, or nullptr if none. */
+
     CBlockIndex *Genesis() const {
         return vChain.size() > 0 ? vChain[0] : nullptr;
     }
 
-    /** Returns the index entry for the first mined block of this chain. */
+
     CBlockIndex *FirstBlock() const {
         return  vChain[1];
     }
-    
+
     CBlockIndex *FirstHiveBlock() const {
         return  vChain[126];
     }
-    
+
     CBlockIndex *varForkBlock() const {
         return  vChain[67777];
     }
-    
+
     CBlockIndex *speedUpdate() const {
         return  vChain[76325];
     }
-    
+
     CBlockIndex *varForkBlocktestnet() const {
         return  vChain[500];
     }
-    
+
     CBlockIndex *preForkBlock() const {
         return  vChain[67776];
     }
-    
+
     CBlockIndex *preForkBlocktestnet() const {
         return  vChain[499];
     }
-    
+
     CBlockIndex *firstLoop() const {
         return  vChain[33217];
     }
@@ -485,8 +462,8 @@ public:
     CBlockIndex *reverting() const {
         return  vChain[163206];
     }
-    
-            
+
+
     CBlockIndex *Back(const CBlockIndex *pindex) const {
 	int supertonton = 17280;
         if (Contains(pindex))
@@ -494,7 +471,7 @@ public:
         else
             return nullptr;
     }
-    
+
     CBlockIndex *ReBack(const CBlockIndex *pindex) const {
 	int supertonton = 25344;
         if (Contains(pindex))
@@ -502,8 +479,8 @@ public:
         else
             return nullptr;
     }
-    
-            
+
+
     CBlockIndex *Backtestnet(const CBlockIndex *pindex) const {
 	int supertonton = 360;
         if (Contains(pindex))
@@ -511,7 +488,7 @@ public:
         else
             return nullptr;
     }
-    
+
     CBlockIndex *ReBacktestnet(const CBlockIndex *pindex) const {
 	int supertonton = 528;
         if (Contains(pindex))
@@ -520,7 +497,6 @@ public:
             return nullptr;
     }
 
-
     CBlockIndex *Back24(const CBlockIndex *pindex) const {
 	int supertutu = 1152;
         if (Contains(pindex))
@@ -528,8 +504,6 @@ public:
         else
             return nullptr;
     }
-    
-
 
     CBlockIndex *Back24testnet(const CBlockIndex *pindex) const {
 	int supertutu2 = 24;
@@ -540,79 +514,76 @@ public:
     }
 
 
-    /** Returns the index entry for the tip of this chain, or nullptr if none. */
     CBlockIndex *Tip() const {
         return vChain.size() > 0 ? vChain[vChain.size() - 1] : nullptr;
     }
-    
-    /** Returns the index entry for the tip of this chain - 17280 */
+
+
     CBlockIndex *TipMinusLifespan() const {
         return vChain.size() > 0 ? vChain[vChain.size() - 17281] : nullptr;
     }
-    
-    /** Returns the index entry for the tip of this chain - 10 */
+
+
     CBlockIndex *TipMinusTen() const {
         return vChain.size() > 0 ? vChain[vChain.size() - 11] : nullptr;
     }
-    
-    /** Returns the index entry for the tip of this chain - 17280 */
+
+
     CBlockIndex *ReTipMinusLifespan() const {
         return vChain.size() > 0 ? vChain[vChain.size() - 25345] : nullptr;
     }
-    
-    /** Returns the index entry for the tip of this chain - 360 ( testnet ) */
+
+
     CBlockIndex *TipMinusLifespanT() const {
         return vChain.size() > 0 ? vChain[vChain.size() - 361] : nullptr;
     }
-    
-    /** Returns the index entry for the tip of this chain - 360 ( testnet ) */
+
+
     CBlockIndex *ReTipMinusLifespanT() const {
         return vChain.size() > 0 ? vChain[vChain.size() - 529] : nullptr;
     }
 
-    /** Returns the index entry at a particular height in this chain, or nullptr if no such height exists. */
+
     CBlockIndex *operator[](int nHeight) const {
         if (nHeight < 0 || nHeight >= (int)vChain.size())
             return nullptr;
         return vChain[nHeight];
     }
 
-    /** Compare two chains efficiently. */
+
     friend bool operator==(const CChain &a, const CChain &b) {
         return a.vChain.size() == b.vChain.size() &&
                a.vChain[a.vChain.size() - 1] == b.vChain[b.vChain.size() - 1];
     }
 
-    /** Efficiently check whether a block is present in this chain. */
+
     bool Contains(const CBlockIndex *pindex) const {
         return (*this)[pindex->nHeight] == pindex;
     }
 
-    /** Find the successor of a block in this chain, or nullptr if the given index is not found or is the tip. */
+
     CBlockIndex *Next(const CBlockIndex *pindex) const {
         if (Contains(pindex))
             return (*this)[pindex->nHeight + 1];
         else
             return nullptr;
     }
-    
 
 
-    /** Return the maximal height in the chain. Is equal to chain.Tip() ? chain.Tip()->nHeight : -1. */
     int Height() const {
         return vChain.size() - 1;
     }
 
-    /** Set/initialize a chain with a given tip. */
+
     void SetTip(CBlockIndex *pindex);
 
-    /** Return a CBlockLocator that refers to a block in this chain (by default the tip). */
+
     CBlockLocator GetLocator(const CBlockIndex *pindex = nullptr) const;
 
-    /** Find the last common block between this chain and a block index entry. */
+
     const CBlockIndex *FindFork(const CBlockIndex *pindex) const;
 
-    /** Find the earliest block with timestamp equal or greater than the given. */
+
     CBlockIndex* FindEarliestAtLeast(int64_t nTime) const;
 };
 

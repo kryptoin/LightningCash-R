@@ -1,4 +1,4 @@
-// Copyright (c) 2011-2017 The Bitcoin Core developers
+// Copyright (c) 2011-2025 The Bitcoin Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -25,7 +25,6 @@
 #include <ApplicationServices/ApplicationServices.h>
 #include <qt/macnotificationhandler.h>
 #endif
-
 
 #ifdef USE_DBUS
 // https://wiki.ubuntu.com/NotificationDevelopmentGuidelines recommends at least 128

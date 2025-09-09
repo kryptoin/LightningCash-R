@@ -6,10 +6,6 @@
 
 #include <string>
 
-/**
- * Filter that generates and validates UTF-8, as well as collates UTF-16
- * surrogate pairs as specified in RFC4627.
- */
 class JSONUTF8StringFilter
 {
 public:

@@ -1,4 +1,4 @@
-// Copyright (c) 2012-2017 The Bitcoin Core developers
+// Copyright (c) 2012-2025 The Bitcoin Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -62,7 +62,6 @@ BOOST_AUTO_TEST_CASE(acc_orderupgrade)
     BOOST_CHECK(results[2].nTime == 1333333336);
     BOOST_CHECK(results[2].strOtherAccount == "c");
 
-
     ae.nTime = 1333333330;
     ae.strOtherAccount = "d";
     ae.nOrderPos = pwalletMain->IncOrderPosNext();
@@ -77,7 +76,6 @@ BOOST_AUTO_TEST_CASE(acc_orderupgrade)
     BOOST_CHECK(results[2].nTime == 1333333336);
     BOOST_CHECK(results[3].nTime == 1333333330);
     BOOST_CHECK(results[3].strComment.empty());
-
 
     wtx.mapValue["comment"] = "y";
     {
@@ -111,7 +109,6 @@ BOOST_AUTO_TEST_CASE(acc_orderupgrade)
     BOOST_CHECK(results[4].nTime == 1333333330);
     BOOST_CHECK(results[4].strComment.empty());
     BOOST_CHECK(5 == vpwtx[1]->nOrderPos);
-
 
     ae.nTime = 1333333334;
     ae.strOtherAccount = "e";
