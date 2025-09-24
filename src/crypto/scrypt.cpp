@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <stdint.h>
 #include <string.h>
+#include <sys/endian.h>
 #include <openssl/sha.h>
 
 #if defined(USE_SSE2) && !defined(USE_SSE2_ALWAYS)
@@ -16,6 +17,7 @@
 #endif
 #endif
 #ifndef __FreeBSD__
+#if !defined(__FreeBSD__) && !defined(__APPLE__)
 static inline uint32_t be32dec(const void *pp)
 {
 	const uint8_t *p = (uint8_t const *)pp;
@@ -31,6 +33,7 @@ static inline void be32enc(void *pp, uint32_t x)
 	p[1] = (x >> 16) & 0xff;
 	p[0] = (x >> 24) & 0xff;
 }
+#endif
 
 #endif
 typedef struct HMAC_SHA256Context {

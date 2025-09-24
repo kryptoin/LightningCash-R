@@ -13,7 +13,6 @@ lightningcashr-Qt.app
 lightningcashr-qt_test
 
 # Build system generated files (autoreconf)
-Makefile.in
 Makefile
 aclocal.m4
 autom4te.cache/
@@ -38,7 +37,6 @@ libbitcoinconsensus.pc
 
 # Generated configuration files
 src/config/bitcoin-config.h
-src/config/bitcoin-config.h.in
 src/config/stamp-h1
 share/setup.nsi
 share/qt/Info.plist
