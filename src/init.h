@@ -11,19 +11,18 @@
 class CScheduler;
 class CWallet;
 
-namespace boost
-{
+namespace boost {
 class thread_group;
-} // namespace boost
+}
 
 void StartShutdown();
 bool ShutdownRequested();
 
 void Interrupt();
 void Shutdown();
-//!Initialize the logging infrastructure
+
 void InitLogging();
-//!Parameter interaction: change current parameters depending on various rules
+
 void InitParameterInteraction();
 
 bool AppInitBasicSetup();
@@ -36,13 +35,10 @@ bool AppInitLockDataDirectory();
 
 bool AppInitMain();
 
-enum HelpMessageMode {
-    HMM_BITCOIND,
-    HMM_BITCOIN_QT
-};
+enum HelpMessageMode { HMM_BITCOIND, HMM_BITCOIN_QT };
 
 std::string HelpMessage(HelpMessageMode mode);
 
 std::string LicenseInfo();
 
-#endif // BITCOIN_INIT_H
+#endif

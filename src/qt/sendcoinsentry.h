@@ -13,58 +13,56 @@ class WalletModel;
 class PlatformStyle;
 
 namespace Ui {
-    class SendCoinsEntry;
+class SendCoinsEntry;
 }
 
-class SendCoinsEntry : public QStackedWidget
-{
-    Q_OBJECT
+class SendCoinsEntry : public QStackedWidget {
+  Q_OBJECT
 
 public:
-    explicit SendCoinsEntry(const PlatformStyle *platformStyle, QWidget *parent = 0);
-    ~SendCoinsEntry();
+  explicit SendCoinsEntry(const PlatformStyle *platformStyle,
+                          QWidget *parent = 0);
+  ~SendCoinsEntry();
 
-    void setModel(WalletModel *model);
-    bool validate();
-    SendCoinsRecipient getValue();
+  void setModel(WalletModel *model);
+  bool validate();
+  SendCoinsRecipient getValue();
 
+  bool isClear();
 
-    bool isClear();
+  void setValue(const SendCoinsRecipient &value);
+  void setAddress(const QString &address);
+  void setAmount(const CAmount &amount);
 
-    void setValue(const SendCoinsRecipient &value);
-    void setAddress(const QString &address);
-    void setAmount(const CAmount &amount);
+  QWidget *setupTabChain(QWidget *prev);
 
-
-    QWidget *setupTabChain(QWidget *prev);
-
-    void setFocus();
+  void setFocus();
 
 public Q_SLOTS:
-    void clear();
-    void checkSubtractFeeFromAmount();
+  void clear();
+  void checkSubtractFeeFromAmount();
 
 Q_SIGNALS:
-    void removeEntry(SendCoinsEntry *entry);
-    void useAvailableBalance(SendCoinsEntry* entry);
-    void payAmountChanged();
-    void subtractFeeFromAmountChanged();
+  void removeEntry(SendCoinsEntry *entry);
+  void useAvailableBalance(SendCoinsEntry *entry);
+  void payAmountChanged();
+  void subtractFeeFromAmountChanged();
 
 private Q_SLOTS:
-    void deleteClicked();
-    void useAvailableBalanceClicked();
-    void on_payTo_textChanged(const QString &address);
-    void on_addressBookButton_clicked();
-    void on_pasteButton_clicked();
-    void updateDisplayUnit();
+  void deleteClicked();
+  void useAvailableBalanceClicked();
+  void on_payTo_textChanged(const QString &address);
+  void on_addressBookButton_clicked();
+  void on_pasteButton_clicked();
+  void updateDisplayUnit();
 
 private:
-    SendCoinsRecipient recipient;
-    Ui::SendCoinsEntry *ui;
-    WalletModel *model;
-    const PlatformStyle *platformStyle;
+  SendCoinsRecipient recipient;
+  Ui::SendCoinsEntry *ui;
+  WalletModel *model;
+  const PlatformStyle *platformStyle;
 
-    bool updateLabel(const QString &address);
+  bool updateLabel(const QString &address);
 };
 
-#endif // BITCOIN_QT_SENDCOINSENTRY_H
+#endif

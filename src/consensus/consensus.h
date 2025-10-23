@@ -6,8 +6,8 @@
 #ifndef BITCOIN_CONSENSUS_CONSENSUS_H
 #define BITCOIN_CONSENSUS_CONSENSUS_H
 
-#include <stdlib.h>
 #include <stdint.h>
+#include <stdlib.h>
 
 static const unsigned int MAX_BLOCK_SERIALIZED_SIZE = 4000000;
 
@@ -19,11 +19,13 @@ static const int COINBASE_MATURITY = 125;
 
 static const int WITNESS_SCALE_FACTOR = 4;
 
-static const size_t MIN_TRANSACTION_WEIGHT = WITNESS_SCALE_FACTOR * 60; // 60 is the lower bound for the size of a valid serialized CTransaction
-static const size_t MIN_SERIALIZABLE_TRANSACTION_WEIGHT = WITNESS_SCALE_FACTOR * 10; // 10 is the lower bound for the size of a serialized CTransaction
+static const size_t MIN_TRANSACTION_WEIGHT = WITNESS_SCALE_FACTOR * 60;
+
+static const size_t MIN_SERIALIZABLE_TRANSACTION_WEIGHT =
+    WITNESS_SCALE_FACTOR * 10;
 
 static constexpr unsigned int LOCKTIME_VERIFY_SEQUENCE = (1 << 0);
 
 static constexpr unsigned int LOCKTIME_MEDIAN_TIME_PAST = (1 << 1);
 
-#endif // BITCOIN_CONSENSUS_CONSENSUS_H
+#endif

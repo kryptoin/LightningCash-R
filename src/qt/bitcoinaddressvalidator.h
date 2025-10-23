@@ -7,24 +7,22 @@
 
 #include <QValidator>
 
-class BitcoinAddressEntryValidator : public QValidator
-{
-    Q_OBJECT
+class BitcoinAddressEntryValidator : public QValidator {
+  Q_OBJECT
 
 public:
-    explicit BitcoinAddressEntryValidator(QObject *parent);
+  explicit BitcoinAddressEntryValidator(QObject *parent);
 
-    State validate(QString &input, int &pos) const;
+  State validate(QString &input, int &pos) const;
 };
 
-class BitcoinAddressCheckValidator : public QValidator
-{
-    Q_OBJECT
+class BitcoinAddressCheckValidator : public QValidator {
+  Q_OBJECT
 
 public:
-    explicit BitcoinAddressCheckValidator(QObject *parent);
+  explicit BitcoinAddressCheckValidator(QObject *parent);
 
-    State validate(QString &input, int &pos) const;
+  State validate(QString &input, int &pos) const;
 };
 
-#endif // BITCOIN_QT_BITCOINADDRESSVALIDATOR_H
+#endif

@@ -14,85 +14,80 @@ class CKeyID;
 class CPubKey;
 class CScriptID;
 
-class CScriptCompressor
-{
+class CScriptCompressor {
 private:
+  static const unsigned int nSpecialScripts = 6;
 
-    static const unsigned int nSpecialScripts = 6;
+  CScript &script;
 
-    CScript &script;
 protected:
+  bool IsToKeyID(CKeyID &hash) const;
+  bool IsToScriptID(CScriptID &hash) const;
+  bool IsToPubKey(CPubKey &pubkey) const;
 
-    bool IsToKeyID(CKeyID &hash) const;
-    bool IsToScriptID(CScriptID &hash) const;
-    bool IsToPubKey(CPubKey &pubkey) const;
+  bool Compress(std::vector<unsigned char> &out) const;
+  unsigned int GetSpecialSize(unsigned int nSize) const;
+  bool Decompress(unsigned int nSize, const std::vector<unsigned char> &out);
 
-    bool Compress(std::vector<unsigned char> &out) const;
-    unsigned int GetSpecialSize(unsigned int nSize) const;
-    bool Decompress(unsigned int nSize, const std::vector<unsigned char> &out);
 public:
-    explicit CScriptCompressor(CScript &scriptIn) : script(scriptIn) { }
+  explicit CScriptCompressor(CScript &scriptIn) : script(scriptIn) {}
 
-    template<typename Stream>
-    void Serialize(Stream &s) const {
-        std::vector<unsigned char> compr;
-        if (Compress(compr)) {
-            s << CFlatData(compr);
-            return;
-        }
-        unsigned int nSize = script.size() + nSpecialScripts;
-        s << VARINT(nSize);
-        s << CFlatData(script);
+  template <typename Stream> void Serialize(Stream &s) const {
+    std::vector<unsigned char> compr;
+    if (Compress(compr)) {
+      s << CFlatData(compr);
+      return;
     }
+    unsigned int nSize = script.size() + nSpecialScripts;
+    s << VARINT(nSize);
+    s << CFlatData(script);
+  }
 
-    template<typename Stream>
-    void Unserialize(Stream &s) {
-        unsigned int nSize = 0;
-        s >> VARINT(nSize);
-        if (nSize < nSpecialScripts) {
-            std::vector<unsigned char> vch(GetSpecialSize(nSize), 0x00);
-            s >> REF(CFlatData(vch));
-            Decompress(nSize, vch);
-            return;
-        }
-        nSize -= nSpecialScripts;
-        if (nSize > MAX_SCRIPT_SIZE) {
-            // Overly long script, replace with a short invalid one
-            script << OP_RETURN;
-            s.ignore(nSize);
-        } else {
-            script.resize(nSize);
-            s >> REF(CFlatData(script));
-        }
+  template <typename Stream> void Unserialize(Stream &s) {
+    unsigned int nSize = 0;
+    s >> VARINT(nSize);
+    if (nSize < nSpecialScripts) {
+      std::vector<unsigned char> vch(GetSpecialSize(nSize), 0x00);
+      s >> REF(CFlatData(vch));
+      Decompress(nSize, vch);
+      return;
     }
+    nSize -= nSpecialScripts;
+    if (nSize > MAX_SCRIPT_SIZE) {
+      script << OP_RETURN;
+      s.ignore(nSize);
+    } else {
+      script.resize(nSize);
+      s >> REF(CFlatData(script));
+    }
+  }
 };
 
-class CTxOutCompressor
-{
+class CTxOutCompressor {
 private:
-    CTxOut &txout;
+  CTxOut &txout;
 
 public:
-    static uint64_t CompressAmount(uint64_t nAmount);
-    static uint64_t DecompressAmount(uint64_t nAmount);
+  static uint64_t CompressAmount(uint64_t nAmount);
+  static uint64_t DecompressAmount(uint64_t nAmount);
 
-    explicit CTxOutCompressor(CTxOut &txoutIn) : txout(txoutIn) { }
+  explicit CTxOutCompressor(CTxOut &txoutIn) : txout(txoutIn) {}
 
-    ADD_SERIALIZE_METHODS;
+  ADD_SERIALIZE_METHODS;
 
-    template <typename Stream, typename Operation>
-    inline void SerializationOp(Stream& s, Operation ser_action) {
-        if (!ser_action.ForRead()) {
-            uint64_t nVal = CompressAmount(txout.nValue);
-            READWRITE(VARINT(nVal));
-        } else {
-            uint64_t nVal = 0;
-            READWRITE(VARINT(nVal));
-            txout.nValue = DecompressAmount(nVal);
-        }
-        CScriptCompressor cscript(REF(txout.scriptPubKey));
-        READWRITE(cscript);
+  template <typename Stream, typename Operation>
+  inline void SerializationOp(Stream &s, Operation ser_action) {
+    if (!ser_action.ForRead()) {
+      uint64_t nVal = CompressAmount(txout.nValue);
+      READWRITE(VARINT(nVal));
+    } else {
+      uint64_t nVal = 0;
+      READWRITE(VARINT(nVal));
+      txout.nValue = DecompressAmount(nVal);
     }
+    CScriptCompressor cscript(REF(txout.scriptPubKey));
+    READWRITE(cscript);
+  }
 };
 
-#endif // BITCOIN_COMPRESSOR_H
+#endif

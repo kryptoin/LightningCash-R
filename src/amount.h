@@ -10,12 +10,16 @@
 
 typedef int64_t CAmount;
 
-static const CAmount COIN_SCALE = 1; 
+static const CAmount COIN_SCALE = 1;
 
-static const CAmount COIN = 100000000 / COIN_SCALE;     // LightningCashr: Account for coinscale
-static const CAmount CENT = 1000000 / COIN_SCALE;       // LightningCashr: Account for coinscale
+static const CAmount COIN = 100000000 / COIN_SCALE;
 
-static const CAmount MAX_MONEY = 400000000 * COIN * COIN_SCALE; // LightningCashr: Account for coinscale
-inline bool MoneyRange(const CAmount& nValue) { return (nValue >= 0 && nValue <= MAX_MONEY); }
+static const CAmount CENT = 1000000 / COIN_SCALE;
 
-#endif //  BITCOIN_AMOUNT_H
+static const CAmount MAX_MONEY = 400000000 * COIN * COIN_SCALE;
+
+inline bool MoneyRange(const CAmount &nValue) {
+  return (nValue >= 0 && nValue <= MAX_MONEY);
+}
+
+#endif

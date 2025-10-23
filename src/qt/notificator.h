@@ -20,55 +20,55 @@ class QDBusInterface;
 #endif
 QT_END_NAMESPACE
 
-class Notificator: public QObject
-{
-    Q_OBJECT
+class Notificator : public QObject {
+  Q_OBJECT
 
 public:
+  Notificator(const QString &programName, QSystemTrayIcon *trayIcon,
+              QWidget *parent);
+  ~Notificator();
 
-    Notificator(const QString &programName, QSystemTrayIcon *trayIcon, QWidget *parent);
-    ~Notificator();
+  enum Class {
+    Information,
 
-    // Message class
-    enum Class
-    {
-        Information,
+    Warning,
 
-        Warning,
+    Critical
 
-        Critical
-
-    };
+  };
 
 public Q_SLOTS:
 
-    void notify(Class cls, const QString &title, const QString &text,
-                const QIcon &icon = QIcon(), int millisTimeout = 10000);
+  void notify(Class cls, const QString &title, const QString &text,
+              const QIcon &icon = QIcon(), int millisTimeout = 10000);
 
 private:
-    QWidget *parent;
-    enum Mode {
-        None,
+  QWidget *parent;
+  enum Mode {
+    None,
 
-        Freedesktop,
+    Freedesktop,
 
-        QSystemTray,
+    QSystemTray,
 
-        UserNotificationCenter
+    UserNotificationCenter
 
-    };
-    QString programName;
-    Mode mode;
-    QSystemTrayIcon *trayIcon;
+  };
+  QString programName;
+  Mode mode;
+  QSystemTrayIcon *trayIcon;
 #ifdef USE_DBUS
-    QDBusInterface *interface;
+  QDBusInterface *interface;
 
-    void notifyDBus(Class cls, const QString &title, const QString &text, const QIcon &icon, int millisTimeout);
+  void notifyDBus(Class cls, const QString &title, const QString &text,
+                  const QIcon &icon, int millisTimeout);
 #endif
-    void notifySystray(Class cls, const QString &title, const QString &text, const QIcon &icon, int millisTimeout);
+  void notifySystray(Class cls, const QString &title, const QString &text,
+                     const QIcon &icon, int millisTimeout);
 #ifdef Q_OS_MAC
-    void notifyMacUserNotificationCenter(Class cls, const QString &title, const QString &text, const QIcon &icon);
+  void notifyMacUserNotificationCenter(Class cls, const QString &title,
+                                       const QString &text, const QIcon &icon);
 #endif
 };
 
-#endif // BITCOIN_QT_NOTIFICATOR_H
+#endif

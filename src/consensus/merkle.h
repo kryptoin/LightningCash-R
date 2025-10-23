@@ -8,23 +8,29 @@
 #include <stdint.h>
 #include <vector>
 
-#include <primitives/transaction.h>
 #include <primitives/block.h>
+#include <primitives/transaction.h>
 #include <uint256.h>
 
-// Original functions (unchanged signatures - backward compatible)
-uint256 ComputeMerkleRoot(const std::vector<uint256>& leaves, bool* mutated = nullptr);
-std::vector<uint256> ComputeMerkleBranch(const std::vector<uint256>& leaves, uint32_t position);
-uint256 ComputeMerkleRootFromBranch(const uint256& leaf, const std::vector<uint256>& branch, uint32_t position);
-uint256 BlockMerkleRoot(const CBlock& block, bool* mutated = nullptr);
-uint256 BlockWitnessMerkleRoot(const CBlock& block, bool* mutated = nullptr);
-std::vector<uint256> BlockMerkleBranch(const CBlock& block, uint32_t position);
+uint256 ComputeMerkleRoot(const std::vector<uint256> &leaves,
+                          bool *mutated = nullptr);
+std::vector<uint256> ComputeMerkleBranch(const std::vector<uint256> &leaves,
+                                         uint32_t position);
+uint256 ComputeMerkleRootFromBranch(const uint256 &leaf,
+                                    const std::vector<uint256> &branch,
+                                    uint32_t position);
+uint256 BlockMerkleRoot(const CBlock &block, bool *mutated = nullptr);
+uint256 BlockWitnessMerkleRoot(const CBlock &block, bool *mutated = nullptr);
+std::vector<uint256> BlockMerkleBranch(const CBlock &block, uint32_t position);
 
-// NEW ADDITIONS - Additional optimized functions
-uint256 ComputeMerkleRootOptimized(const std::vector<uint256>& leaves, bool* mutated = nullptr);
-uint256 ComputeMerkleRootFromTransactions(const std::vector<CTransactionRef>& vtx, bool* mutated = nullptr);
-bool ValidateMerkleProof(const uint256& leaf, const std::vector<uint256>& branch,
-                        uint32_t position, const uint256& root);
+uint256 ComputeMerkleRootOptimized(const std::vector<uint256> &leaves,
+                                   bool *mutated = nullptr);
+uint256
+ComputeMerkleRootFromTransactions(const std::vector<CTransactionRef> &vtx,
+                                  bool *mutated = nullptr);
+bool ValidateMerkleProof(const uint256 &leaf,
+                         const std::vector<uint256> &branch, uint32_t position,
+                         const uint256 &root);
 size_t GetMerkleTreeDepth(size_t leaf_count);
 
 #endif

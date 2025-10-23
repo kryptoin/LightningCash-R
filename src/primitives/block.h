@@ -10,143 +10,115 @@
 #include <serialize.h>
 #include <uint256.h>
 
-class CBlockHeader
-{
+class CBlockHeader {
 public:
-    // header
-    int32_t nVersion;
-    uint256 hashPrevBlock;
-    uint256 hashMerkleRoot;
-    uint32_t nTime;
-    uint32_t nBits;
-    uint32_t nNonce;
+  int32_t nVersion;
+  uint256 hashPrevBlock;
+  uint256 hashMerkleRoot;
+  uint32_t nTime;
+  uint32_t nBits;
+  uint32_t nNonce;
 
-    CBlockHeader()
-    {
-        SetNull();
-    }
+  CBlockHeader() { SetNull(); }
 
-    ADD_SERIALIZE_METHODS;
+  ADD_SERIALIZE_METHODS;
 
-    template <typename Stream, typename Operation>
-    inline void SerializationOp(Stream& s, Operation ser_action) {
-        READWRITE(this->nVersion);
-        READWRITE(hashPrevBlock);
-        READWRITE(hashMerkleRoot);
-        READWRITE(nTime);
-        READWRITE(nBits);
-        READWRITE(nNonce);
-    }
+  template <typename Stream, typename Operation>
+  inline void SerializationOp(Stream &s, Operation ser_action) {
+    READWRITE(this->nVersion);
+    READWRITE(hashPrevBlock);
+    READWRITE(hashMerkleRoot);
+    READWRITE(nTime);
+    READWRITE(nBits);
+    READWRITE(nNonce);
+  }
 
-    void SetNull()
-    {
-        nVersion = 0;
-        hashPrevBlock.SetNull();
-        hashMerkleRoot.SetNull();
-        nTime = 0;
-        nBits = 0;
-        nNonce = 0;
-    }
+  void SetNull() {
+    nVersion = 0;
+    hashPrevBlock.SetNull();
+    hashMerkleRoot.SetNull();
+    nTime = 0;
+    nBits = 0;
+    nNonce = 0;
+  }
 
-    bool IsNull() const
-    {
-        return (nBits == 0);
-    }
+  bool IsNull() const { return (nBits == 0); }
 
-    uint256 GetHash() const;
+  uint256 GetHash() const;
 
-    uint256 GetPoWHash() const;
+  uint256 GetPoWHash() const;
 
-    uint256 GetHashYespower() const;
+  uint256 GetHashYespower() const;
 
-    int64_t GetBlockTime() const
-    {
-        return (int64_t)nTime;
-    }
+  int64_t GetBlockTime() const { return (int64_t)nTime; }
 
-    // LightningCashr: Hive: Check if this block is hivemined
-    bool IsHiveMined(const Consensus::Params& consensusParams) const {
-        return (nNonce == consensusParams.hiveNonceMarker);
-    }
+  bool IsHiveMined(const Consensus::Params &consensusParams) const {
+    return (nNonce == consensusParams.hiveNonceMarker);
+  }
 };
 
-class CBlock : public CBlockHeader
-{
+class CBlock : public CBlockHeader {
 public:
-    // network and disk
-    std::vector<CTransactionRef> vtx;
+  std::vector<CTransactionRef> vtx;
 
-    // memory only
-    mutable bool fChecked;
+  mutable bool fChecked;
 
-    CBlock()
-    {
-        SetNull();
-    }
+  CBlock() { SetNull(); }
 
-    CBlock(const CBlockHeader &header)
-    {
-        SetNull();
-        *((CBlockHeader*)this) = header;
-    }
+  CBlock(const CBlockHeader &header) {
+    SetNull();
+    *((CBlockHeader *)this) = header;
+  }
 
-    ADD_SERIALIZE_METHODS;
+  ADD_SERIALIZE_METHODS;
 
-    template <typename Stream, typename Operation>
-    inline void SerializationOp(Stream& s, Operation ser_action) {
-        READWRITE(*(CBlockHeader*)this);
-        READWRITE(vtx);
-    }
+  template <typename Stream, typename Operation>
+  inline void SerializationOp(Stream &s, Operation ser_action) {
+    READWRITE(*(CBlockHeader *)this);
+    READWRITE(vtx);
+  }
 
-    void SetNull()
-    {
-        CBlockHeader::SetNull();
-        vtx.clear();
-        fChecked = false;
-    }
+  void SetNull() {
+    CBlockHeader::SetNull();
+    vtx.clear();
+    fChecked = false;
+  }
 
-    CBlockHeader GetBlockHeader() const
-    {
-        CBlockHeader block;
-        block.nVersion       = nVersion;
-        block.hashPrevBlock  = hashPrevBlock;
-        block.hashMerkleRoot = hashMerkleRoot;
-        block.nTime          = nTime;
-        block.nBits          = nBits;
-        block.nNonce         = nNonce;
-        return block;
-    }
+  CBlockHeader GetBlockHeader() const {
+    CBlockHeader block;
+    block.nVersion = nVersion;
+    block.hashPrevBlock = hashPrevBlock;
+    block.hashMerkleRoot = hashMerkleRoot;
+    block.nTime = nTime;
+    block.nBits = nBits;
+    block.nNonce = nNonce;
+    return block;
+  }
 
-    std::string ToString() const;
+  std::string ToString() const;
 };
 
-struct CBlockLocator
-{
-    std::vector<uint256> vHave;
+struct CBlockLocator {
+  std::vector<uint256> vHave;
 
-    CBlockLocator() {}
+  CBlockLocator() {}
 
-    explicit CBlockLocator(const std::vector<uint256>& vHaveIn) : vHave(vHaveIn) {}
+  explicit CBlockLocator(const std::vector<uint256> &vHaveIn)
+      : vHave(vHaveIn) {}
 
-    ADD_SERIALIZE_METHODS;
+  ADD_SERIALIZE_METHODS;
 
-    template <typename Stream, typename Operation>
-    inline void SerializationOp(Stream& s, Operation ser_action) {
-        int nVersion = s.GetVersion();
-        if (!(s.GetType() & SER_GETHASH))
-            READWRITE(nVersion);
-        READWRITE(vHave);
-    }
+  template <typename Stream, typename Operation>
+  inline void SerializationOp(Stream &s, Operation ser_action) {
+    int nVersion = s.GetVersion();
+    if (!(s.GetType() & SER_GETHASH))
+      READWRITE(nVersion);
+    READWRITE(vHave);
+  }
 
-    void SetNull()
-    {
-        vHave.clear();
-    }
+  void SetNull() { vHave.clear(); }
 
-    bool IsNull() const
-    {
-        return vHave.empty();
-    }
+  bool IsNull() const { return vHave.empty(); }
 };
 
-#endif // BITCOIN_PRIMITIVES_BLOCK_H
+#endif

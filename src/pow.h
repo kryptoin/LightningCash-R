@@ -16,8 +16,8 @@ class uint256;
 class CBlock;
 
 struct BeePopGraphPoint {
-    int immaturePop;
-    int maturePop;
+  int immaturePop;
+  int maturePop;
 };
 
 extern CAmount totalMatureBees;
@@ -31,18 +31,44 @@ extern int switchHmem;
 extern int switchLmem;
 extern int threshold;
 
-unsigned int GetNextWorkRequired(const CBlockIndex* pindexLast, const CBlockHeader *pblock, const Consensus::Params&);
-unsigned int CalculateNextWorkRequired(const CBlockIndex* pindexLast, int64_t nFirstBlockTime, const Consensus::Params&);
-unsigned int GetNextHiveWorkRequired(const CBlockIndex* pindexLast, const Consensus::Params& params);                       // LightningCashr: Hive: Get the current Bee Hash Target
-bool CheckHiveProof(const CBlock* pblock, const Consensus::Params& params);                                                 // LightningCashr: Hive: Check the hive proof for given block
-bool CheckHiveProof2(const CBlock* pblock, const Consensus::Params& params);                                                 // LightningCashr: Hive: Check the hive proof for given block
-bool CheckHiveProof3(const CBlock* pblock, const Consensus::Params& params);                                                 // LightningCashr: Hive: Check the hive proof for given block
-bool GetNetworkHiveInfo(int& immatureBees, int& immatureBCTs, int& matureBees, int& matureBCTs, CAmount& potentialLifespanRewards, const Consensus::Params& consensusParams, bool recalcGraph = false); // LightningCashr: Hive: Get count of all live and gestating BCTs on the network
-bool GetNetworkHiveInfo2(int& immatureBees, int& immatureBCTs, int& matureBees, int& matureBCTs, CAmount& potentialLifespanRewards, const Consensus::Params& consensusParams, bool recalcGraph = false); // LightningCashr: Hive: Get count of all live and gestating BCTs on the network
-bool GetNetworkHiveInfo3(int& immatureBees, int& immatureBCTs, int& matureBees, int& matureBCTs, CAmount& potentialLifespanRewards, const Consensus::Params& consensusParams, bool recalcGraph = false); // LightningCashr: Hive: Get count of all live and gestating BCTs on the network
-bool GetNetworkHiveInfo4(int& immatureBees, int& immatureBCTs, int& matureBees, int& matureBCTs, CAmount& potentialLifespanRewards, const Consensus::Params& consensusParams, bool recalcGraph = false); // LightningCashr: Hive: Get count of all live and gestating BCTs on the network
+unsigned int GetNextWorkRequired(const CBlockIndex *pindexLast,
+                                 const CBlockHeader *pblock,
+                                 const Consensus::Params &);
+unsigned int CalculateNextWorkRequired(const CBlockIndex *pindexLast,
+                                       int64_t nFirstBlockTime,
+                                       const Consensus::Params &);
+unsigned int GetNextHiveWorkRequired(const CBlockIndex *pindexLast,
+                                     const Consensus::Params &params);
 
-bool CheckProofOfWork(uint256 hash, unsigned int nBits, const Consensus::Params&);
-bool CheckProofOfWork2(uint256 hash, unsigned int nBits, const Consensus::Params&);
+bool CheckHiveProof(const CBlock *pblock, const Consensus::Params &params);
 
-#endif // BITCOIN_POW_H
+bool CheckHiveProof2(const CBlock *pblock, const Consensus::Params &params);
+
+bool CheckHiveProof3(const CBlock *pblock, const Consensus::Params &params);
+
+bool GetNetworkHiveInfo(int &immatureBees, int &immatureBCTs, int &matureBees,
+                        int &matureBCTs, CAmount &potentialLifespanRewards,
+                        const Consensus::Params &consensusParams,
+                        bool recalcGraph = false);
+
+bool GetNetworkHiveInfo2(int &immatureBees, int &immatureBCTs, int &matureBees,
+                         int &matureBCTs, CAmount &potentialLifespanRewards,
+                         const Consensus::Params &consensusParams,
+                         bool recalcGraph = false);
+
+bool GetNetworkHiveInfo3(int &immatureBees, int &immatureBCTs, int &matureBees,
+                         int &matureBCTs, CAmount &potentialLifespanRewards,
+                         const Consensus::Params &consensusParams,
+                         bool recalcGraph = false);
+
+bool GetNetworkHiveInfo4(int &immatureBees, int &immatureBCTs, int &matureBees,
+                         int &matureBCTs, CAmount &potentialLifespanRewards,
+                         const Consensus::Params &consensusParams,
+                         bool recalcGraph = false);
+
+bool CheckProofOfWork(uint256 hash, unsigned int nBits,
+                      const Consensus::Params &);
+bool CheckProofOfWork2(uint256 hash, unsigned int nBits,
+                       const Consensus::Params &);
+
+#endif

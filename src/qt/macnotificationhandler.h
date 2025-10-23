@@ -7,17 +7,14 @@
 
 #include <QObject>
 
-class MacNotificationHandler : public QObject
-{
-    Q_OBJECT
+class MacNotificationHandler : public QObject {
+  Q_OBJECT
 
 public:
+  void showNotification(const QString &title, const QString &text);
 
-    void showNotification(const QString &title, const QString &text);
-
-
-    bool hasUserNotificationCenterSupport(void);
-    static MacNotificationHandler *instance();
+  bool hasUserNotificationCenterSupport(void);
+  static MacNotificationHandler *instance();
 };
 
-#endif // BITCOIN_QT_MACNOTIFICATIONHANDLER_H
+#endif

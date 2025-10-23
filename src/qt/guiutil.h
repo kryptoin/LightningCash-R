@@ -10,12 +10,12 @@
 
 #include <QEvent>
 #include <QHeaderView>
+#include <QLabel>
 #include <QMessageBox>
 #include <QObject>
 #include <QProgressBar>
 #include <QString>
 #include <QTableView>
-#include <QLabel>
 
 class QValidatedLineEdit;
 class SendCoinsRecipient;
@@ -29,159 +29,148 @@ class QUrl;
 class QWidget;
 QT_END_NAMESPACE
 
-namespace GUIUtil
-{
-    // Create human-readable string from date
-    QString dateTimeStr(const QDateTime &datetime);
-    QString dateTimeStr(qint64 nTime);
+namespace GUIUtil {
+QString dateTimeStr(const QDateTime &datetime);
+QString dateTimeStr(qint64 nTime);
 
-    // Return a monospace font
-    QFont fixedPitchFont();
+QFont fixedPitchFont();
 
-    // Set up widgets for address and amounts
-    void setupAddressWidget(QValidatedLineEdit *widget, QWidget *parent);
-    void setupAmountWidget(QLineEdit *widget, QWidget *parent);
+void setupAddressWidget(QValidatedLineEdit *widget, QWidget *parent);
+void setupAmountWidget(QLineEdit *widget, QWidget *parent);
 
-    // Parse "bitcoin:" URI into recipient object, return true on successful parsing
-    bool parseBitcoinURI(const QUrl &uri, SendCoinsRecipient *out);
-    bool parseBitcoinURI(QString uri, SendCoinsRecipient *out);
-    QString formatBitcoinURI(const SendCoinsRecipient &info);
+bool parseBitcoinURI(const QUrl &uri, SendCoinsRecipient *out);
+bool parseBitcoinURI(QString uri, SendCoinsRecipient *out);
+QString formatBitcoinURI(const SendCoinsRecipient &info);
 
-    // Returns true if given address+amount meets "dust" definition
-    bool isDust(const QString& address, const CAmount& amount);
+bool isDust(const QString &address, const CAmount &amount);
 
-    // HTML escaping for rich text controls
-    QString HtmlEscape(const QString& str, bool fMultiLine=false);
-    QString HtmlEscape(const std::string& str, bool fMultiLine=false);
+QString HtmlEscape(const QString &str, bool fMultiLine = false);
+QString HtmlEscape(const std::string &str, bool fMultiLine = false);
 
-    void copyEntryData(QAbstractItemView *view, int column, int role=Qt::EditRole);
+void copyEntryData(QAbstractItemView *view, int column,
+                   int role = Qt::EditRole);
 
-    QList<QModelIndex> getEntryData(QAbstractItemView *view, int column);
+QList<QModelIndex> getEntryData(QAbstractItemView *view, int column);
 
-    void setClipboard(const QString& str);
+void setClipboard(const QString &str);
 
-    QString getSaveFileName(QWidget *parent, const QString &caption, const QString &dir,
-        const QString &filter,
-        QString *selectedSuffixOut);
+QString getSaveFileName(QWidget *parent, const QString &caption,
+                        const QString &dir, const QString &filter,
+                        QString *selectedSuffixOut);
 
-    QString getOpenFileName(QWidget *parent, const QString &caption, const QString &dir,
-        const QString &filter,
-        QString *selectedSuffixOut);
+QString getOpenFileName(QWidget *parent, const QString &caption,
+                        const QString &dir, const QString &filter,
+                        QString *selectedSuffixOut);
 
-    Qt::ConnectionType blockingGUIThreadConnection();
+Qt::ConnectionType blockingGUIThreadConnection();
 
-    // Determine whether a widget is hidden behind other windows
-    bool isObscured(QWidget *w);
+bool isObscured(QWidget *w);
 
-    // Open debug.log
-    void openDebugLogfile();
+void openDebugLogfile();
 
-    // Open the config file
-    bool openBitcoinConf();
+bool openBitcoinConf();
 
-    // Replace invalid default fonts with known good ones
-    void SubstituteFonts(const QString& language);
+void SubstituteFonts(const QString &language);
 
-    class ToolTipToRichTextFilter : public QObject
-    {
-        Q_OBJECT
+class ToolTipToRichTextFilter : public QObject {
+  Q_OBJECT
 
-    public:
-        explicit ToolTipToRichTextFilter(int size_threshold, QObject *parent = 0);
+public:
+  explicit ToolTipToRichTextFilter(int size_threshold, QObject *parent = 0);
 
-    protected:
-        bool eventFilter(QObject *obj, QEvent *evt);
+protected:
+  bool eventFilter(QObject *obj, QEvent *evt);
 
-    private:
-        int size_threshold;
-    };
+private:
+  int size_threshold;
+};
 
-    class TableViewLastColumnResizingFixer: public QObject
-    {
-        Q_OBJECT
+class TableViewLastColumnResizingFixer : public QObject {
+  Q_OBJECT
 
-        public:
-            TableViewLastColumnResizingFixer(QTableView* table, int lastColMinimumWidth, int allColsMinimumWidth, QObject *parent);
-            void stretchColumnWidth(int column);
+public:
+  TableViewLastColumnResizingFixer(QTableView *table, int lastColMinimumWidth,
+                                   int allColsMinimumWidth, QObject *parent);
+  void stretchColumnWidth(int column);
 
-        private:
-            QTableView* tableView;
-            int lastColumnMinimumWidth;
-            int allColumnsMinimumWidth;
-            int lastColumnIndex;
-            int columnCount;
-            int secondToLastColumnIndex;
+private:
+  QTableView *tableView;
+  int lastColumnMinimumWidth;
+  int allColumnsMinimumWidth;
+  int lastColumnIndex;
+  int columnCount;
+  int secondToLastColumnIndex;
 
-            void adjustTableColumnsWidth();
-            int getAvailableWidthForColumn(int column);
-            int getColumnsWidth();
-            void connectViewHeadersSignals();
-            void disconnectViewHeadersSignals();
-            void setViewHeaderResizeMode(int logicalIndex, QHeaderView::ResizeMode resizeMode);
-            void resizeColumn(int nColumnIndex, int width);
+  void adjustTableColumnsWidth();
+  int getAvailableWidthForColumn(int column);
+  int getColumnsWidth();
+  void connectViewHeadersSignals();
+  void disconnectViewHeadersSignals();
+  void setViewHeaderResizeMode(int logicalIndex,
+                               QHeaderView::ResizeMode resizeMode);
+  void resizeColumn(int nColumnIndex, int width);
 
-        private Q_SLOTS:
-            void on_sectionResized(int logicalIndex, int oldSize, int newSize);
-            void on_geometriesChanged();
-    };
+private Q_SLOTS:
+  void on_sectionResized(int logicalIndex, int oldSize, int newSize);
+  void on_geometriesChanged();
+};
 
-    bool GetStartOnSystemStartup();
-    bool SetStartOnSystemStartup(bool fAutoStart);
+bool GetStartOnSystemStartup();
+bool SetStartOnSystemStartup(bool fAutoStart);
 
-    fs::path qstringToBoostPath(const QString &path);
+fs::path qstringToBoostPath(const QString &path);
 
-    QString boostPathToQString(const fs::path &path);
+QString boostPathToQString(const fs::path &path);
 
-    QString formatDurationStr(int secs);
+QString formatDurationStr(int secs);
 
-    QString formatServicesStr(quint64 mask);
+QString formatServicesStr(quint64 mask);
 
-    QString formatPingTime(double dPingTime);
+QString formatPingTime(double dPingTime);
 
-    QString formatTimeOffset(int64_t nTimeOffset);
+QString formatTimeOffset(int64_t nTimeOffset);
 
-    QString formatNiceTimeOffset(qint64 secs);
+QString formatNiceTimeOffset(qint64 secs);
 
-    QString formatBytes(uint64_t bytes);
+QString formatBytes(uint64_t bytes);
 
-    qreal calculateIdealFontSize(int width, const QString& text, QFont font, qreal minPointSize = 4, qreal startPointSize = 14);
+qreal calculateIdealFontSize(int width, const QString &text, QFont font,
+                             qreal minPointSize = 4, qreal startPointSize = 14);
 
-    class ClickableLabel : public QLabel
-    {
-        Q_OBJECT
+class ClickableLabel : public QLabel {
+  Q_OBJECT
 
-    Q_SIGNALS:
+Q_SIGNALS:
 
-        void clicked(const QPoint& point);
-    protected:
-        void mouseReleaseEvent(QMouseEvent *event);
-    };
+  void clicked(const QPoint &point);
 
-    class ClickableProgressBar : public QProgressBar
-    {
-        Q_OBJECT
+protected:
+  void mouseReleaseEvent(QMouseEvent *event);
+};
 
-    Q_SIGNALS:
+class ClickableProgressBar : public QProgressBar {
+  Q_OBJECT
 
-        void clicked(const QPoint& point);
-    protected:
-        void mouseReleaseEvent(QMouseEvent *event);
-    };
+Q_SIGNALS:
+
+  void clicked(const QPoint &point);
+
+protected:
+  void mouseReleaseEvent(QMouseEvent *event);
+};
 
 #if defined(Q_OS_MAC) && QT_VERSION >= 0x050000
-    // workaround for Qt OSX Bug:
-    // https://bugreports.qt-project.org/browse/QTBUG-15631
-    // QProgressBar uses around 10% CPU even when app is in background
-    class ProgressBar : public ClickableProgressBar
-    {
-        bool event(QEvent *e) {
-            return (e->type() != QEvent::StyleAnimationUpdate) ? QProgressBar::event(e) : false;
-        }
-    };
+
+class ProgressBar : public ClickableProgressBar {
+  bool event(QEvent *e) {
+    return (e->type() != QEvent::StyleAnimationUpdate) ? QProgressBar::event(e)
+                                                       : false;
+  }
+};
 #else
-    typedef ClickableProgressBar ProgressBar;
+typedef ClickableProgressBar ProgressBar;
 #endif
 
 } // namespace GUIUtil
 
-#endif // BITCOIN_QT_GUIUTIL_H
+#endif

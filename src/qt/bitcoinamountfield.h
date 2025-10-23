@@ -15,57 +15,46 @@ QT_BEGIN_NAMESPACE
 class QValueComboBox;
 QT_END_NAMESPACE
 
-class BitcoinAmountField: public QWidget
-{
-    Q_OBJECT
+class BitcoinAmountField : public QWidget {
+  Q_OBJECT
 
-    // ugly hack: for some unknown reason CAmount (instead of qint64) does not work here as expected
-    // discussion: https://github.com/bitcoin/bitcoin/pull/5117
-    Q_PROPERTY(qint64 value READ value WRITE setValue NOTIFY valueChanged USER true)
+  Q_PROPERTY(
+      qint64 value READ value WRITE setValue NOTIFY valueChanged USER true)
 
 public:
-    explicit BitcoinAmountField(QWidget *parent = 0);
+  explicit BitcoinAmountField(QWidget *parent = 0);
 
-    CAmount value(bool *value=0) const;
-    void setValue(const CAmount& value);
+  CAmount value(bool *value = 0) const;
+  void setValue(const CAmount &value);
 
+  void setSingleStep(const CAmount &step);
 
-    void setSingleStep(const CAmount& step);
+  void setReadOnly(bool fReadOnly);
 
+  void setValid(bool valid);
 
-    void setReadOnly(bool fReadOnly);
+  bool validate();
 
+  void setDisplayUnit(int unit);
 
-    void setValid(bool valid);
+  void clear();
 
-    bool validate();
+  void setEnabled(bool fEnabled);
 
-
-    void setDisplayUnit(int unit);
-
-
-    void clear();
-
-
-    void setEnabled(bool fEnabled);
-
-
-    QWidget *setupTabChain(QWidget *prev);
+  QWidget *setupTabChain(QWidget *prev);
 
 Q_SIGNALS:
-    void valueChanged();
+  void valueChanged();
 
 protected:
-
-    bool eventFilter(QObject *object, QEvent *event);
+  bool eventFilter(QObject *object, QEvent *event);
 
 private:
-    AmountSpinBox *amount;
-    QValueComboBox *unit;
+  AmountSpinBox *amount;
+  QValueComboBox *unit;
 
 private Q_SLOTS:
-    void unitChanged(int idx);
-
+  void unitChanged(int idx);
 };
 
-#endif // BITCOIN_QT_BITCOINAMOUNTFIELD_H
+#endif

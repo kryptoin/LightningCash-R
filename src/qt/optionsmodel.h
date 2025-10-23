@@ -16,81 +16,102 @@ QT_END_NAMESPACE
 extern const char *DEFAULT_GUI_PROXY_HOST;
 static constexpr unsigned short DEFAULT_GUI_PROXY_PORT = 9050;
 
-class OptionsModel : public QAbstractListModel
-{
-    Q_OBJECT
+class OptionsModel : public QAbstractListModel {
+  Q_OBJECT
 
 public:
-    explicit OptionsModel(QObject *parent = 0, bool resetSettings = false);
+  explicit OptionsModel(QObject *parent = 0, bool resetSettings = false);
 
-    enum OptionID {
-        StartAtStartup,         // bool
-        HideTrayIcon,           // bool
-        MinimizeToTray,         // bool
-        MapPortUPnP,            // bool
-        MinimizeOnClose,        // bool
-        ProxyUse,               // bool
-        ProxyIP,                // QString
-        ProxyPort,              // int
-        ProxyUseTor,            // bool
-        ProxyIPTor,             // QString
-        ProxyPortTor,           // int
-        DisplayUnit,            // BitcoinUnits::Unit
-        ThirdPartyTxUrls,       // QString
-        Language,               // QString
-        CoinControlFeatures,    // bool
-        ThreadsScriptVerif,     // int
-        DatabaseCache,          // int
-        SpendZeroConfChange,    // bool
-        Listen,                 // bool
-        HiveCheckDelay,         // LightningCashr: Hive: Mining optimisations (int)
-        HiveCheckThreads,       // LightningCashr: Hive: Mining optimisations (int)
-        HiveCheckEarlyOut,      // LightningCashr: Hive: Mining optimisations (bool)
-        OptionIDRowCount,
-    };
+  enum OptionID {
+    StartAtStartup,
 
-    void Init(bool resetSettings = false);
-    void Reset();
+    HideTrayIcon,
 
-    int rowCount(const QModelIndex & parent = QModelIndex()) const;
-    QVariant data(const QModelIndex & index, int role = Qt::DisplayRole) const;
-    bool setData(const QModelIndex & index, const QVariant & value, int role = Qt::EditRole);
+    MinimizeToTray,
 
-    void setDisplayUnit(const QVariant &value);
+    MapPortUPnP,
 
-    bool getHideTrayIcon() const { return fHideTrayIcon; }
-    bool getMinimizeToTray() const { return fMinimizeToTray; }
-    bool getMinimizeOnClose() const { return fMinimizeOnClose; }
-    int getDisplayUnit() const { return nDisplayUnit; }
-    QString getThirdPartyTxUrls() const { return strThirdPartyTxUrls; }
-    bool getProxySettings(QNetworkProxy& proxy) const;
-    bool getCoinControlFeatures() const { return fCoinControlFeatures; }
-    const QString& getOverriddenByCommandLine() { return strOverriddenByCommandLine; }
+    MinimizeOnClose,
 
-    void setRestartRequired(bool fRequired);
-    bool isRestartRequired() const;
+    ProxyUse,
+
+    ProxyIP,
+
+    ProxyPort,
+
+    ProxyUseTor,
+
+    ProxyIPTor,
+
+    ProxyPortTor,
+
+    DisplayUnit,
+
+    ThirdPartyTxUrls,
+
+    Language,
+
+    CoinControlFeatures,
+
+    ThreadsScriptVerif,
+
+    DatabaseCache,
+
+    SpendZeroConfChange,
+
+    Listen,
+
+    HiveCheckDelay,
+
+    HiveCheckThreads,
+
+    HiveCheckEarlyOut,
+
+    OptionIDRowCount,
+  };
+
+  void Init(bool resetSettings = false);
+  void Reset();
+
+  int rowCount(const QModelIndex &parent = QModelIndex()) const;
+  QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
+  bool setData(const QModelIndex &index, const QVariant &value,
+               int role = Qt::EditRole);
+
+  void setDisplayUnit(const QVariant &value);
+
+  bool getHideTrayIcon() const { return fHideTrayIcon; }
+  bool getMinimizeToTray() const { return fMinimizeToTray; }
+  bool getMinimizeOnClose() const { return fMinimizeOnClose; }
+  int getDisplayUnit() const { return nDisplayUnit; }
+  QString getThirdPartyTxUrls() const { return strThirdPartyTxUrls; }
+  bool getProxySettings(QNetworkProxy &proxy) const;
+  bool getCoinControlFeatures() const { return fCoinControlFeatures; }
+  const QString &getOverriddenByCommandLine() {
+    return strOverriddenByCommandLine;
+  }
+
+  void setRestartRequired(bool fRequired);
+  bool isRestartRequired() const;
 
 private:
+  bool fHideTrayIcon;
+  bool fMinimizeToTray;
+  bool fMinimizeOnClose;
+  QString language;
+  int nDisplayUnit;
+  QString strThirdPartyTxUrls;
+  bool fCoinControlFeatures;
 
-    bool fHideTrayIcon;
-    bool fMinimizeToTray;
-    bool fMinimizeOnClose;
-    QString language;
-    int nDisplayUnit;
-    QString strThirdPartyTxUrls;
-    bool fCoinControlFeatures;
+  QString strOverriddenByCommandLine;
 
-    QString strOverriddenByCommandLine;
+  void addOverriddenOption(const std::string &option);
 
-    // Add option to list of GUI options overridden through command line/config file
-    void addOverriddenOption(const std::string &option);
-
-    // Check settings version and upgrade default values if required
-    void checkAndMigrate();
+  void checkAndMigrate();
 Q_SIGNALS:
-    void displayUnitChanged(int unit);
-    void coinControlFeaturesChanged(bool);
-    void hideTrayIconChanged(bool);
+  void displayUnitChanged(int unit);
+  void coinControlFeaturesChanged(bool);
+  void hideTrayIconChanged(bool);
 };
 
-#endif // BITCOIN_QT_OPTIONSMODEL_H
+#endif

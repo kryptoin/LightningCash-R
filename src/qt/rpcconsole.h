@@ -10,16 +10,16 @@
 
 #include <net.h>
 
-#include <QWidget>
 #include <QCompleter>
 #include <QThread>
+#include <QWidget>
 
 class ClientModel;
 class PlatformStyle;
 class RPCTimerInterface;
 
 namespace Ui {
-    class RPCConsole;
+class RPCConsole;
 }
 
 QT_BEGIN_NAMESPACE
@@ -27,132 +27,124 @@ class QMenu;
 class QItemSelection;
 QT_END_NAMESPACE
 
-class RPCConsole: public QWidget
-{
-    Q_OBJECT
+class RPCConsole : public QWidget {
+  Q_OBJECT
 
 public:
-    explicit RPCConsole(const PlatformStyle *platformStyle, QWidget *parent);
-    ~RPCConsole();
+  explicit RPCConsole(const PlatformStyle *platformStyle, QWidget *parent);
+  ~RPCConsole();
 
-    static bool RPCParseCommandLine(std::string &strResult, const std::string &strCommand, bool fExecute, std::string * const pstrFilteredOut = nullptr);
-    static bool RPCExecuteCommandLine(std::string &strResult, const std::string &strCommand, std::string * const pstrFilteredOut = nullptr) {
-        return RPCParseCommandLine(strResult, strCommand, true, pstrFilteredOut);
-    }
+  static bool RPCParseCommandLine(std::string &strResult,
+                                  const std::string &strCommand, bool fExecute,
+                                  std::string *const pstrFilteredOut = nullptr);
+  static bool
+  RPCExecuteCommandLine(std::string &strResult, const std::string &strCommand,
+                        std::string *const pstrFilteredOut = nullptr) {
+    return RPCParseCommandLine(strResult, strCommand, true, pstrFilteredOut);
+  }
 
-    void setClientModel(ClientModel *model);
+  void setClientModel(ClientModel *model);
 
-    enum MessageClass {
-        MC_ERROR,
-        MC_DEBUG,
-        CMD_REQUEST,
-        CMD_REPLY,
-        CMD_ERROR
-    };
+  enum MessageClass { MC_ERROR, MC_DEBUG, CMD_REQUEST, CMD_REPLY, CMD_ERROR };
 
-    enum TabTypes {
-        TAB_INFO = 0,
-        TAB_CONSOLE = 1,
-        TAB_GRAPH = 2,
-        TAB_PEERS = 3
-    };
+  enum TabTypes { TAB_INFO = 0, TAB_CONSOLE = 1, TAB_GRAPH = 2, TAB_PEERS = 3 };
 
 protected:
-    virtual bool eventFilter(QObject* obj, QEvent *event);
-    void keyPressEvent(QKeyEvent *);
+  virtual bool eventFilter(QObject *obj, QEvent *event);
+  void keyPressEvent(QKeyEvent *);
 
 private Q_SLOTS:
-    void on_lineEdit_returnPressed();
-    void on_tabWidget_currentChanged(int index);
+  void on_lineEdit_returnPressed();
+  void on_tabWidget_currentChanged(int index);
 
-    void on_openDebugLogfileButton_clicked();
+  void on_openDebugLogfileButton_clicked();
 
-    void on_sldGraphRange_valueChanged(int value);
+  void on_sldGraphRange_valueChanged(int value);
 
-    void updateTrafficStats(quint64 totalBytesIn, quint64 totalBytesOut);
-    void resizeEvent(QResizeEvent *event);
-    void showEvent(QShowEvent *event);
-    void hideEvent(QHideEvent *event);
+  void updateTrafficStats(quint64 totalBytesIn, quint64 totalBytesOut);
+  void resizeEvent(QResizeEvent *event);
+  void showEvent(QShowEvent *event);
+  void hideEvent(QHideEvent *event);
 
-    void showPeersTableContextMenu(const QPoint& point);
+  void showPeersTableContextMenu(const QPoint &point);
 
-    void showBanTableContextMenu(const QPoint& point);
+  void showBanTableContextMenu(const QPoint &point);
 
-    void showOrHideBanTableIfRequired();
+  void showOrHideBanTableIfRequired();
 
-    void clearSelectedNode();
+  void clearSelectedNode();
 
 public Q_SLOTS:
-    void clear(bool clearHistory = true);
-    void fontBigger();
-    void fontSmaller();
-    void setFontSize(int newSize);
+  void clear(bool clearHistory = true);
+  void fontBigger();
+  void fontSmaller();
+  void setFontSize(int newSize);
 
-    void message(int category, const QString &message, bool html = false);
+  void message(int category, const QString &message, bool html = false);
 
-    void setNumConnections(int count);
+  void setNumConnections(int count);
 
-    void setNetworkActive(bool networkActive);
+  void setNetworkActive(bool networkActive);
 
-    void setNumBlocks(int count, const QDateTime& blockDate, double nVerificationProgress, bool headers);
+  void setNumBlocks(int count, const QDateTime &blockDate,
+                    double nVerificationProgress, bool headers);
 
-    void setMempoolSize(long numberOfTxs, size_t dynUsage);
+  void setMempoolSize(long numberOfTxs, size_t dynUsage);
 
-    void browseHistory(int offset);
+  void browseHistory(int offset);
 
-    void scrollToEnd();
+  void scrollToEnd();
 
-    void peerSelected(const QItemSelection &selected, const QItemSelection &deselected);
+  void peerSelected(const QItemSelection &selected,
+                    const QItemSelection &deselected);
 
-    void peerLayoutAboutToChange();
+  void peerLayoutAboutToChange();
 
-    void peerLayoutChanged();
+  void peerLayoutChanged();
 
-    void disconnectSelectedNode();
+  void disconnectSelectedNode();
 
-    void banSelectedNode(int bantime);
+  void banSelectedNode(int bantime);
 
-    void unbanSelectedNode();
+  void unbanSelectedNode();
 
-    void setTabFocus(enum TabTypes tabType);
+  void setTabFocus(enum TabTypes tabType);
 
 Q_SIGNALS:
-    // For RPC command executor
-    void stopExecutor();
-    void cmdRequest(const QString &command);
+
+  void stopExecutor();
+  void cmdRequest(const QString &command);
 
 private:
-    void startExecutor();
-    void setTrafficGraphRange(int mins);
+  void startExecutor();
+  void setTrafficGraphRange(int mins);
 
-    void updateNodeDetail(const CNodeCombinedStats *stats);
+  void updateNodeDetail(const CNodeCombinedStats *stats);
 
-    enum ColumnWidths
-    {
-        ADDRESS_COLUMN_WIDTH = 200,
-        SUBVERSION_COLUMN_WIDTH = 150,
-        PING_COLUMN_WIDTH = 80,
-        BANSUBNET_COLUMN_WIDTH = 200,
-        BANTIME_COLUMN_WIDTH = 250
+  enum ColumnWidths {
+    ADDRESS_COLUMN_WIDTH = 200,
+    SUBVERSION_COLUMN_WIDTH = 150,
+    PING_COLUMN_WIDTH = 80,
+    BANSUBNET_COLUMN_WIDTH = 200,
+    BANTIME_COLUMN_WIDTH = 250
 
-    };
+  };
 
-    Ui::RPCConsole *ui;
-    ClientModel *clientModel;
-    QStringList history;
-    int historyPtr;
-    QString cmdBeforeBrowsing;
-    QList<NodeId> cachedNodeids;
-    const PlatformStyle *platformStyle;
-    RPCTimerInterface *rpcTimerInterface;
-    QMenu *peersTableContextMenu;
-    QMenu *banTableContextMenu;
-    int consoleFontSize;
-    QCompleter *autoCompleter;
-    QThread thread;
+  Ui::RPCConsole *ui;
+  ClientModel *clientModel;
+  QStringList history;
+  int historyPtr;
+  QString cmdBeforeBrowsing;
+  QList<NodeId> cachedNodeids;
+  const PlatformStyle *platformStyle;
+  RPCTimerInterface *rpcTimerInterface;
+  QMenu *peersTableContextMenu;
+  QMenu *banTableContextMenu;
+  int consoleFontSize;
+  QCompleter *autoCompleter;
+  QThread thread;
 
-
-    void updateNetworkState();
+  void updateNetworkState();
 };
 
-#endif // BITCOIN_QT_RPCCONSOLE_H
+#endif

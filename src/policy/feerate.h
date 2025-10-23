@@ -13,40 +13,53 @@
 
 extern const std::string CURRENCY_UNIT;
 
-class CFeeRate
-{
+class CFeeRate {
 private:
-    CAmount nSatoshisPerK; // unit is satoshis-per-1,000-bytes
+  CAmount nSatoshisPerK;
 
 public:
+  CFeeRate() : nSatoshisPerK(0) {}
+  template <typename I>
+  CFeeRate(const I _nSatoshisPerK) : nSatoshisPerK(_nSatoshisPerK) {
+    static_assert(std::is_integral<I>::value,
+                  "CFeeRate should be used without floats");
+  }
 
-    CFeeRate() : nSatoshisPerK(0) { }
-    template<typename I>
-    CFeeRate(const I _nSatoshisPerK): nSatoshisPerK(_nSatoshisPerK) {
-        // We've previously had bugs creep in from silent double->int conversion...
-        static_assert(std::is_integral<I>::value, "CFeeRate should be used without floats");
-    }
+  CFeeRate(const CAmount &nFeePaid, size_t nBytes);
 
-    CFeeRate(const CAmount& nFeePaid, size_t nBytes);
+  CAmount GetFee(size_t nBytes) const;
 
-    CAmount GetFee(size_t nBytes) const;
+  CAmount GetFeePerK() const { return GetFee(1000); }
+  friend bool operator<(const CFeeRate &a, const CFeeRate &b) {
+    return a.nSatoshisPerK < b.nSatoshisPerK;
+  }
+  friend bool operator>(const CFeeRate &a, const CFeeRate &b) {
+    return a.nSatoshisPerK > b.nSatoshisPerK;
+  }
+  friend bool operator==(const CFeeRate &a, const CFeeRate &b) {
+    return a.nSatoshisPerK == b.nSatoshisPerK;
+  }
+  friend bool operator<=(const CFeeRate &a, const CFeeRate &b) {
+    return a.nSatoshisPerK <= b.nSatoshisPerK;
+  }
+  friend bool operator>=(const CFeeRate &a, const CFeeRate &b) {
+    return a.nSatoshisPerK >= b.nSatoshisPerK;
+  }
+  friend bool operator!=(const CFeeRate &a, const CFeeRate &b) {
+    return a.nSatoshisPerK != b.nSatoshisPerK;
+  }
+  CFeeRate &operator+=(const CFeeRate &a) {
+    nSatoshisPerK += a.nSatoshisPerK;
+    return *this;
+  }
+  std::string ToString() const;
 
-    CAmount GetFeePerK() const { return GetFee(1000); }
-    friend bool operator<(const CFeeRate& a, const CFeeRate& b) { return a.nSatoshisPerK < b.nSatoshisPerK; }
-    friend bool operator>(const CFeeRate& a, const CFeeRate& b) { return a.nSatoshisPerK > b.nSatoshisPerK; }
-    friend bool operator==(const CFeeRate& a, const CFeeRate& b) { return a.nSatoshisPerK == b.nSatoshisPerK; }
-    friend bool operator<=(const CFeeRate& a, const CFeeRate& b) { return a.nSatoshisPerK <= b.nSatoshisPerK; }
-    friend bool operator>=(const CFeeRate& a, const CFeeRate& b) { return a.nSatoshisPerK >= b.nSatoshisPerK; }
-    friend bool operator!=(const CFeeRate& a, const CFeeRate& b) { return a.nSatoshisPerK != b.nSatoshisPerK; }
-    CFeeRate& operator+=(const CFeeRate& a) { nSatoshisPerK += a.nSatoshisPerK; return *this; }
-    std::string ToString() const;
+  ADD_SERIALIZE_METHODS;
 
-    ADD_SERIALIZE_METHODS;
-
-    template <typename Stream, typename Operation>
-    inline void SerializationOp(Stream& s, Operation ser_action) {
-        READWRITE(nSatoshisPerK);
-    }
+  template <typename Stream, typename Operation>
+  inline void SerializationOp(Stream &s, Operation ser_action) {
+    READWRITE(nSatoshisPerK);
+  }
 };
 
-#endif //  BITCOIN_POLICY_FEERATE_H
+#endif

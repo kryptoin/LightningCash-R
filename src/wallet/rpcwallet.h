@@ -13,16 +13,16 @@ class JSONRPCRequest;
 
 struct BeePopGraphPoint;
 
-extern BeePopGraphPoint beePopGraph[1024*40];       // LightningCashr: Hive
+extern BeePopGraphPoint beePopGraph[1024 * 40];
 
 void RegisterWalletRPCCommands(CRPCTable &t);
 
-CWallet *GetWalletForJSONRPCRequest(const JSONRPCRequest& request);
+CWallet *GetWalletForJSONRPCRequest(const JSONRPCRequest &request);
 
-CWallet *GetWalletForQTKeyImport();     // LightningCashr: Key import helper
+CWallet *GetWalletForQTKeyImport();
 
 std::string HelpRequiringPassphrase(CWallet *);
 void EnsureWalletIsUnlocked(CWallet *);
 bool EnsureWalletIsAvailable(CWallet *, bool avoidException);
 
-#endif //BITCOIN_WALLET_RPCWALLET_H
+#endif

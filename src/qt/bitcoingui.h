@@ -37,227 +37,214 @@ class QProgressBar;
 class QProgressDialog;
 QT_END_NAMESPACE
 
-class BitcoinGUI : public QMainWindow
-{
-    Q_OBJECT
+class BitcoinGUI : public QMainWindow {
+  Q_OBJECT
 
 public:
-    static const QString DEFAULT_WALLET;
-    static const std::string DEFAULT_UIPLATFORM;
+  static const QString DEFAULT_WALLET;
+  static const std::string DEFAULT_UIPLATFORM;
 
-    explicit BitcoinGUI(const PlatformStyle *platformStyle, const NetworkStyle *networkStyle, QWidget *parent = 0);
-    ~BitcoinGUI();
+  explicit BitcoinGUI(const PlatformStyle *platformStyle,
+                      const NetworkStyle *networkStyle, QWidget *parent = 0);
+  ~BitcoinGUI();
 
-
-    void setClientModel(ClientModel *clientModel);
+  void setClientModel(ClientModel *clientModel);
 
 #ifdef ENABLE_WALLET
 
-    bool addWallet(const QString& name, WalletModel *walletModel);
-    bool setCurrentWallet(const QString& name);
-    void removeAllWallets();
-#endif // ENABLE_WALLET
-    bool enableWallet;
+  bool addWallet(const QString &name, WalletModel *walletModel);
+  bool setCurrentWallet(const QString &name);
+  void removeAllWallets();
+#endif
+
+  bool enableWallet;
 
 protected:
-    void changeEvent(QEvent *e);
-    void closeEvent(QCloseEvent *event);
-    void showEvent(QShowEvent *event);
-    void dragEnterEvent(QDragEnterEvent *event);
-    void dropEvent(QDropEvent *event);
-    bool eventFilter(QObject *object, QEvent *event);
+  void changeEvent(QEvent *e);
+  void closeEvent(QCloseEvent *event);
+  void showEvent(QShowEvent *event);
+  void dragEnterEvent(QDragEnterEvent *event);
+  void dropEvent(QDropEvent *event);
+  bool eventFilter(QObject *object, QEvent *event);
 
 private:
-    ClientModel *clientModel;
-    WalletFrame *walletFrame;
+  ClientModel *clientModel;
+  WalletFrame *walletFrame;
 
-    UnitDisplayStatusBarControl *unitDisplayControl;
-    QLabel *labelWalletEncryptionIcon;
-    QLabel *labelWalletHDStatusIcon;
-    QLabel *connectionsControl;
-    QLabel *hiveStatusIcon;             // LightningCashr: Hive status icon
-    QLabel *labelBlocksIcon;
-    QLabel *progressBarLabel;
-    QProgressBar *progressBar;
-    QProgressDialog *progressDialog;
+  UnitDisplayStatusBarControl *unitDisplayControl;
+  QLabel *labelWalletEncryptionIcon;
+  QLabel *labelWalletHDStatusIcon;
+  QLabel *connectionsControl;
+  QLabel *hiveStatusIcon;
 
-    QMenuBar *appMenuBar;
-    QAction *overviewAction;
-    QAction *hiveAction;                // LightningCashr: Hive page
-    QAction *importPrivateKeyAction;    // LightningCashr: Key import helper
-    QAction *historyAction;
-    QAction *quitAction;
-    QAction *sendCoinsAction;
-    QAction *sendCoinsMenuAction;
-    QAction *usedSendingAddressesAction;
-    QAction *usedReceivingAddressesAction;
-    QAction *signMessageAction;
-    QAction *verifyMessageAction;
-    QAction *aboutAction;
-    QAction *receiveCoinsAction;
-    QAction *receiveCoinsMenuAction;
-    QAction *optionsAction;
-    QAction *toggleHideAction;
-    QAction *encryptWalletAction;
-    QAction *backupWalletAction;
-    QAction *changePassphraseAction;
-    QAction *aboutQtAction;
-    QAction *openRPCConsoleAction;
-    QAction *openAction;
-    QAction *showHelpMessageAction;
+  QLabel *labelBlocksIcon;
+  QLabel *progressBarLabel;
+  QProgressBar *progressBar;
+  QProgressDialog *progressDialog;
 
-    QSystemTrayIcon *trayIcon;
-    QMenu *trayIconMenu;
-    Notificator *notificator;
-    RPCConsole *rpcConsole;
-    HelpMessageDialog *helpMessageDialog;
-    ModalOverlay *modalOverlay;
+  QMenuBar *appMenuBar;
+  QAction *overviewAction;
+  QAction *hiveAction;
 
+  QAction *importPrivateKeyAction;
 
-    int prevBlocks;
-    int spinnerFrame;
+  QAction *historyAction;
+  QAction *quitAction;
+  QAction *sendCoinsAction;
+  QAction *sendCoinsMenuAction;
+  QAction *usedSendingAddressesAction;
+  QAction *usedReceivingAddressesAction;
+  QAction *signMessageAction;
+  QAction *verifyMessageAction;
+  QAction *aboutAction;
+  QAction *receiveCoinsAction;
+  QAction *receiveCoinsMenuAction;
+  QAction *optionsAction;
+  QAction *toggleHideAction;
+  QAction *encryptWalletAction;
+  QAction *backupWalletAction;
+  QAction *changePassphraseAction;
+  QAction *aboutQtAction;
+  QAction *openRPCConsoleAction;
+  QAction *openAction;
+  QAction *showHelpMessageAction;
 
-    const PlatformStyle *platformStyle;
+  QSystemTrayIcon *trayIcon;
+  QMenu *trayIconMenu;
+  Notificator *notificator;
+  RPCConsole *rpcConsole;
+  HelpMessageDialog *helpMessageDialog;
+  ModalOverlay *modalOverlay;
 
+  int prevBlocks;
+  int spinnerFrame;
 
-    void createActions();
+  const PlatformStyle *platformStyle;
 
-    void createMenuBar();
+  void createActions();
 
-    void createToolBars();
+  void createMenuBar();
 
-    void createTrayIcon(const NetworkStyle *networkStyle);
+  void createToolBars();
 
-    void createTrayIconMenu();
+  void createTrayIcon(const NetworkStyle *networkStyle);
 
+  void createTrayIconMenu();
 
-    void setWalletActionsEnabled(bool enabled);
+  void setWalletActionsEnabled(bool enabled);
 
+  void subscribeToCoreSignals();
 
-    void subscribeToCoreSignals();
+  void unsubscribeFromCoreSignals();
 
-    void unsubscribeFromCoreSignals();
+  void updateNetworkState();
 
-
-    void updateNetworkState();
-
-    void updateHeadersSyncProgressLabel();
+  void updateHeadersSyncProgressLabel();
 
 Q_SIGNALS:
 
-    void receivedURI(const QString &uri);
+  void receivedURI(const QString &uri);
 
 public Q_SLOTS:
 
-    void setNumConnections(int count);
+  void setNumConnections(int count);
 
-    void setNetworkActive(bool networkActive);
+  void setNetworkActive(bool networkActive);
 
-    void setNumBlocks(int count, const QDateTime& blockDate, double nVerificationProgress, bool headers);
+  void setNumBlocks(int count, const QDateTime &blockDate,
+                    double nVerificationProgress, bool headers);
 
+  void message(const QString &title, const QString &message, unsigned int style,
+               bool *ret = nullptr);
 
-    void message(const QString &title, const QString &message, unsigned int style, bool *ret = nullptr);
-
-    // LightningCashr: Hive: Update hive status icon
-    void updateHiveStatusIcon(QString icon, QString tooltip);
+  void updateHiveStatusIcon(QString icon, QString tooltip);
 
 #ifdef ENABLE_WALLET
 
-    void setEncryptionStatus(int status);
+  void setEncryptionStatus(int status);
 
+  void setHDStatus(int hdEnabled);
 
-    void setHDStatus(int hdEnabled);
+  bool handlePaymentRequest(const SendCoinsRecipient &recipient);
 
-    bool handlePaymentRequest(const SendCoinsRecipient& recipient);
-
-
-    void incomingTransaction(const QString& date, int unit, const CAmount& amount, const QString& type, const QString& address, const QString& label);
-#endif // ENABLE_WALLET
-
-private Q_SLOTS:
-#ifdef ENABLE_WALLET
-
-    void gotoOverviewPage();
-
-    void gotoHistoryPage();
-
-    void gotoReceiveCoinsPage();
-
-    void gotoSendCoinsPage(QString addr = "");
-
-    // LightningCashr: Switch to hive page
-    void gotoHivePage();
-
-
-    void gotoSignMessageTab(QString addr = "");
-
-    void gotoVerifyMessageTab(QString addr = "");
-
-
-    void openClicked();
-#endif // ENABLE_WALLET
-
-    void optionsClicked();
-
-    void aboutClicked();
-
-    void showDebugWindow();
-
-    void showDebugWindowActivateConsole();
-
-    void showHelpMessageClicked();
-#ifndef Q_OS_MAC
-
-    void trayIconActivated(QSystemTrayIcon::ActivationReason reason);
+  void incomingTransaction(const QString &date, int unit, const CAmount &amount,
+                           const QString &type, const QString &address,
+                           const QString &label);
 #endif
 
+private Q_SLOTS:
+#ifdef ENABLE_WALLET
 
-    void showNormalIfMinimized(bool fToggleHidden = false);
+  void gotoOverviewPage();
 
-    void toggleHidden();
+  void gotoHistoryPage();
 
+  void gotoReceiveCoinsPage();
 
-    void detectShutdown();
+  void gotoSendCoinsPage(QString addr = "");
 
+  void gotoHivePage();
 
-    void showProgress(const QString &title, int nProgress);
+  void gotoSignMessageTab(QString addr = "");
 
+  void gotoVerifyMessageTab(QString addr = "");
 
-    void setTrayIconVisible(bool);
+  void openClicked();
+#endif
 
+  void optionsClicked();
 
-    void toggleNetworkActive();
+  void aboutClicked();
 
-    void showModalOverlay();
+  void showDebugWindow();
+
+  void showDebugWindowActivateConsole();
+
+  void showHelpMessageClicked();
+#ifndef Q_OS_MAC
+
+  void trayIconActivated(QSystemTrayIcon::ActivationReason reason);
+#endif
+
+  void showNormalIfMinimized(bool fToggleHidden = false);
+
+  void toggleHidden();
+
+  void detectShutdown();
+
+  void showProgress(const QString &title, int nProgress);
+
+  void setTrayIconVisible(bool);
+
+  void toggleNetworkActive();
+
+  void showModalOverlay();
 };
 
-class UnitDisplayStatusBarControl : public QLabel
-{
-    Q_OBJECT
+class UnitDisplayStatusBarControl : public QLabel {
+  Q_OBJECT
 
 public:
-    explicit UnitDisplayStatusBarControl(const PlatformStyle *platformStyle);
+  explicit UnitDisplayStatusBarControl(const PlatformStyle *platformStyle);
 
-    void setOptionsModel(OptionsModel *optionsModel);
+  void setOptionsModel(OptionsModel *optionsModel);
 
 protected:
-
-    void mousePressEvent(QMouseEvent *event);
+  void mousePressEvent(QMouseEvent *event);
 
 private:
-    OptionsModel *optionsModel;
-    QMenu* menu;
+  OptionsModel *optionsModel;
+  QMenu *menu;
 
+  void onDisplayUnitsClicked(const QPoint &point);
 
-    void onDisplayUnitsClicked(const QPoint& point);
-
-    void createContextMenu();
+  void createContextMenu();
 
 private Q_SLOTS:
 
-    void updateDisplayUnit(int newUnits);
+  void updateDisplayUnit(int newUnits);
 
-    void onMenuSelection(QAction* action);
+  void onMenuSelection(QAction *action);
 };
 
-#endif // BITCOIN_QT_BITCOINGUI_H
+#endif

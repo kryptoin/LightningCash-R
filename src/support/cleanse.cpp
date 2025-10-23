@@ -8,16 +8,16 @@
 #include <cstring>
 
 #if defined(_MSC_VER)
-#include <Windows.h> // For SecureZeroMemory.
+#include <Windows.h>
+
 #endif
 
-void memory_cleanse(void *ptr, size_t len)
-{
-    std::memset(ptr, 0, len);
+void memory_cleanse(void *ptr, size_t len) {
+  std::memset(ptr, 0, len);
 
 #if defined(_MSC_VER)
-    SecureZeroMemory(ptr, len);
+  SecureZeroMemory(ptr, len);
 #else
-    __asm__ __volatile__("" : : "r"(ptr) : "memory");
+  __asm__ __volatile__("" : : "r"(ptr) : "memory");
 #endif
 }

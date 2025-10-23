@@ -17,99 +17,106 @@ class WalletModel;
 
 class CWallet;
 
-class TransactionTableModel : public QAbstractTableModel
-{
-    Q_OBJECT
+class TransactionTableModel : public QAbstractTableModel {
+  Q_OBJECT
 
 public:
-    explicit TransactionTableModel(const PlatformStyle *platformStyle, CWallet* wallet, WalletModel *parent = 0);
-    ~TransactionTableModel();
+  explicit TransactionTableModel(const PlatformStyle *platformStyle,
+                                 CWallet *wallet, WalletModel *parent = 0);
+  ~TransactionTableModel();
 
-    enum ColumnIndex {
-        Status = 0,
-        Watchonly = 1,
-        Date = 2,
-        Type = 3,
-        ToAddress = 4,
-        Amount = 5
-    };
+  enum ColumnIndex {
+    Status = 0,
+    Watchonly = 1,
+    Date = 2,
+    Type = 3,
+    ToAddress = 4,
+    Amount = 5
+  };
 
-    enum RoleIndex {
+  enum RoleIndex {
+    TypeRole = Qt::UserRole,
 
-        TypeRole = Qt::UserRole,
+    DateRole,
 
-        DateRole,
+    WatchonlyRole,
 
-        WatchonlyRole,
+    WatchonlyDecorationRole,
 
-        WatchonlyDecorationRole,
+    LongDescriptionRole,
 
-        LongDescriptionRole,
+    AddressRole,
 
-        AddressRole,
+    LabelRole,
 
-        LabelRole,
+    AmountRole,
 
-        AmountRole,
+    TxIDRole,
 
-        TxIDRole,
+    TxHashRole,
 
-        TxHashRole,
+    TxHexRole,
 
-        TxHexRole,
+    TxPlainTextRole,
 
-        TxPlainTextRole,
+    ConfirmedRole,
 
-        ConfirmedRole,
+    FormattedAmountRole,
 
-        FormattedAmountRole,
+    StatusRole,
 
-        StatusRole,
+    RawDecorationRole,
+  };
 
-        RawDecorationRole,
-    };
-
-    int rowCount(const QModelIndex &parent) const;
-    int columnCount(const QModelIndex &parent) const;
-    QVariant data(const QModelIndex &index, int role) const;
-    QVariant headerData(int section, Qt::Orientation orientation, int role) const;
-    QModelIndex index(int row, int column, const QModelIndex & parent = QModelIndex()) const;
-    bool processingQueuedTransactions() const { return fProcessingQueuedTransactions; }
+  int rowCount(const QModelIndex &parent) const;
+  int columnCount(const QModelIndex &parent) const;
+  QVariant data(const QModelIndex &index, int role) const;
+  QVariant headerData(int section, Qt::Orientation orientation, int role) const;
+  QModelIndex index(int row, int column,
+                    const QModelIndex &parent = QModelIndex()) const;
+  bool processingQueuedTransactions() const {
+    return fProcessingQueuedTransactions;
+  }
 
 private:
-    CWallet* wallet;
-    WalletModel *walletModel;
-    QStringList columns;
-    TransactionTablePriv *priv;
-    bool fProcessingQueuedTransactions;
-    const PlatformStyle *platformStyle;
+  CWallet *wallet;
+  WalletModel *walletModel;
+  QStringList columns;
+  TransactionTablePriv *priv;
+  bool fProcessingQueuedTransactions;
+  const PlatformStyle *platformStyle;
 
-    void subscribeToCoreSignals();
-    void unsubscribeFromCoreSignals();
+  void subscribeToCoreSignals();
+  void unsubscribeFromCoreSignals();
 
-    QString lookupAddress(const std::string &address, bool tooltip) const;
-    QVariant addressColor(const TransactionRecord *wtx) const;
-    QString formatTxStatus(const TransactionRecord *wtx) const;
-    QString formatTxDate(const TransactionRecord *wtx) const;
-    QString formatTxType(const TransactionRecord *wtx) const;
-    QString formatTxToAddress(const TransactionRecord *wtx, bool tooltip) const;
-    QString formatTxAmount(const TransactionRecord *wtx, bool showUnconfirmed=true, BitcoinUnits::SeparatorStyle separators=BitcoinUnits::separatorStandard) const;
-    QString formatTooltip(const TransactionRecord *rec) const;
-    QVariant txStatusDecoration(const TransactionRecord *wtx) const;
-    QVariant txWatchonlyDecoration(const TransactionRecord *wtx) const;
-    QVariant txAddressDecoration(const TransactionRecord *wtx) const;
+  QString lookupAddress(const std::string &address, bool tooltip) const;
+  QVariant addressColor(const TransactionRecord *wtx) const;
+  QString formatTxStatus(const TransactionRecord *wtx) const;
+  QString formatTxDate(const TransactionRecord *wtx) const;
+  QString formatTxType(const TransactionRecord *wtx) const;
+  QString formatTxToAddress(const TransactionRecord *wtx, bool tooltip) const;
+  QString formatTxAmount(const TransactionRecord *wtx,
+                         bool showUnconfirmed = true,
+                         BitcoinUnits::SeparatorStyle separators =
+                             BitcoinUnits::separatorStandard) const;
+  QString formatTooltip(const TransactionRecord *rec) const;
+  QVariant txStatusDecoration(const TransactionRecord *wtx) const;
+  QVariant txWatchonlyDecoration(const TransactionRecord *wtx) const;
+  QVariant txAddressDecoration(const TransactionRecord *wtx) const;
 
 public Q_SLOTS:
 
-    void updateTransaction(const QString &hash, int status, bool showTransaction);
-    void updateConfirmations();
-    void updateDisplayUnit();
+  void updateTransaction(const QString &hash, int status, bool showTransaction);
+  void updateConfirmations();
+  void updateDisplayUnit();
 
-    void updateAmountColumnTitle();
+  void updateAmountColumnTitle();
 
-    void setProcessingQueuedTransactions(bool value) { fProcessingQueuedTransactions = value; }
+  void setProcessingQueuedTransactions(bool value) {
+    fProcessingQueuedTransactions = value;
+  }
 
-    friend class TransactionTablePriv;
+  friend class TransactionTablePriv;
 };
 
-#endif // BITCOIN_QT_TRANSACTIONTABLEMODEL_H
+#endif

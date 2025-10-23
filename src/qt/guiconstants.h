@@ -42,4 +42,4 @@ static const int MAX_URI_LENGTH = 255;
 #define QAPP_APP_NAME_DEFAULT "LightningCashr-Qt"
 #define QAPP_APP_NAME_TESTNET "LightningCashr-Qt-testnet"
 
-#endif // BITCOIN_QT_GUICONSTANTS_H
+#endif

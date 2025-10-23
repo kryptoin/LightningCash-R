@@ -19,77 +19,72 @@ QT_BEGIN_NAMESPACE
 class QStackedWidget;
 QT_END_NAMESPACE
 
-class WalletFrame : public QFrame
-{
-    Q_OBJECT
+class WalletFrame : public QFrame {
+  Q_OBJECT
 
 public:
-    explicit WalletFrame(const PlatformStyle *platformStyle, BitcoinGUI *_gui = 0);
-    ~WalletFrame();
+  explicit WalletFrame(const PlatformStyle *platformStyle,
+                       BitcoinGUI *_gui = 0);
+  ~WalletFrame();
 
-    void setClientModel(ClientModel *clientModel);
+  void setClientModel(ClientModel *clientModel);
 
-    bool addWallet(const QString& name, WalletModel *walletModel);
-    bool setCurrentWallet(const QString& name);
-    bool removeWallet(const QString &name);
-    void removeAllWallets();
+  bool addWallet(const QString &name, WalletModel *walletModel);
+  bool setCurrentWallet(const QString &name);
+  bool removeWallet(const QString &name);
+  void removeAllWallets();
 
-    bool handlePaymentRequest(const SendCoinsRecipient& recipient);
+  bool handlePaymentRequest(const SendCoinsRecipient &recipient);
 
-    void showOutOfSyncWarning(bool fShow);
+  void showOutOfSyncWarning(bool fShow);
 
 Q_SIGNALS:
 
-    void requestedSyncWarningInfo();
+  void requestedSyncWarningInfo();
 
 private:
-    QStackedWidget *walletStack;
-    BitcoinGUI *gui;
-    ClientModel *clientModel;
-    QMap<QString, WalletView*> mapWalletViews;
+  QStackedWidget *walletStack;
+  BitcoinGUI *gui;
+  ClientModel *clientModel;
+  QMap<QString, WalletView *> mapWalletViews;
 
-    bool bOutOfSync;
+  bool bOutOfSync;
 
-    const PlatformStyle *platformStyle;
+  const PlatformStyle *platformStyle;
 
-    WalletView *currentWalletView();
+  WalletView *currentWalletView();
 
 public Q_SLOTS:
 
-    void gotoOverviewPage();
+  void gotoOverviewPage();
 
-    void gotoHistoryPage();
+  void gotoHistoryPage();
 
-    void gotoReceiveCoinsPage();
+  void gotoReceiveCoinsPage();
 
-    void gotoSendCoinsPage(QString addr = "");
+  void gotoSendCoinsPage(QString addr = "");
 
-    // LightningCashr: Switch to hive page
-    void gotoHivePage();
+  void gotoHivePage();
 
-    // LightningCashr: Key import helper
-    void importPrivateKey();
+  void importPrivateKey();
 
+  void gotoSignMessageTab(QString addr = "");
 
-    void gotoSignMessageTab(QString addr = "");
+  void gotoVerifyMessageTab(QString addr = "");
 
-    void gotoVerifyMessageTab(QString addr = "");
+  void encryptWallet(bool status);
 
+  void backupWallet();
 
-    void encryptWallet(bool status);
+  void changePassphrase();
 
-    void backupWallet();
+  void unlockWallet();
 
-    void changePassphrase();
+  void usedSendingAddresses();
 
-    void unlockWallet();
+  void usedReceivingAddresses();
 
-
-    void usedSendingAddresses();
-
-    void usedReceivingAddresses();
-
-    void outOfSyncWarningClicked();
+  void outOfSyncWarningClicked();
 };
 
-#endif // BITCOIN_QT_WALLETFRAME_H
+#endif

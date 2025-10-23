@@ -13,11 +13,9 @@
 #include <string>
 #include <vector>
 
-namespace bech32
-{
+namespace bech32 {
+std::string Encode(const std::string &hrp, const std::vector<uint8_t> &values);
 
-std::string Encode(const std::string& hrp, const std::vector<uint8_t>& values);
-
-std::pair<std::string, std::vector<uint8_t>> Decode(const std::string& str);
+std::pair<std::string, std::vector<uint8_t>> Decode(const std::string &str);
 
 } // namespace bech32

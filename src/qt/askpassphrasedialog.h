@@ -10,49 +10,48 @@
 class WalletModel;
 
 namespace Ui {
-    class AskPassphraseDialog;
+class AskPassphraseDialog;
 }
 
-class AskPassphraseDialog : public QDialog
-{
-    Q_OBJECT
+class AskPassphraseDialog : public QDialog {
+  Q_OBJECT
 
 public:
-    enum Mode {
-        Encrypt,
+  enum Mode {
+    Encrypt,
 
-        UnlockHiveMining,
-     // LightningCashr: Hive: Support locked wallets
-        Unlock,
+    UnlockHiveMining,
 
-        ChangePass,
+    Unlock,
 
-        Decrypt
+    ChangePass,
 
-    };
+    Decrypt
 
-    explicit AskPassphraseDialog(Mode mode, QWidget *parent);
-    ~AskPassphraseDialog();
+  };
 
-    void accept();
+  explicit AskPassphraseDialog(Mode mode, QWidget *parent);
+  ~AskPassphraseDialog();
 
-    void setModel(WalletModel *model);
+  void accept();
+
+  void setModel(WalletModel *model);
 
 private:
-    Ui::AskPassphraseDialog *ui;
-    Mode mode;
-    WalletModel *model;
-    bool fCapsLock;
-	bool fHiveOnly;
+  Ui::AskPassphraseDialog *ui;
+  Mode mode;
+  WalletModel *model;
+  bool fCapsLock;
+  bool fHiveOnly;
 
 private Q_SLOTS:
-    void textChanged();
-    void secureClearPassFields();
-    void toggleShowPassword(bool);
+  void textChanged();
+  void secureClearPassFields();
+  void toggleShowPassword(bool);
 
 protected:
-    bool event(QEvent *event);
-    bool eventFilter(QObject *object, QEvent *event);
+  bool event(QEvent *event);
+  bool eventFilter(QObject *object, QEvent *event);
 };
 
-#endif // BITCOIN_QT_ASKPASSPHRASEDIALOG_H
+#endif

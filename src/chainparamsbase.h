@@ -9,32 +9,31 @@
 #include <string>
 #include <vector>
 
-class CBaseChainParams
-{
+class CBaseChainParams {
 public:
+  static const std::string MAIN;
+  static const std::string TESTNET;
+  static const std::string REGTEST;
 
-    static const std::string MAIN;
-    static const std::string TESTNET;
-    static const std::string REGTEST;
-
-    const std::string& DataDir() const { return strDataDir; }
-    int RPCPort() const { return nRPCPort; }
+  const std::string &DataDir() const { return strDataDir; }
+  int RPCPort() const { return nRPCPort; }
 
 protected:
-    CBaseChainParams() {}
+  CBaseChainParams() {}
 
-    int nRPCPort;
-    std::string strDataDir;
+  int nRPCPort;
+  std::string strDataDir;
 };
 
-std::unique_ptr<CBaseChainParams> CreateBaseChainParams(const std::string& chain);
+std::unique_ptr<CBaseChainParams>
+CreateBaseChainParams(const std::string &chain);
 
-void AppendParamsHelpMessages(std::string& strUsage, bool debugHelp=true);
+void AppendParamsHelpMessages(std::string &strUsage, bool debugHelp = true);
 
-const CBaseChainParams& BaseParams();
+const CBaseChainParams &BaseParams();
 
-void SelectBaseParams(const std::string& chain);
+void SelectBaseParams(const std::string &chain);
 
 std::string ChainNameFromCommandLine();
 
-#endif // BITCOIN_CHAINPARAMSBASE_H
+#endif

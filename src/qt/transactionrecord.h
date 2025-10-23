@@ -14,132 +14,110 @@
 class CWallet;
 class CWalletTx;
 
-class TransactionStatus
-{
+class TransactionStatus {
 public:
-    TransactionStatus():
-        countsForBalance(false), sortKey(""),
-        matures_in(0), status(Offline), depth(0), open_for(0), cur_num_blocks(-1)
-    { }
+  TransactionStatus()
+      : countsForBalance(false), sortKey(""), matures_in(0), status(Offline),
+        depth(0), open_for(0), cur_num_blocks(-1) {}
 
-    enum Status {
-        Confirmed,
+  enum Status {
+    Confirmed,
 
-        /// Normal (sent/received) transactions
-        OpenUntilDate,
+    OpenUntilDate,
 
-        OpenUntilBlock,
+    OpenUntilBlock,
 
-        Offline,
+    Offline,
 
-        Unconfirmed,
+    Unconfirmed,
 
-        Confirming,
+    Confirming,
 
-        Conflicted,
+    Conflicted,
 
-        Abandoned,
+    Abandoned,
 
-        /// Generated (mined) transactions
-        Immature,
+    Immature,
 
-        MaturesWarning,
+    MaturesWarning,
 
-        NotAccepted
+    NotAccepted
 
-    };
+  };
 
-    /// Transaction counts towards available balance
-    bool countsForBalance;
-    /// Sorting key based on status
-    std::string sortKey;
+  bool countsForBalance;
 
+  std::string sortKey;
 
-    int matures_in;
+  int matures_in;
 
+  Status status;
+  qint64 depth;
+  qint64 open_for;
 
-    Status status;
-    qint64 depth;
-    qint64 open_for;
+  int cur_num_blocks;
 
-
-
-    int cur_num_blocks;
-
-    bool needsUpdate;
+  bool needsUpdate;
 };
 
-class TransactionRecord
-{
+class TransactionRecord {
 public:
-    enum Type
-    {
-        Other,
-        Generated,
-        SendToAddress,
-        SendToOther,
-        RecvWithAddress,
-        RecvFromOther,
-        SendToSelf,
-        HiveBeeCreation,    // LightningCashr: Hive
-        HiveCommunityFund,  // LightningCashr: Hive
-        HiveHoney           // LightningCashr: Hive
-    };
+  enum Type {
+    Other,
+    Generated,
+    SendToAddress,
+    SendToOther,
+    RecvWithAddress,
+    RecvFromOther,
+    SendToSelf,
+    HiveBeeCreation,
 
+    HiveCommunityFund,
 
-    static const int RecommendedNumConfirmations = 6;
+    HiveHoney
 
-    TransactionRecord():
-            hash(), time(0), type(Other), address(""), debit(0), credit(0), idx(0)
-    {
-    }
+  };
 
-    TransactionRecord(uint256 _hash, qint64 _time):
-            hash(_hash), time(_time), type(Other), address(""), debit(0),
-            credit(0), idx(0)
-    {
-    }
+  static const int RecommendedNumConfirmations = 6;
 
-    TransactionRecord(uint256 _hash, qint64 _time,
-                Type _type, const std::string &_address,
-                const CAmount& _debit, const CAmount& _credit):
-            hash(_hash), time(_time), type(_type), address(_address), debit(_debit), credit(_credit),
-            idx(0)
-    {
-    }
+  TransactionRecord()
+      : hash(), time(0), type(Other), address(""), debit(0), credit(0), idx(0) {
+  }
 
+  TransactionRecord(uint256 _hash, qint64 _time)
+      : hash(_hash), time(_time), type(Other), address(""), debit(0), credit(0),
+        idx(0) {}
 
-    static bool showTransaction(const CWalletTx &wtx);
-    static QList<TransactionRecord> decomposeTransaction(const CWallet *wallet, const CWalletTx &wtx);
+  TransactionRecord(uint256 _hash, qint64 _time, Type _type,
+                    const std::string &_address, const CAmount &_debit,
+                    const CAmount &_credit)
+      : hash(_hash), time(_time), type(_type), address(_address), debit(_debit),
+        credit(_credit), idx(0) {}
 
+  static bool showTransaction(const CWalletTx &wtx);
+  static QList<TransactionRecord> decomposeTransaction(const CWallet *wallet,
+                                                       const CWalletTx &wtx);
 
-    uint256 hash;
-    qint64 time;
-    Type type;
-    std::string address;
-    CAmount debit;
-    CAmount credit;
+  uint256 hash;
+  qint64 time;
+  Type type;
+  std::string address;
+  CAmount debit;
+  CAmount credit;
 
+  int idx;
 
-    int idx;
+  TransactionStatus status;
 
+  bool involvesWatchAddress;
 
-    TransactionStatus status;
+  QString getTxID() const;
 
+  int getOutputIndex() const;
 
-    bool involvesWatchAddress;
+  void updateStatus(const CWalletTx &wtx);
 
-
-    QString getTxID() const;
-
-
-    int getOutputIndex() const;
-
-
-    void updateStatus(const CWalletTx &wtx);
-
-
-    bool statusUpdateNeeded() const;
+  bool statusUpdateNeeded() const;
 };
 
-#endif // BITCOIN_QT_TRANSACTIONRECORD_H
+#endif

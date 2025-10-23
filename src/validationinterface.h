@@ -6,7 +6,7 @@
 #ifndef BITCOIN_VALIDATIONINTERFACE_H
 #define BITCOIN_VALIDATIONINTERFACE_H
 
-#include <primitives/transaction.h> // CTransaction(Ref)
+#include <primitives/transaction.h>
 
 #include <functional>
 #include <memory>
@@ -24,83 +24,91 @@ class CScheduler;
 class CTxMemPool;
 enum class MemPoolRemovalReason;
 
-// These functions dispatch to one or all registered wallets
+void RegisterValidationInterface(CValidationInterface *pwalletIn);
 
-void RegisterValidationInterface(CValidationInterface* pwalletIn);
-
-void UnregisterValidationInterface(CValidationInterface* pwalletIn);
+void UnregisterValidationInterface(CValidationInterface *pwalletIn);
 
 void UnregisterAllValidationInterfaces();
 
-void CallFunctionInValidationInterfaceQueue(std::function<void ()> func);
+void CallFunctionInValidationInterfaceQueue(std::function<void()> func);
 
 void SyncWithValidationInterfaceQueue();
 
 class CValidationInterface {
 protected:
+  virtual void UpdatedBlockTip(const CBlockIndex *pindexNew,
+                               const CBlockIndex *pindexFork,
+                               bool fInitialDownload) {}
 
-    virtual void UpdatedBlockTip(const CBlockIndex *pindexNew, const CBlockIndex *pindexFork, bool fInitialDownload) {}
+  virtual void TransactionAddedToMempool(const CTransactionRef &ptxn) {}
 
-    virtual void TransactionAddedToMempool(const CTransactionRef &ptxn) {}
+  virtual void TransactionRemovedFromMempool(const CTransactionRef &ptx) {}
 
-    virtual void TransactionRemovedFromMempool(const CTransactionRef &ptx) {}
+  virtual void
+  BlockConnected(const std::shared_ptr<const CBlock> &block,
+                 const CBlockIndex *pindex,
+                 const std::vector<CTransactionRef> &txnConflicted) {}
 
-    virtual void BlockConnected(const std::shared_ptr<const CBlock> &block, const CBlockIndex *pindex, const std::vector<CTransactionRef> &txnConflicted) {}
+  virtual void BlockDisconnected(const std::shared_ptr<const CBlock> &block) {}
 
-    virtual void BlockDisconnected(const std::shared_ptr<const CBlock> &block) {}
+  virtual void SetBestChain(const CBlockLocator &locator) {}
 
-    virtual void SetBestChain(const CBlockLocator &locator) {}
+  virtual void Inventory(const uint256 &hash) {}
 
-    virtual void Inventory(const uint256 &hash) {}
+  virtual void ResendWalletTransactions(int64_t nBestBlockTime,
+                                        CConnman *connman) {}
 
-    virtual void ResendWalletTransactions(int64_t nBestBlockTime, CConnman* connman) {}
+  virtual void BlockChecked(const CBlock &, const CValidationState &) {}
 
-    virtual void BlockChecked(const CBlock&, const CValidationState&) {}
-
-    virtual void NewPoWValidBlock(const CBlockIndex *pindex, const std::shared_ptr<const CBlock>& block) {};
-    friend void ::RegisterValidationInterface(CValidationInterface*);
-    friend void ::UnregisterValidationInterface(CValidationInterface*);
-    friend void ::UnregisterAllValidationInterfaces();
+  virtual void NewPoWValidBlock(const CBlockIndex *pindex,
+                                const std::shared_ptr<const CBlock> &block) {};
+  friend void ::RegisterValidationInterface(CValidationInterface *);
+  friend void ::UnregisterValidationInterface(CValidationInterface *);
+  friend void ::UnregisterAllValidationInterfaces();
 };
 
 struct MainSignalsInstance;
 class CMainSignals {
 private:
-    std::unique_ptr<MainSignalsInstance> m_internals;
+  std::unique_ptr<MainSignalsInstance> m_internals;
 
-    friend void ::RegisterValidationInterface(CValidationInterface*);
-    friend void ::UnregisterValidationInterface(CValidationInterface*);
-    friend void ::UnregisterAllValidationInterfaces();
-    friend void ::CallFunctionInValidationInterfaceQueue(std::function<void ()> func);
+  friend void ::RegisterValidationInterface(CValidationInterface *);
+  friend void ::UnregisterValidationInterface(CValidationInterface *);
+  friend void ::UnregisterAllValidationInterfaces();
+  friend void ::CallFunctionInValidationInterfaceQueue(
+      std::function<void()> func);
 
-    void MempoolEntryRemoved(CTransactionRef tx, MemPoolRemovalReason reason);
+  void MempoolEntryRemoved(CTransactionRef tx, MemPoolRemovalReason reason);
 
 public:
+  void RegisterBackgroundSignalScheduler(CScheduler &scheduler);
 
-    void RegisterBackgroundSignalScheduler(CScheduler& scheduler);
+  void UnregisterBackgroundSignalScheduler();
 
-    void UnregisterBackgroundSignalScheduler();
+  void FlushBackgroundCallbacks();
 
-    void FlushBackgroundCallbacks();
+  size_t CallbacksPending();
 
-    size_t CallbacksPending();
+  void RegisterWithMempoolSignals(CTxMemPool &pool);
 
+  void UnregisterWithMempoolSignals(CTxMemPool &pool);
 
-    void RegisterWithMempoolSignals(CTxMemPool& pool);
-
-    void UnregisterWithMempoolSignals(CTxMemPool& pool);
-
-    void UpdatedBlockTip(const CBlockIndex *, const CBlockIndex *, bool fInitialDownload);
-    void TransactionAddedToMempool(const CTransactionRef &);
-    void BlockConnected(const std::shared_ptr<const CBlock> &, const CBlockIndex *pindex, const std::shared_ptr<const std::vector<CTransactionRef>> &);
-    void BlockDisconnected(const std::shared_ptr<const CBlock> &);
-    void SetBestChain(const CBlockLocator &);
-    void Inventory(const uint256 &);
-    void Broadcast(int64_t nBestBlockTime, CConnman* connman);
-    void BlockChecked(const CBlock&, const CValidationState&);
-    void NewPoWValidBlock(const CBlockIndex *, const std::shared_ptr<const CBlock>&);
+  void UpdatedBlockTip(const CBlockIndex *, const CBlockIndex *,
+                       bool fInitialDownload);
+  void TransactionAddedToMempool(const CTransactionRef &);
+  void
+  BlockConnected(const std::shared_ptr<const CBlock> &,
+                 const CBlockIndex *pindex,
+                 const std::shared_ptr<const std::vector<CTransactionRef>> &);
+  void BlockDisconnected(const std::shared_ptr<const CBlock> &);
+  void SetBestChain(const CBlockLocator &);
+  void Inventory(const uint256 &);
+  void Broadcast(int64_t nBestBlockTime, CConnman *connman);
+  void BlockChecked(const CBlock &, const CValidationState &);
+  void NewPoWValidBlock(const CBlockIndex *,
+                        const std::shared_ptr<const CBlock> &);
 };
 
-CMainSignals& GetMainSignals();
+CMainSignals &GetMainSignals();
 
-#endif // BITCOIN_VALIDATIONINTERFACE_H
+#endif

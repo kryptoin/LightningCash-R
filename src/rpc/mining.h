@@ -7,11 +7,11 @@
 
 #include <script/script.h>
 
-//#include <univalue.h>
 #include "univalue/include/univalue.h"
 
-UniValue generateBlocks(std::shared_ptr<CReserveScript> coinbaseScript, int nGenerate, uint64_t nMaxTries, bool keepScript);
+UniValue generateBlocks(std::shared_ptr<CReserveScript> coinbaseScript,
+                        int nGenerate, uint64_t nMaxTries, bool keepScript);
 
-unsigned int ParseConfirmTarget(const UniValue& value);
+unsigned int ParseConfirmTarget(const UniValue &value);
 
 #endif

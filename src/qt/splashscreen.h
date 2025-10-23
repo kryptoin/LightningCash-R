@@ -5,48 +5,45 @@
 #ifndef BITCOIN_QT_SPLASHSCREEN_H
 #define BITCOIN_QT_SPLASHSCREEN_H
 
-#include <functional>
 #include <QSplashScreen>
+#include <functional>
 
 class CWallet;
 class NetworkStyle;
 
-class SplashScreen : public QWidget
-{
-    Q_OBJECT
+class SplashScreen : public QWidget {
+  Q_OBJECT
 
 public:
-    explicit SplashScreen(Qt::WindowFlags f, const NetworkStyle *networkStyle);
-    ~SplashScreen();
+  explicit SplashScreen(Qt::WindowFlags f, const NetworkStyle *networkStyle);
+  ~SplashScreen();
 
 protected:
-    void paintEvent(QPaintEvent *event);
-    void closeEvent(QCloseEvent *event);
+  void paintEvent(QPaintEvent *event);
+  void closeEvent(QCloseEvent *event);
 
 public Q_SLOTS:
 
-    void slotFinish(QWidget *mainWin);
+  void slotFinish(QWidget *mainWin);
 
-
-    void showMessage(const QString &message, int alignment, const QColor &color);
+  void showMessage(const QString &message, int alignment, const QColor &color);
 
 protected:
-    bool eventFilter(QObject * obj, QEvent * ev);
+  bool eventFilter(QObject *obj, QEvent *ev);
 
 private:
+  void subscribeToCoreSignals();
 
-    void subscribeToCoreSignals();
+  void unsubscribeFromCoreSignals();
 
-    void unsubscribeFromCoreSignals();
+  void ConnectWallet(CWallet *);
 
-    void ConnectWallet(CWallet*);
+  QPixmap pixmap;
+  QString curMessage;
+  QColor curColor;
+  int curAlignment;
 
-    QPixmap pixmap;
-    QString curMessage;
-    QColor curColor;
-    int curAlignment;
-
-    QList<CWallet*> connectedWallets;
+  QList<CWallet *> connectedWallets;
 };
 
-#endif // BITCOIN_QT_SPLASHSCREEN_H
+#endif

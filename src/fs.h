@@ -9,14 +9,14 @@
 #include <string>
 
 #include <boost/filesystem.hpp>
-#include <boost/filesystem/fstream.hpp>
 #include <boost/filesystem/detail/utf8_codecvt_facet.hpp>
+#include <boost/filesystem/fstream.hpp>
 
 namespace fs = boost::filesystem;
 
 namespace fsbridge {
-    FILE *fopen(const fs::path& p, const char *mode);
-    FILE *freopen(const fs::path& p, const char *mode, FILE *stream);
-};
+FILE *fopen(const fs::path &p, const char *mode);
+FILE *freopen(const fs::path &p, const char *mode, FILE *stream);
+}; // namespace fsbridge
 
-#endif // BITCOIN_FS_H
+#endif

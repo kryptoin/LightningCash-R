@@ -5,138 +5,135 @@
 #ifndef BITCOIN_SUPPORT_LOCKEDPOOL_H
 #define BITCOIN_SUPPORT_LOCKEDPOOL_H
 
-#include <stdint.h>
 #include <list>
 #include <map>
-#include <mutex>
 #include <memory>
+#include <mutex>
+#include <stdint.h>
 
-class LockedPageAllocator
-{
+class LockedPageAllocator {
 public:
-    virtual ~LockedPageAllocator() {}
+  virtual ~LockedPageAllocator() {}
 
-    virtual void* AllocateLocked(size_t len, bool *lockingSuccess) = 0;
+  virtual void *AllocateLocked(size_t len, bool *lockingSuccess) = 0;
 
-    virtual void FreeLocked(void* addr, size_t len) = 0;
+  virtual void FreeLocked(void *addr, size_t len) = 0;
 
-    virtual size_t GetLimit() = 0;
+  virtual size_t GetLimit() = 0;
 };
 
-class Arena
-{
+class Arena {
 public:
-    Arena(void *base, size_t size, size_t alignment);
-    virtual ~Arena();
+  Arena(void *base, size_t size, size_t alignment);
+  virtual ~Arena();
 
-    Arena(const Arena& other) = delete; // non construction-copyable
-    Arena& operator=(const Arena&) = delete; // non copyable
+  Arena(const Arena &other) = delete;
 
-    struct Stats
-    {
-        size_t used;
-        size_t free;
-        size_t total;
-        size_t chunks_used;
-        size_t chunks_free;
-    };
+  Arena &operator=(const Arena &) = delete;
 
-    void* alloc(size_t size);
+  struct Stats {
+    size_t used;
+    size_t free;
+    size_t total;
+    size_t chunks_used;
+    size_t chunks_free;
+  };
 
-    void free(void *ptr);
+  void *alloc(size_t size);
 
-    Stats stats() const;
+  void free(void *ptr);
+
+  Stats stats() const;
 
 #ifdef ARENA_DEBUG
-    void walk() const;
+  void walk() const;
 #endif
 
-    bool addressInArena(void *ptr) const { return ptr >= base && ptr < end; }
+  bool addressInArena(void *ptr) const { return ptr >= base && ptr < end; }
+
 private:
+  std::map<char *, size_t> chunks_free;
+  std::map<char *, size_t> chunks_used;
 
-    std::map<char*, size_t> chunks_free;
-    std::map<char*, size_t> chunks_used;
+  char *base;
 
-    char* base;
+  char *end;
 
-    char* end;
-
-    size_t alignment;
+  size_t alignment;
 };
 
-class LockedPool
-{
+class LockedPool {
 public:
+  static const size_t ARENA_SIZE = 256 * 1024;
 
-    static const size_t ARENA_SIZE = 256*1024;
+  static const size_t ARENA_ALIGN = 16;
 
-    static const size_t ARENA_ALIGN = 16;
+  typedef bool (*LockingFailed_Callback)();
 
-    typedef bool (*LockingFailed_Callback)();
+  struct Stats {
+    size_t used;
+    size_t free;
+    size_t total;
+    size_t locked;
+    size_t chunks_used;
+    size_t chunks_free;
+  };
 
-    struct Stats
-    {
-        size_t used;
-        size_t free;
-        size_t total;
-        size_t locked;
-        size_t chunks_used;
-        size_t chunks_free;
-    };
+  explicit LockedPool(std::unique_ptr<LockedPageAllocator> allocator,
+                      LockingFailed_Callback lf_cb_in = nullptr);
+  ~LockedPool();
 
-    explicit LockedPool(std::unique_ptr<LockedPageAllocator> allocator, LockingFailed_Callback lf_cb_in = nullptr);
-    ~LockedPool();
+  LockedPool(const LockedPool &other) = delete;
 
-    LockedPool(const LockedPool& other) = delete; // non construction-copyable
-    LockedPool& operator=(const LockedPool&) = delete; // non copyable
+  LockedPool &operator=(const LockedPool &) = delete;
 
-    void* alloc(size_t size);
+  void *alloc(size_t size);
 
-    void free(void *ptr);
+  void free(void *ptr);
 
-    Stats stats() const;
+  Stats stats() const;
+
 private:
-    std::unique_ptr<LockedPageAllocator> allocator;
+  std::unique_ptr<LockedPageAllocator> allocator;
 
-    class LockedPageArena: public Arena
-    {
-    public:
-        LockedPageArena(LockedPageAllocator *alloc_in, void *base_in, size_t size, size_t align);
-        ~LockedPageArena();
-    private:
-        void *base;
-        size_t size;
-        LockedPageAllocator *allocator;
-    };
+  class LockedPageArena : public Arena {
+  public:
+    LockedPageArena(LockedPageAllocator *alloc_in, void *base_in, size_t size,
+                    size_t align);
+    ~LockedPageArena();
 
-    bool new_arena(size_t size, size_t align);
+  private:
+    void *base;
+    size_t size;
+    LockedPageAllocator *allocator;
+  };
 
-    std::list<LockedPageArena> arenas;
-    LockingFailed_Callback lf_cb;
-    size_t cumulative_bytes_locked;
+  bool new_arena(size_t size, size_t align);
 
-    mutable std::mutex mutex;
+  std::list<LockedPageArena> arenas;
+  LockingFailed_Callback lf_cb;
+  size_t cumulative_bytes_locked;
+
+  mutable std::mutex mutex;
 };
 
-class LockedPoolManager : public LockedPool
-{
+class LockedPoolManager : public LockedPool {
 public:
-
-    static LockedPoolManager& Instance()
-    {
-        std::call_once(LockedPoolManager::init_flag, LockedPoolManager::CreateInstance);
-        return *LockedPoolManager::_instance;
-    }
+  static LockedPoolManager &Instance() {
+    std::call_once(LockedPoolManager::init_flag,
+                   LockedPoolManager::CreateInstance);
+    return *LockedPoolManager::_instance;
+  }
 
 private:
-    explicit LockedPoolManager(std::unique_ptr<LockedPageAllocator> allocator);
+  explicit LockedPoolManager(std::unique_ptr<LockedPageAllocator> allocator);
 
-    static void CreateInstance();
+  static void CreateInstance();
 
-    static bool LockingFailed();
+  static bool LockingFailed();
 
-    static LockedPoolManager* _instance;
-    static std::once_flag init_flag;
+  static LockedPoolManager *_instance;
+  static std::once_flag init_flag;
 };
 
-#endif // BITCOIN_SUPPORT_LOCKEDPOOL_H
+#endif

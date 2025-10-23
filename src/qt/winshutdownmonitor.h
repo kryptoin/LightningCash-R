@@ -10,20 +10,19 @@
 #include <QString>
 
 #if QT_VERSION >= 0x050000
-#include <windef.h> // for HWND
+#include <windef.h>
 
 #include <QAbstractNativeEventFilter>
 
-class WinShutdownMonitor : public QAbstractNativeEventFilter
-{
+class WinShutdownMonitor : public QAbstractNativeEventFilter {
 public:
+  bool nativeEventFilter(const QByteArray &eventType, void *pMessage,
+                         long *pnResult);
 
-    bool nativeEventFilter(const QByteArray &eventType, void *pMessage, long *pnResult);
-
-
-    static void registerShutdownBlockReason(const QString& strReason, const HWND& mainWinId);
+  static void registerShutdownBlockReason(const QString &strReason,
+                                          const HWND &mainWinId);
 };
 #endif
 #endif
 
-#endif // BITCOIN_QT_WINSHUTDOWNMONITOR_H
+#endif

@@ -15,84 +15,90 @@
 #include <vector>
 
 struct SeedSpec6 {
-    uint8_t addr[16];
-    uint16_t port;
+  uint8_t addr[16];
+  uint16_t port;
 };
 
 typedef std::map<int, uint256> MapCheckpoints;
 
 struct CCheckpointData {
-    MapCheckpoints mapCheckpoints;
+  MapCheckpoints mapCheckpoints;
 };
 
 struct ChainTxData {
-    int64_t nTime;
-    int64_t nTxCount;
-    double dTxRate;
+  int64_t nTime;
+  int64_t nTxCount;
+  double dTxRate;
 };
 
-class CChainParams
-{
+class CChainParams {
 public:
-    enum Base58Type {
-        PUBKEY_ADDRESS,
-        SCRIPT_ADDRESS,
-        SCRIPT_ADDRESS2,
-        SECRET_KEY,
-        EXT_PUBLIC_KEY,
-        EXT_SECRET_KEY,
+  enum Base58Type {
+    PUBKEY_ADDRESS,
+    SCRIPT_ADDRESS,
+    SCRIPT_ADDRESS2,
+    SECRET_KEY,
+    EXT_PUBLIC_KEY,
+    EXT_SECRET_KEY,
 
-        MAX_BASE58_TYPES
-    };
+    MAX_BASE58_TYPES
+  };
 
-    const Consensus::Params& GetConsensus() const { return consensus; }
-    const CMessageHeader::MessageStartChars& MessageStart() const { return pchMessageStart; }
-    int GetDefaultPort() const { return nDefaultPort; }
+  const Consensus::Params &GetConsensus() const { return consensus; }
+  const CMessageHeader::MessageStartChars &MessageStart() const {
+    return pchMessageStart;
+  }
+  int GetDefaultPort() const { return nDefaultPort; }
 
-    const CBlock& GenesisBlock() const { return genesis; }
+  const CBlock &GenesisBlock() const { return genesis; }
 
-    bool DefaultConsistencyChecks() const { return fDefaultConsistencyChecks; }
+  bool DefaultConsistencyChecks() const { return fDefaultConsistencyChecks; }
 
-    bool RequireStandard() const { return fRequireStandard; }
-    uint64_t PruneAfterHeight() const { return nPruneAfterHeight; }
+  bool RequireStandard() const { return fRequireStandard; }
+  uint64_t PruneAfterHeight() const { return nPruneAfterHeight; }
 
-    bool MineBlocksOnDemand() const { return fMineBlocksOnDemand; }
+  bool MineBlocksOnDemand() const { return fMineBlocksOnDemand; }
 
-    std::string NetworkIDString() const { return strNetworkID; }
+  std::string NetworkIDString() const { return strNetworkID; }
 
-    const std::vector<std::string>& DNSSeeds() const { return vSeeds; }
-    const std::vector<unsigned char>& Base58Prefix(Base58Type type) const { return base58Prefixes[type]; }
-    const std::string& Bech32HRP() const { return bech32_hrp; }
-    const std::vector<SeedSpec6>& FixedSeeds() const { return vFixedSeeds; }
-    const CCheckpointData& Checkpoints() const { return checkpointData; }
-    const ChainTxData& TxData() const { return chainTxData; }
-    void UpdateVersionBitsParameters(Consensus::DeploymentPos d, int64_t nStartTime, int64_t nTimeout);
+  const std::vector<std::string> &DNSSeeds() const { return vSeeds; }
+  const std::vector<unsigned char> &Base58Prefix(Base58Type type) const {
+    return base58Prefixes[type];
+  }
+  const std::string &Bech32HRP() const { return bech32_hrp; }
+  const std::vector<SeedSpec6> &FixedSeeds() const { return vFixedSeeds; }
+  const CCheckpointData &Checkpoints() const { return checkpointData; }
+  const ChainTxData &TxData() const { return chainTxData; }
+  void UpdateVersionBitsParameters(Consensus::DeploymentPos d,
+                                   int64_t nStartTime, int64_t nTimeout);
+
 protected:
-    CChainParams() {}
+  CChainParams() {}
 
-    Consensus::Params consensus;
-    CMessageHeader::MessageStartChars pchMessageStart;
-    int nDefaultPort;
-    uint64_t nPruneAfterHeight;
-    std::vector<std::string> vSeeds;
-    std::vector<unsigned char> base58Prefixes[MAX_BASE58_TYPES];
-    std::string bech32_hrp;
-    std::string strNetworkID;
-    CBlock genesis;
-    std::vector<SeedSpec6> vFixedSeeds;
-    bool fDefaultConsistencyChecks;
-    bool fRequireStandard;
-    bool fMineBlocksOnDemand;
-    CCheckpointData checkpointData;
-    ChainTxData chainTxData;
+  Consensus::Params consensus;
+  CMessageHeader::MessageStartChars pchMessageStart;
+  int nDefaultPort;
+  uint64_t nPruneAfterHeight;
+  std::vector<std::string> vSeeds;
+  std::vector<unsigned char> base58Prefixes[MAX_BASE58_TYPES];
+  std::string bech32_hrp;
+  std::string strNetworkID;
+  CBlock genesis;
+  std::vector<SeedSpec6> vFixedSeeds;
+  bool fDefaultConsistencyChecks;
+  bool fRequireStandard;
+  bool fMineBlocksOnDemand;
+  CCheckpointData checkpointData;
+  ChainTxData chainTxData;
 };
 
-std::unique_ptr<CChainParams> CreateChainParams(const std::string& chain);
+std::unique_ptr<CChainParams> CreateChainParams(const std::string &chain);
 
 const CChainParams &Params();
 
-void SelectParams(const std::string& chain);
+void SelectParams(const std::string &chain);
 
-void UpdateVersionBitsParameters(Consensus::DeploymentPos d, int64_t nStartTime, int64_t nTimeout);
+void UpdateVersionBitsParameters(Consensus::DeploymentPos d, int64_t nStartTime,
+                                 int64_t nTimeout);
 
-#endif // BITCOIN_CHAINPARAMS_H
+#endif

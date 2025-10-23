@@ -9,19 +9,18 @@ class CBlock;
 class CBlockIndex;
 class UniValue;
 
-// LightningCashr: Hive: If optional argument getHiveDifficulty is true, will return Hive difficulty as close to blockindex or tip as possible.
-// If getHiveDifficulty is false, will return PoW difficulty as close to blockindex or tip as possible.
-double GetDifficulty(const CBlockIndex* blockindex = nullptr, bool getHiveDifficulty = false);
+double GetDifficulty(const CBlockIndex *blockindex = nullptr,
+                     bool getHiveDifficulty = false);
 
 void RPCNotifyBlockChange(bool ibd, const CBlockIndex *);
 
-UniValue blockToJSON(const CBlock& block, const CBlockIndex* blockindex, bool txDetails = false);
+UniValue blockToJSON(const CBlock &block, const CBlockIndex *blockindex,
+                     bool txDetails = false);
 
 UniValue mempoolInfoToJSON();
 
 UniValue mempoolToJSON(bool fVerbose = false);
 
-UniValue blockheaderToJSON(const CBlockIndex* blockindex);
+UniValue blockheaderToJSON(const CBlockIndex *blockindex);
 
 #endif
-

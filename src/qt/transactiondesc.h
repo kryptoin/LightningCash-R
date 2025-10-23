@@ -13,17 +13,17 @@ class TransactionRecord;
 class CWallet;
 class CWalletTx;
 
-class TransactionDesc: public QObject
-{
-    Q_OBJECT
+class TransactionDesc : public QObject {
+  Q_OBJECT
 
 public:
-    static QString toHTML(CWallet *wallet, CWalletTx &wtx, TransactionRecord *rec, int unit);
+  static QString toHTML(CWallet *wallet, CWalletTx &wtx, TransactionRecord *rec,
+                        int unit);
 
 private:
-    TransactionDesc() {}
+  TransactionDesc() {}
 
-    static QString FormatTxStatus(const CWalletTx& wtx);
+  static QString FormatTxStatus(const CWalletTx &wtx);
 };
 
-#endif // BITCOIN_QT_TRANSACTIONDESC_H
+#endif

@@ -17,13 +17,12 @@ void RegisterMiningRPCCommands(CRPCTable &tableRPC);
 
 void RegisterRawTransactionRPCCommands(CRPCTable &tableRPC);
 
-static inline void RegisterAllCoreRPCCommands(CRPCTable &t)
-{
-    RegisterBlockchainRPCCommands(t);
-    RegisterNetRPCCommands(t);
-    RegisterMiscRPCCommands(t);
-    RegisterMiningRPCCommands(t);
-    RegisterRawTransactionRPCCommands(t);
+static inline void RegisterAllCoreRPCCommands(CRPCTable &t) {
+  RegisterBlockchainRPCCommands(t);
+  RegisterNetRPCCommands(t);
+  RegisterMiscRPCCommands(t);
+  RegisterMiningRPCCommands(t);
+  RegisterRawTransactionRPCCommands(t);
 }
 
 #endif

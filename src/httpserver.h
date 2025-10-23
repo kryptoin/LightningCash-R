@@ -5,13 +5,13 @@
 #ifndef BITCOIN_HTTPSERVER_H
 #define BITCOIN_HTTPSERVER_H
 
-#include <string>
-#include <stdint.h>
 #include <functional>
+#include <stdint.h>
+#include <string>
 
-static const int DEFAULT_HTTP_THREADS=4;
-static const int DEFAULT_HTTP_WORKQUEUE=16;
-static const int DEFAULT_HTTP_SERVER_TIMEOUT=30;
+static const int DEFAULT_HTTP_THREADS = 4;
+static const int DEFAULT_HTTP_WORKQUEUE = 16;
+static const int DEFAULT_HTTP_SERVER_TIMEOUT = 30;
 
 struct evhttp_request;
 struct event_base;
@@ -28,77 +28,63 @@ void StopHTTPServer();
 
 bool UpdateHTTPServerLogging(bool enable);
 
-typedef std::function<bool(HTTPRequest* req, const std::string &)> HTTPRequestHandler;
+typedef std::function<bool(HTTPRequest *req, const std::string &)>
+    HTTPRequestHandler;
 
-void RegisterHTTPHandler(const std::string &prefix, bool exactMatch, const HTTPRequestHandler &handler);
+void RegisterHTTPHandler(const std::string &prefix, bool exactMatch,
+                         const HTTPRequestHandler &handler);
 
 void UnregisterHTTPHandler(const std::string &prefix, bool exactMatch);
 
-struct event_base* EventBase();
+struct event_base *EventBase();
 
-class HTTPRequest
-{
+class HTTPRequest {
 private:
-    struct evhttp_request* req;
-    bool replySent;
+  struct evhttp_request *req;
+  bool replySent;
 
 public:
-    explicit HTTPRequest(struct evhttp_request* req);
-    ~HTTPRequest();
+  explicit HTTPRequest(struct evhttp_request *req);
+  ~HTTPRequest();
 
-    enum RequestMethod {
-        UNKNOWN,
-        GET,
-        POST,
-        HEAD,
-        PUT
-    };
+  enum RequestMethod { UNKNOWN, GET, POST, HEAD, PUT };
 
+  std::string GetURI();
 
-    std::string GetURI();
+  CService GetPeer();
 
+  RequestMethod GetRequestMethod();
 
-    CService GetPeer();
+  std::pair<bool, std::string> GetHeader(const std::string &hdr);
 
+  std::string ReadBody();
 
-    RequestMethod GetRequestMethod();
+  void WriteHeader(const std::string &hdr, const std::string &value);
 
-
-    std::pair<bool, std::string> GetHeader(const std::string& hdr);
-
-
-    std::string ReadBody();
-
-
-    void WriteHeader(const std::string& hdr, const std::string& value);
-
-
-    void WriteReply(int nStatus, const std::string& strReply = "");
+  void WriteReply(int nStatus, const std::string &strReply = "");
 };
 
-class HTTPClosure
-{
+class HTTPClosure {
 public:
-    virtual void operator()() = 0;
-    virtual ~HTTPClosure() {}
+  virtual void operator()() = 0;
+  virtual ~HTTPClosure() {}
 };
 
-class HTTPEvent
-{
+class HTTPEvent {
 public:
+  HTTPEvent(struct event_base *base, bool deleteWhenTriggered,
+            const std::function<void(void)> &handler);
+  ~HTTPEvent();
 
-    HTTPEvent(struct event_base* base, bool deleteWhenTriggered, const std::function<void(void)>& handler);
-    ~HTTPEvent();
+  void trigger(struct timeval *tv);
 
+  bool deleteWhenTriggered;
+  std::function<void(void)> handler;
 
-    void trigger(struct timeval* tv);
-
-    bool deleteWhenTriggered;
-    std::function<void(void)> handler;
 private:
-    struct event* ev;
+  struct event *ev;
 };
 
 std::string urlDecode(const std::string &urlEncoded);
 
-#endif // BITCOIN_HTTPSERVER_H
+#endif

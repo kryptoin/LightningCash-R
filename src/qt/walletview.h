@@ -6,14 +6,15 @@
 #define BITCOIN_QT_WALLETVIEW_H
 
 #include <amount.h>
-#include <wallet/wallet.h>  // LightningCashr: Key import helper
+#include <wallet/wallet.h>
 
 #include <QStackedWidget>
 
 class BitcoinGUI;
 class ClientModel;
 class OverviewPage;
-class HiveDialog;     // LightningCashr: Hive page
+class HiveDialog;
+
 class PlatformStyle;
 class ReceiveCoinsDialog;
 class SendCoinsDialog;
@@ -27,100 +28,99 @@ class QModelIndex;
 class QProgressDialog;
 QT_END_NAMESPACE
 
-class WalletView : public QStackedWidget
-{
-    Q_OBJECT
+class WalletView : public QStackedWidget {
+  Q_OBJECT
 
 public:
-    explicit WalletView(const PlatformStyle *platformStyle, QWidget *parent);
-    ~WalletView();
+  explicit WalletView(const PlatformStyle *platformStyle, QWidget *parent);
+  ~WalletView();
 
-    void setBitcoinGUI(BitcoinGUI *gui);
+  void setBitcoinGUI(BitcoinGUI *gui);
 
-    void setClientModel(ClientModel *clientModel);
+  void setClientModel(ClientModel *clientModel);
 
-    void setWalletModel(WalletModel *walletModel);
+  void setWalletModel(WalletModel *walletModel);
 
-    bool handlePaymentRequest(const SendCoinsRecipient& recipient);
+  bool handlePaymentRequest(const SendCoinsRecipient &recipient);
 
-    void showOutOfSyncWarning(bool fShow);
+  void showOutOfSyncWarning(bool fShow);
 
-    static void doRescan(CWallet* pwallet, int64_t startTime);  // LightningCashr: Key import helper
+  static void doRescan(CWallet *pwallet, int64_t startTime);
 
 private:
-    ClientModel *clientModel;
-    WalletModel *walletModel;
+  ClientModel *clientModel;
+  WalletModel *walletModel;
 
-    OverviewPage *overviewPage;
-    HiveDialog *hivePage;     // LightningCashr: Hive page
-    QWidget *transactionsPage;
-    ReceiveCoinsDialog *receiveCoinsPage;
-    SendCoinsDialog *sendCoinsPage;
-    AddressBookPage *usedSendingAddressesPage;
-    AddressBookPage *usedReceivingAddressesPage;
+  OverviewPage *overviewPage;
+  HiveDialog *hivePage;
 
-    TransactionView *transactionView;
+  QWidget *transactionsPage;
+  ReceiveCoinsDialog *receiveCoinsPage;
+  SendCoinsDialog *sendCoinsPage;
+  AddressBookPage *usedSendingAddressesPage;
+  AddressBookPage *usedReceivingAddressesPage;
 
-    QProgressDialog *progressDialog;
-    const PlatformStyle *platformStyle;
+  TransactionView *transactionView;
+
+  QProgressDialog *progressDialog;
+  const PlatformStyle *platformStyle;
 
 public Q_SLOTS:
 
-    void gotoOverviewPage();
+  void gotoOverviewPage();
 
-    void gotoHistoryPage();
+  void gotoHistoryPage();
 
-    void gotoReceiveCoinsPage();
+  void gotoReceiveCoinsPage();
 
-    void gotoSendCoinsPage(QString addr = "");
+  void gotoSendCoinsPage(QString addr = "");
 
-    // LightningCashr: Switch to hive page
-    void gotoHivePage();
+  void gotoHivePage();
 
-    void gotoSignMessageTab(QString addr = "");
+  void gotoSignMessageTab(QString addr = "");
 
-    void gotoVerifyMessageTab(QString addr = "");
+  void gotoVerifyMessageTab(QString addr = "");
 
-    void processNewTransaction(const QModelIndex& parent, int start, int
-);
+  void processNewTransaction(const QModelIndex &parent, int start, int);
 
-    void encryptWallet(bool status);
+  void encryptWallet(bool status);
 
-    void backupWallet();
+  void backupWallet();
 
-    void changePassphrase();
+  void changePassphrase();
 
-    void unlockWallet();
+  void unlockWallet();
 
-	// LightningCashr: Unlock wallet just for hive
-	void unlockWalletHive();
+  void unlockWalletHive();
 
-    // LightningCashr: Key import helper
-    void importPrivateKey();
+  void importPrivateKey();
 
-    void usedSendingAddresses();
+  void usedSendingAddresses();
 
-    void usedReceivingAddresses();
+  void usedReceivingAddresses();
 
-    void updateEncryptionStatus();
+  void updateEncryptionStatus();
 
-    void showProgress(const QString &title, int nProgress);
+  void showProgress(const QString &title, int nProgress);
 
-    void requestedSyncWarningInfo();
+  void requestedSyncWarningInfo();
 
 Q_SIGNALS:
 
-    void showNormalIfMinimized();
+  void showNormalIfMinimized();
 
-    void message(const QString &title, const QString &message, unsigned int style);
+  void message(const QString &title, const QString &message,
+               unsigned int style);
 
-    void encryptionStatusChanged(int status);
+  void encryptionStatusChanged(int status);
 
-    void hdEnabledStatusChanged(int hdEnabled);
+  void hdEnabledStatusChanged(int hdEnabled);
 
-    void incomingTransaction(const QString& date, int unit, const CAmount& amount, const QString& type, const QString& address, const QString& label);
+  void incomingTransaction(const QString &date, int unit, const CAmount &amount,
+                           const QString &type, const QString &address,
+                           const QString &label);
 
-    void outOfSyncWarningClicked();
+  void outOfSyncWarningClicked();
 };
 
-#endif // BITCOIN_QT_WALLETVIEW_H
+#endif

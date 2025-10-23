@@ -8,28 +8,28 @@
 #include <QComboBox>
 #include <QVariant>
 
-class QValueComboBox : public QComboBox
-{
-    Q_OBJECT
+class QValueComboBox : public QComboBox {
+  Q_OBJECT
 
-    Q_PROPERTY(QVariant value READ value WRITE setValue NOTIFY valueChanged USER true)
+  Q_PROPERTY(
+      QVariant value READ value WRITE setValue NOTIFY valueChanged USER true)
 
 public:
-    explicit QValueComboBox(QWidget *parent = 0);
+  explicit QValueComboBox(QWidget *parent = 0);
 
-    QVariant value() const;
-    void setValue(const QVariant &value);
+  QVariant value() const;
+  void setValue(const QVariant &value);
 
-    void setRole(int role);
+  void setRole(int role);
 
 Q_SIGNALS:
-    void valueChanged();
+  void valueChanged();
 
 private:
-    int role;
+  int role;
 
 private Q_SLOTS:
-    void handleSelectionChanged(int idx);
+  void handleSelectionChanged(int idx);
 };
 
-#endif // BITCOIN_QT_QVALUECOMBOBOX_H
+#endif
