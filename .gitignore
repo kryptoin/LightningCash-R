@@ -12,7 +12,7 @@ lightningcashr-qt
 lightningcashr-Qt.app
 lightningcashr-qt_test
 
-# Build system generated files (autoreconf)
+# Build system generated files (autoreconf) - root level
 Makefile
 aclocal.m4
 autom4te.cache/
@@ -34,6 +34,20 @@ config.status
 configure
 libtool
 libbitcoinconsensus.pc
+
+# Build system generated files (autoreconf) - subdirectories
+src/secp256k1/Makefile.in
+src/secp256k1/build-aux/
+src/secp256k1/libsecp256k1.pc
+src/secp256k1/src/libsecp256k1-config.h
+src/secp256k1/src/libsecp256k1-config.h.in
+src/secp256k1/src/stamp-h1
+src/univalue/Makefile.in
+src/univalue/build-aux/
+src/univalue/pc/
+src/univalue/stamp-h1
+src/univalue/univalue-config.h
+src/univalue/univalue-config.h.in
 
 # Generated configuration files
 src/config/bitcoin-config.h
@@ -115,6 +129,7 @@ test/cache/*
 
 # Documentation
 /doc/doxygen/
+doc/Doxyfile
 
 # IDE and editor files
 src/.vscode/
