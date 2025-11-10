@@ -28,6 +28,8 @@
 #endif
 
 #include <QDesktopWidget>
+#include <QScreen>
+#include <QGuiApplication>
 #include <QKeyEvent>
 #include <QMenu>
 #include <QMessageBox>

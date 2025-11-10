@@ -22,9 +22,12 @@
 
 #include <QApplication>
 #include <QCloseEvent>
-#include <QDesktopWidget>
+#include <QGuiApplication>
+#include <QScreen>
 #include <QPainter>
 #include <QRadialGradient>
+
+using namespace boost::placeholders;
 
 SplashScreen::SplashScreen(Qt::WindowFlags f, const NetworkStyle *networkStyle)
     : QWidget(0, f), curAlignment(0) {
@@ -136,7 +139,7 @@ SplashScreen::SplashScreen(Qt::WindowFlags f, const NetworkStyle *networkStyle)
                           pixmap.size().height() / devicePixelRatio));
   resize(r.size());
   setFixedSize(r.size());
-  move(QApplication::desktop()->screenGeometry().center() - r.center());
+  move(QGuiApplication::primaryScreen()->geometry().center() - r.center());
 
   subscribeToCoreSignals();
   installEventFilter(this);

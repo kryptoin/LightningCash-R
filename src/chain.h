@@ -19,6 +19,12 @@ static const int64_t MAX_FUTURE_BLOCK_TIME = 8 * 60;
 
 static const int64_t TIMESTAMP_WINDOW = MAX_FUTURE_BLOCK_TIME;
 
+// Reorg protection constants
+static const uint16_t DEFAULT_REORG_ANCHOR_DEPTH = 12;        // Default blocks for reorg anchoring
+static const uint16_t DEFAULT_EXPOSURE_DELAY_DEPTH = 3;       // Default blocks to delay exposure
+static const uint16_t MAX_DESCENDANT_TRAVERSAL_DEPTH = 128;   // Max depth for descendant traversal
+static const uint16_t DEFAULT_RPC_RATE_LIMIT = 60;           // Default RPC requests per minute
+
 class CBlockFileInfo {
 public:
   unsigned int nBlocks;
@@ -148,6 +154,10 @@ enum BlockStatus : uint32_t {
 
 class CBlockIndex {
 public:
+  // Added fields for reorg protection
+  bool exposed_public{true};
+  uint16_t shallow_distance_from_tip{UINT16_MAX};
+  
   const uint256 *phashBlock;
 
   CBlockIndex *pprev;
@@ -291,6 +301,23 @@ public:
       return true;
     }
     return false;
+  }
+
+  // Reorg protection helper methods
+  bool IsShallow(uint16_t exposure_delay_depth) const {
+    return shallow_distance_from_tip <= exposure_delay_depth;
+  }
+
+  bool IsExposedPublic() const { 
+    return exposed_public; 
+  }
+
+  void SetShallowDistance(uint16_t distance) {
+    shallow_distance_from_tip = distance;
+  }
+
+  void SetExposedPublic(bool exposed) {
+    exposed_public = exposed;
   }
 
   void BuildSkip();

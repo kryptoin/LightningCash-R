@@ -108,6 +108,7 @@ BITCOIN_CORE_H = \
   miner.h \
   net.h \
   net_processing.h \
+  net_processing_reorg.h \
   netaddress.h \
   netbase.h \
   netmessagemaker.h \
@@ -153,6 +154,7 @@ BITCOIN_CORE_H = \
   utilmoneystr.h \
   utiltime.h \
   validation.h \
+  validation_reorg.h \
   validationinterface.h \
   versionbits.h \
   wallet/coincontrol.h \
@@ -197,6 +199,7 @@ libbitcoin_server_a_SOURCES = \
   miner.cpp \
   net.cpp \
   net_processing.cpp \
+  net_processing_reorg.cpp \
   noui.cpp \
   policy/fees.cpp \
   policy/policy.cpp \
@@ -218,6 +221,7 @@ libbitcoin_server_a_SOURCES = \
   txmempool.cpp \
   ui_interface.cpp \
   validation.cpp \
+  validation_reorg.cpp \
   validationinterface.cpp \
   versionbits.cpp \
   $(BITCOIN_CORE_H)
@@ -389,6 +393,12 @@ if TARGET_WINDOWS
 lightningcashrd_SOURCES += bitcoind-res.rc
 endif
 
+if ENABLE_HWCRC32
+LIBLEVELDB_SSE42_LA = $(LIBLEVELDB_SSE42)
+else
+LIBLEVELDB_SSE42_LA =
+endif
+
 lightningcashrd_LDADD = \
   $(LIBBITCOIN_SERVER) \
   $(LIBBITCOIN_COMMON) \
@@ -399,7 +409,7 @@ lightningcashrd_LDADD = \
   $(LIBBITCOIN_CONSENSUS) \
   $(LIBBITCOIN_CRYPTO) \
   $(LIBLEVELDB) \
-  $(LIBLEVELDB_SSE42) \
+  $(LIBLEVELDB_SSE42_LA) \
   $(LIBMEMENV) \
   $(LIBSECP256K1)
 

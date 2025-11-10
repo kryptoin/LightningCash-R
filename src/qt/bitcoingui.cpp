@@ -37,6 +37,8 @@
 #include <QAction>
 #include <QApplication>
 #include <QDateTime>
+#include <QGuiApplication>
+#include <QScreen>
 #include <QDesktopWidget>
 #include <QDragEnterEvent>
 #include <QListWidget>
@@ -59,6 +61,8 @@
 #else
 #include <QUrlQuery>
 #endif
+
+using namespace boost::placeholders;
 
 const std::string BitcoinGUI::DEFAULT_UIPLATFORM =
 #if defined(Q_OS_MAC)
@@ -95,7 +99,7 @@ BitcoinGUI::BitcoinGUI(const PlatformStyle *_platformStyle,
       spinnerFrame(0), platformStyle(_platformStyle) {
   QSettings settings;
   if (!restoreGeometry(settings.value("MainWindowGeometry").toByteArray())) {
-    move(QApplication::desktop()->availableGeometry().center() -
+    move(QGuiApplication::primaryScreen()->availableGeometry().center() -
          frameGeometry().center());
   }
 

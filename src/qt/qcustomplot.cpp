@@ -4217,8 +4217,8 @@ QList<QCPGraph *> QCPAxis::graphs() const {
     return result;
 
   for (int i = 0; i < mParentPlot->mGraphs.size(); ++i) {
-    if (mParentPlot->mGraphs.at(i)->keyAxis() == this ||
-        mParentPlot->mGraphs.at(i)->valueAxis() == this)
+    if (mParentPlot->mGraphs.at(i)->mKeyAxis.data() == this ||
+        mParentPlot->mGraphs.at(i)->mValueAxis.data() == this)
       result.append(mParentPlot->mGraphs.at(i));
   }
   return result;
@@ -6800,12 +6800,24 @@ QCPGraph *QCustomPlot::addGraph(QCPAxis *keyAxis, QCPAxis *valueAxis) {
   }
 
   QCPGraph *newGraph = new QCPGraph(keyAxis, valueAxis);
-  newGraph->setName(QLatin1String("Graph ") + QString::number(mGraphs.size()));
+  newGraph->mName = QLatin1String("Graph ") + QString::number(mGraphs.size());
   return newGraph;
 }
 
 bool QCustomPlot::removeGraph(QCPGraph *graph) {
-  return removePlottable(graph);
+  if (!mGraphs.contains(graph)) {
+    qDebug() << Q_FUNC_INFO << "graph not in list:" << reinterpret_cast<quintptr>(graph);
+    return false;
+  }
+  
+  if (graph->mParentPlot == this) {
+    mGraphs.removeOne(graph);
+    delete graph;
+    return true;
+  } else {
+    qDebug() << Q_FUNC_INFO << "graph not of this QCustomPlot:" << reinterpret_cast<quintptr>(graph);
+    return false;
+  }
 }
 
 bool QCustomPlot::removeGraph(int index) {
@@ -6827,7 +6839,7 @@ int QCustomPlot::graphCount() const { return mGraphs.size(); }
 QList<QCPGraph *> QCustomPlot::selectedGraphs() const {
   QList<QCPGraph *> result;
   Q_FOREACH (QCPGraph *graph, mGraphs) {
-    if (graph->selected())
+    if (!graph->mSelection.isEmpty())
       result.append(graph);
   }
   return result;
@@ -8875,9 +8887,10 @@ QList<QCPAbstractPlottable *> QCPAxisRect::plottables() const {
 QList<QCPGraph *> QCPAxisRect::graphs() const {
   QList<QCPGraph *> result;
   for (int i = 0; i < mParentPlot->mGraphs.size(); ++i) {
-    if (mParentPlot->mGraphs.at(i)->keyAxis()->axisRect() == this ||
-        mParentPlot->mGraphs.at(i)->valueAxis()->axisRect() == this)
-      result.append(mParentPlot->mGraphs.at(i));
+    QCPGraph *graph = mParentPlot->mGraphs.at(i);
+    if (graph->keyAxis()->axisRect() == this ||
+        graph->valueAxis()->axisRect() == this)
+      result.append(graph);
   }
   return result;
 }
@@ -10079,7 +10092,7 @@ void QCPColorScale::setRangeDrag(bool enabled) {
   if (enabled)
     mAxisRect.data()->setRangeDrag(QCPAxis::orientation(mType));
   else
-    mAxisRect.data()->setRangeDrag(0);
+    mAxisRect.data()->setRangeDrag({});
 }
 
 void QCPColorScale::setRangeZoom(bool enabled) {
@@ -10091,7 +10104,7 @@ void QCPColorScale::setRangeZoom(bool enabled) {
   if (enabled)
     mAxisRect.data()->setRangeZoom(QCPAxis::orientation(mType));
   else
-    mAxisRect.data()->setRangeZoom(0);
+    mAxisRect.data()->setRangeZoom({});
 }
 
 QList<QCPColorMap *> QCPColorScale::colorMaps() const {
@@ -10384,8 +10397,8 @@ QCPGraph::QCPGraph(QCPAxis *keyAxis, QCPAxis *valueAxis)
     : QCPAbstractPlottable1D<QCPGraphData>(keyAxis, valueAxis) {
   mParentPlot->registerGraph(this);
 
-  setPen(QPen(Qt::blue, 0));
-  setBrush(Qt::NoBrush);
+  mPen = QPen(Qt::blue, 0);
+  mBrush = Qt::NoBrush;
 
   setLineStyle(lsLine);
   setScatterSkip(0);
@@ -10502,7 +10515,7 @@ void QCPGraph::draw(QCPPainter *painter) {
   QVector<QPointF> lines, scatters;
 
   QList<QCPDataRange> selectedSegments, unselectedSegments, allSegments;
-  getDataSegments(selectedSegments, unselectedSegments);
+  this->getDataSegments(selectedSegments, unselectedSegments);
   allSegments << unselectedSegments << selectedSegments;
   for (int i = 0; i < allSegments.size(); ++i) {
     bool isSelectedSegment = i >= unselectedSegments.size();
@@ -10553,19 +10566,19 @@ void QCPGraph::draw(QCPPainter *painter) {
   }
 
   if (mSelectionDecorator)
-    mSelectionDecorator->drawDecoration(painter, selection());
+    mSelectionDecorator->drawDecoration(painter, mSelection);
 }
 
 void QCPGraph::drawLegendIcon(QCPPainter *painter, const QRectF &rect) const {
   if (mBrush.style() != Qt::NoBrush) {
-    applyFillAntialiasingHint(painter);
+    this->applyFillAntialiasingHint(painter);
     painter->fillRect(QRectF(rect.left(), rect.top() + rect.height() / 2.0,
                              rect.width(), rect.height() / 3.0),
                       mBrush);
   }
 
   if (mLineStyle != lsNone) {
-    applyDefaultAntialiasingHint(painter);
+    this->applyDefaultAntialiasingHint(painter);
     painter->setPen(mPen);
     painter->drawLine(QLineF(rect.left(), rect.top() + rect.height() / 2.0,
                              rect.right() + 5,
@@ -10573,7 +10586,7 @@ void QCPGraph::drawLegendIcon(QCPPainter *painter, const QRectF &rect) const {
   }
 
   if (!mScatterStyle.isNone()) {
-    applyScattersAntialiasingHint(painter);
+    this->applyScattersAntialiasingHint(painter);
 
     if (mScatterStyle.shape() == QCPScatterStyle::ssPixmap &&
         (mScatterStyle.pixmap().size().width() > rect.width() ||
@@ -10873,16 +10886,16 @@ void QCPGraph::drawFill(QCPPainter *painter, QVector<QPointF> *lines) const {
       painter->brush().color().alpha() == 0)
     return;
 
-  applyFillAntialiasingHint(painter);
+  this->applyFillAntialiasingHint(painter);
   QVector<QCPDataRange> segments =
-      getNonNanSegments(lines, keyAxis()->orientation());
+      getNonNanSegments(lines, mKeyAxis.data()->orientation());
   if (!mChannelFillGraph) {
     for (int i = 0; i < segments.size(); ++i)
       painter->drawPolygon(getFillPolygon(lines, segments.at(i)));
   } else {
     QVector<QPointF> otherLines;
     mChannelFillGraph->getLines(
-        &otherLines, QCPDataRange(0, mChannelFillGraph->dataCount()));
+        &otherLines, QCPDataRange(0, mChannelFillGraph->mDataContainer->size()));
     if (!otherLines.isEmpty()) {
       QVector<QCPDataRange> otherSegments = getNonNanSegments(
           &otherLines, mChannelFillGraph->keyAxis()->orientation());
@@ -10899,7 +10912,7 @@ void QCPGraph::drawFill(QCPPainter *painter, QVector<QPointF> *lines) const {
 void QCPGraph::drawScatterPlot(QCPPainter *painter,
                                const QVector<QPointF> &scatters,
                                const QCPScatterStyle &style) const {
-  applyScattersAntialiasingHint(painter);
+  this->applyScattersAntialiasingHint(painter);
   style.applyTo(painter, mPen);
   for (int i = 0; i < scatters.size(); ++i)
     style.drawShape(painter, scatters.at(i).x(), scatters.at(i).y());
@@ -10909,8 +10922,8 @@ void QCPGraph::drawLinePlot(QCPPainter *painter,
                             const QVector<QPointF> &lines) const {
   if (painter->pen().style() != Qt::NoPen &&
       painter->pen().color().alpha() != 0) {
-    applyDefaultAntialiasingHint(painter);
-    drawPolyline(painter, lines);
+    this->applyDefaultAntialiasingHint(painter);
+    this->drawPolyline(painter, lines);
   }
 }
 
@@ -10918,7 +10931,7 @@ void QCPGraph::drawImpulsePlot(QCPPainter *painter,
                                const QVector<QPointF> &lines) const {
   if (painter->pen().style() != Qt::NoPen &&
       painter->pen().color().alpha() != 0) {
-    applyDefaultAntialiasingHint(painter);
+    this->applyDefaultAntialiasingHint(painter);
     QPen oldPen = painter->pen();
     QPen newPen = painter->pen();
     newPen.setCapStyle(Qt::FlatCap);

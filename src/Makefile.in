@@ -128,19 +128,18 @@ TESTS = $(am__EXEEXT_1) $(am__EXEEXT_4)
 @TARGET_WINDOWS_TRUE@am__append_5 = bitcoin-tx-res.rc
 @BUILD_BITCOIN_LIBS_TRUE@@GLIBC_BACK_COMPAT_TRUE@am__append_6 = compat/glibc_compat.cpp
 @EMBEDDED_LEVELDB_TRUE@am__append_7 = $(LIBLEVELDB_INT) \
-@EMBEDDED_LEVELDB_TRUE@	$(LIBMEMENV_INT) \
-@EMBEDDED_LEVELDB_TRUE@	$(LIBLEVELDB_SSE42_INT)
+@EMBEDDED_LEVELDB_TRUE@	$(LIBMEMENV_INT)
 @EMBEDDED_LEVELDB_TRUE@am__append_8 = $(LIBLEVELDB_INT)
 @EMBEDDED_LEVELDB_TRUE@am__append_9 = $(LIBMEMENV_INT)
-@EMBEDDED_LEVELDB_TRUE@am__append_10 = -I$(srcdir)/leveldb/include \
+@EMBEDDED_LEVELDB_TRUE@@ENABLE_HWCRC32_TRUE@am__append_10 = $(LIBLEVELDB_SSE42_INT)
+@EMBEDDED_LEVELDB_TRUE@am__append_11 = -I$(srcdir)/leveldb/include \
 @EMBEDDED_LEVELDB_TRUE@	-I$(srcdir)/leveldb/helpers/memenv
-@EMBEDDED_LEVELDB_TRUE@@TARGET_WINDOWS_TRUE@am__append_11 = -DLEVELDB_PLATFORM_WINDOWS -DWINVER=0x0500 -D__USE_MINGW_ANSI_STDIO=1
-@EMBEDDED_LEVELDB_TRUE@@TARGET_WINDOWS_FALSE@am__append_12 = -DLEVELDB_PLATFORM_POSIX
-@EMBEDDED_LEVELDB_TRUE@@TARGET_WINDOWS_TRUE@am__append_13 = leveldb/util/env_win.cc \
+@EMBEDDED_LEVELDB_TRUE@@TARGET_WINDOWS_TRUE@am__append_12 = -DLEVELDB_PLATFORM_WINDOWS -DWINVER=0x0500 -D__USE_MINGW_ANSI_STDIO=1
+@EMBEDDED_LEVELDB_TRUE@@TARGET_WINDOWS_FALSE@am__append_13 = -DLEVELDB_PLATFORM_POSIX
+@EMBEDDED_LEVELDB_TRUE@@ENABLE_HWCRC32_TRUE@am__append_14 = -DHAVE_HWCRC32
+@EMBEDDED_LEVELDB_TRUE@@TARGET_WINDOWS_TRUE@am__append_15 = leveldb/util/env_win.cc \
 @EMBEDDED_LEVELDB_TRUE@@TARGET_WINDOWS_TRUE@	leveldb/port/port_win.cc
-@EMBEDDED_LEVELDB_TRUE@@TARGET_WINDOWS_FALSE@am__append_14 = leveldb/port/port_posix.cc
-@EMBEDDED_LEVELDB_TRUE@@ENABLE_HWCRC32_TRUE@am__append_15 = -DLEVELDB_PLATFORM_POSIX_SSE
-@EMBEDDED_LEVELDB_TRUE@@ENABLE_HWCRC32_TRUE@am__append_16 = $(SSE42_CXXFLAGS)
+@EMBEDDED_LEVELDB_TRUE@@TARGET_WINDOWS_FALSE@am__append_16 = leveldb/port/port_posix.cc
 @ENABLE_TESTS_TRUE@am__append_17 = test/test_lightningcashr
 @ENABLE_TESTS_TRUE@am__append_18 = test/test_lightningcashr
 @ENABLE_TESTS_TRUE@am__append_19 = test/test_lightningcashr_fuzzy
@@ -392,7 +391,7 @@ leveldb_libleveldb_sse42_a_RANLIB = $(RANLIB)
 leveldb_libleveldb_sse42_a_LIBADD =
 am__leveldb_libleveldb_sse42_a_SOURCES_DIST =  \
 	leveldb/port/port_posix_sse.cc
-@EMBEDDED_LEVELDB_TRUE@am_leveldb_libleveldb_sse42_a_OBJECTS = leveldb/port/libleveldb_sse42_a-port_posix_sse.$(OBJEXT)
+@EMBEDDED_LEVELDB_TRUE@@ENABLE_HWCRC32_TRUE@am_leveldb_libleveldb_sse42_a_OBJECTS = leveldb/port/libleveldb_sse42_a-port_posix_sse.$(OBJEXT)
 leveldb_libleveldb_sse42_a_OBJECTS =  \
 	$(am_leveldb_libleveldb_sse42_a_OBJECTS)
 leveldb_libmemenv_a_AR = $(AR) $(ARFLAGS)
@@ -466,6 +465,7 @@ am_libbitcoin_server_a_OBJECTS = libbitcoin_server_a-addrdb.$(OBJEXT) \
 	libbitcoin_server_a-miner.$(OBJEXT) \
 	libbitcoin_server_a-net.$(OBJEXT) \
 	libbitcoin_server_a-net_processing.$(OBJEXT) \
+	libbitcoin_server_a-net_processing_reorg.$(OBJEXT) \
 	libbitcoin_server_a-noui.$(OBJEXT) \
 	policy/libbitcoin_server_a-fees.$(OBJEXT) \
 	policy/libbitcoin_server_a-policy.$(OBJEXT) \
@@ -487,6 +487,7 @@ am_libbitcoin_server_a_OBJECTS = libbitcoin_server_a-addrdb.$(OBJEXT) \
 	libbitcoin_server_a-txmempool.$(OBJEXT) \
 	libbitcoin_server_a-ui_interface.$(OBJEXT) \
 	libbitcoin_server_a-validation.$(OBJEXT) \
+	libbitcoin_server_a-validation_reorg.$(OBJEXT) \
 	libbitcoin_server_a-validationinterface.$(OBJEXT) \
 	libbitcoin_server_a-versionbits.$(OBJEXT) $(am__objects_4)
 libbitcoin_server_a_OBJECTS = $(am_libbitcoin_server_a_OBJECTS)
@@ -507,24 +508,25 @@ am__libbitcoin_util_a_SOURCES_DIST = support/lockedpool.cpp \
 	core_memusage.h cuckoocache.h fs.h httprpc.h httpserver.h \
 	indirectmap.h init.h key.h keystore.h dbwrapper.h limitedmap.h \
 	memusage.h merkleblock.h miner.h net.h net_processing.h \
-	netaddress.h netbase.h netmessagemaker.h noui.h \
-	policy/feerate.h policy/fees.h policy/policy.h policy/rbf.h \
-	pow.h protocol.h random.h reverse_iterator.h reverselock.h \
-	rpc/blockchain.h rpc/client.h rpc/mining.h rpc/protocol.h \
-	rpc/safemode.h rpc/server.h rpc/register.h rpc/util.h \
-	scheduler.h script/sigcache.h script/sign.h script/standard.h \
-	script/ismine.h streams.h support/allocators/secure.h \
-	support/allocators/zeroafterfree.h support/cleanse.h \
-	support/events.h support/lockedpool.h sync.h threadsafety.h \
-	threadinterrupt.h timedata.h torcontrol.h txdb.h txmempool.h \
-	ui_interface.h undo.h util.h utilmoneystr.h utiltime.h \
-	validation.h validationinterface.h versionbits.h \
-	wallet/coincontrol.h wallet/crypter.h wallet/db.h \
-	wallet/feebumper.h wallet/fees.h wallet/init.h \
-	wallet/rpcwallet.h wallet/wallet.h wallet/walletdb.h \
-	wallet/walletutil.h warnings.h zmq/zmqabstractnotifier.h \
-	zmq/zmqconfig.h zmq/zmqnotificationinterface.h \
-	zmq/zmqpublishnotifier.h compat/glibc_compat.cpp
+	net_processing_reorg.h netaddress.h netbase.h \
+	netmessagemaker.h noui.h policy/feerate.h policy/fees.h \
+	policy/policy.h policy/rbf.h pow.h protocol.h random.h \
+	reverse_iterator.h reverselock.h rpc/blockchain.h rpc/client.h \
+	rpc/mining.h rpc/protocol.h rpc/safemode.h rpc/server.h \
+	rpc/register.h rpc/util.h scheduler.h script/sigcache.h \
+	script/sign.h script/standard.h script/ismine.h streams.h \
+	support/allocators/secure.h support/allocators/zeroafterfree.h \
+	support/cleanse.h support/events.h support/lockedpool.h sync.h \
+	threadsafety.h threadinterrupt.h timedata.h torcontrol.h \
+	txdb.h txmempool.h ui_interface.h undo.h util.h utilmoneystr.h \
+	utiltime.h validation.h validation_reorg.h \
+	validationinterface.h versionbits.h wallet/coincontrol.h \
+	wallet/crypter.h wallet/db.h wallet/feebumper.h wallet/fees.h \
+	wallet/init.h wallet/rpcwallet.h wallet/wallet.h \
+	wallet/walletdb.h wallet/walletutil.h warnings.h \
+	zmq/zmqabstractnotifier.h zmq/zmqconfig.h \
+	zmq/zmqnotificationinterface.h zmq/zmqpublishnotifier.h \
+	compat/glibc_compat.cpp
 @GLIBC_BACK_COMPAT_TRUE@am__objects_5 = compat/libbitcoin_util_a-glibc_compat.$(OBJEXT)
 am_libbitcoin_util_a_OBJECTS =  \
 	support/libbitcoin_util_a-lockedpool.$(OBJEXT) \
@@ -1010,15 +1012,16 @@ am__lightningcashrd_SOURCES_DIST = bitcoind.cpp bitcoind-res.rc
 am_lightningcashrd_OBJECTS = lightningcashrd-bitcoind.$(OBJEXT) \
 	$(am__objects_24)
 lightningcashrd_OBJECTS = $(am_lightningcashrd_OBJECTS)
+@ENABLE_HWCRC32_TRUE@am__DEPENDENCIES_6 = $(LIBLEVELDB_SSE42)
 lightningcashrd_DEPENDENCIES = $(LIBBITCOIN_SERVER) \
 	$(LIBBITCOIN_COMMON) $(am__DEPENDENCIES_4) $(LIBBITCOIN_UTIL) \
 	$(LIBBITCOIN_WALLET) $(LIBBITCOIN_ZMQ) $(LIBBITCOIN_CONSENSUS) \
-	$(LIBBITCOIN_CRYPTO) $(am__DEPENDENCIES_2) $(LIBLEVELDB_SSE42) \
-	$(am__DEPENDENCIES_3) $(LIBSECP256K1) $(am__DEPENDENCIES_1) \
+	$(LIBBITCOIN_CRYPTO) $(am__DEPENDENCIES_2) \
+	$(am__DEPENDENCIES_6) $(am__DEPENDENCIES_3) $(LIBSECP256K1) \
 	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
 	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
 	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
-	$(am__DEPENDENCIES_1)
+	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
 lightningcashrd_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CXX \
 	$(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=link $(CXXLD) \
 	$(lightningcashrd_CXXFLAGS) $(CXXFLAGS) \
@@ -1037,12 +1040,12 @@ am__qt_lightningcashr_qt_SOURCES_DIST = qt/bitcoin.cpp \
 @ENABLE_QT_TRUE@	qt/lightningcashr_qt-bitcoin.$(OBJEXT) \
 @ENABLE_QT_TRUE@	$(am__objects_26) $(am__objects_28)
 qt_lightningcashr_qt_OBJECTS = $(am_qt_lightningcashr_qt_OBJECTS)
-@ENABLE_QT_TRUE@@ENABLE_ZMQ_TRUE@am__DEPENDENCIES_6 =  \
+@ENABLE_QT_TRUE@@ENABLE_ZMQ_TRUE@am__DEPENDENCIES_7 =  \
 @ENABLE_QT_TRUE@@ENABLE_ZMQ_TRUE@	$(LIBBITCOIN_ZMQ) \
 @ENABLE_QT_TRUE@@ENABLE_ZMQ_TRUE@	$(am__DEPENDENCIES_1)
 @ENABLE_QT_TRUE@qt_lightningcashr_qt_DEPENDENCIES = qt/libbitcoinqt.a \
 @ENABLE_QT_TRUE@	$(LIBBITCOIN_SERVER) $(am__append_35) \
-@ENABLE_QT_TRUE@	$(am__DEPENDENCIES_6) $(LIBBITCOIN_CLI) \
+@ENABLE_QT_TRUE@	$(am__DEPENDENCIES_7) $(LIBBITCOIN_CLI) \
 @ENABLE_QT_TRUE@	$(LIBBITCOIN_COMMON) $(LIBBITCOIN_UTIL) \
 @ENABLE_QT_TRUE@	$(LIBBITCOIN_CONSENSUS) $(LIBBITCOIN_CRYPTO) \
 @ENABLE_QT_TRUE@	$(am__DEPENDENCIES_4) $(am__DEPENDENCIES_2) \
@@ -1087,12 +1090,12 @@ am__qt_test_test_lightningcashr_qt_SOURCES_DIST =  \
 qt_test_test_lightningcashr_qt_OBJECTS =  \
 	$(am_qt_test_test_lightningcashr_qt_OBJECTS) \
 	$(nodist_qt_test_test_lightningcashr_qt_OBJECTS)
-@ENABLE_QT_TESTS_TRUE@@ENABLE_ZMQ_TRUE@am__DEPENDENCIES_7 =  \
+@ENABLE_QT_TESTS_TRUE@@ENABLE_ZMQ_TRUE@am__DEPENDENCIES_8 =  \
 @ENABLE_QT_TESTS_TRUE@@ENABLE_ZMQ_TRUE@	$(LIBBITCOIN_ZMQ) \
 @ENABLE_QT_TESTS_TRUE@@ENABLE_ZMQ_TRUE@	$(am__DEPENDENCIES_1)
 @ENABLE_QT_TESTS_TRUE@qt_test_test_lightningcashr_qt_DEPENDENCIES =  \
 @ENABLE_QT_TESTS_TRUE@	$(LIBBITCOINQT) $(LIBBITCOIN_SERVER) \
-@ENABLE_QT_TESTS_TRUE@	$(am__append_42) $(am__DEPENDENCIES_7) \
+@ENABLE_QT_TESTS_TRUE@	$(am__append_42) $(am__DEPENDENCIES_8) \
 @ENABLE_QT_TESTS_TRUE@	$(LIBBITCOIN_CLI) $(LIBBITCOIN_COMMON) \
 @ENABLE_QT_TESTS_TRUE@	$(LIBBITCOIN_UTIL) \
 @ENABLE_QT_TESTS_TRUE@	$(LIBBITCOIN_CONSENSUS) \
@@ -1232,7 +1235,7 @@ am__test_test_lightningcashr_SOURCES_DIST =  \
 test_test_lightningcashr_OBJECTS =  \
 	$(am_test_test_lightningcashr_OBJECTS) \
 	$(nodist_test_test_lightningcashr_OBJECTS)
-@ENABLE_TESTS_TRUE@@ENABLE_ZMQ_TRUE@am__DEPENDENCIES_8 =  \
+@ENABLE_TESTS_TRUE@@ENABLE_ZMQ_TRUE@am__DEPENDENCIES_9 =  \
 @ENABLE_TESTS_TRUE@@ENABLE_ZMQ_TRUE@	$(am__DEPENDENCIES_1)
 @ENABLE_TESTS_TRUE@test_test_lightningcashr_DEPENDENCIES =  \
 @ENABLE_TESTS_TRUE@	$(am__append_21) $(LIBBITCOIN_SERVER) \
@@ -1246,7 +1249,7 @@ test_test_lightningcashr_OBJECTS =  \
 @ENABLE_TESTS_TRUE@	$(LIBBITCOIN_CONSENSUS) \
 @ENABLE_TESTS_TRUE@	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
 @ENABLE_TESTS_TRUE@	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
-@ENABLE_TESTS_TRUE@	$(am__DEPENDENCIES_8)
+@ENABLE_TESTS_TRUE@	$(am__DEPENDENCIES_9)
 test_test_lightningcashr_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CXX \
 	$(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=link $(CXXLD) \
 	$(test_test_lightningcashr_CXXFLAGS) $(CXXFLAGS) \
@@ -1314,6 +1317,7 @@ am__depfiles_remade = ./$(DEPDIR)/libbitcoin_common_a-base58.Po \
 	./$(DEPDIR)/libbitcoin_server_a-miner.Po \
 	./$(DEPDIR)/libbitcoin_server_a-net.Po \
 	./$(DEPDIR)/libbitcoin_server_a-net_processing.Po \
+	./$(DEPDIR)/libbitcoin_server_a-net_processing_reorg.Po \
 	./$(DEPDIR)/libbitcoin_server_a-noui.Po \
 	./$(DEPDIR)/libbitcoin_server_a-pow.Po \
 	./$(DEPDIR)/libbitcoin_server_a-rest.Po \
@@ -1323,6 +1327,7 @@ am__depfiles_remade = ./$(DEPDIR)/libbitcoin_common_a-base58.Po \
 	./$(DEPDIR)/libbitcoin_server_a-txmempool.Po \
 	./$(DEPDIR)/libbitcoin_server_a-ui_interface.Po \
 	./$(DEPDIR)/libbitcoin_server_a-validation.Po \
+	./$(DEPDIR)/libbitcoin_server_a-validation_reorg.Po \
 	./$(DEPDIR)/libbitcoin_server_a-validationinterface.Po \
 	./$(DEPDIR)/libbitcoin_server_a-versionbits.Po \
 	./$(DEPDIR)/libbitcoin_util_a-chainparamsbase.Po \
@@ -2110,7 +2115,7 @@ LCOV = @LCOV@
 LCOV_OPTS = @LCOV_OPTS@
 LD = @LD@
 LDFLAGS = @LDFLAGS@
-LEVELDB_CPPFLAGS = @LEVELDB_CPPFLAGS@ $(am__append_10)
+LEVELDB_CPPFLAGS = @LEVELDB_CPPFLAGS@ $(am__append_11)
 LEVELDB_TARGET_FLAGS = @LEVELDB_TARGET_FLAGS@
 LIBLEVELDB = @LIBLEVELDB@ $(am__append_8)
 LIBMEMENV = @LIBMEMENV@ $(am__append_9)
@@ -2286,7 +2291,8 @@ AM_CPPFLAGS = $(HARDENED_CPPFLAGS)
 EXTRA_LIBRARIES = $(LIBBITCOIN_CRYPTO) $(LIBBITCOIN_UTIL) \
 	$(LIBBITCOIN_COMMON) $(LIBBITCOIN_CONSENSUS) \
 	$(LIBBITCOIN_SERVER) $(LIBBITCOIN_CLI) $(LIBBITCOIN_WALLET) \
-	$(LIBBITCOIN_ZMQ) $(am__append_7) $(am__append_30)
+	$(LIBBITCOIN_ZMQ) $(am__append_7) $(am__append_10) \
+	$(am__append_30)
 @EMBEDDED_UNIVALUE_FALSE@LIBUNIVALUE = $(UNIVALUE_LIBS)
 @EMBEDDED_UNIVALUE_TRUE@LIBUNIVALUE = univalue/libunivalue.la
 BITCOIN_INCLUDES = -I$(builddir) $(BDB_CPPFLAGS) $(BOOST_CPPFLAGS) \
@@ -2345,6 +2351,7 @@ BITCOIN_CORE_H = \
   miner.h \
   net.h \
   net_processing.h \
+  net_processing_reorg.h \
   netaddress.h \
   netbase.h \
   netmessagemaker.h \
@@ -2390,6 +2397,7 @@ BITCOIN_CORE_H = \
   utilmoneystr.h \
   utiltime.h \
   validation.h \
+  validation_reorg.h \
   validationinterface.h \
   versionbits.h \
   wallet/coincontrol.h \
@@ -2428,6 +2436,7 @@ libbitcoin_server_a_SOURCES = \
   miner.cpp \
   net.cpp \
   net_processing.cpp \
+  net_processing_reorg.cpp \
   noui.cpp \
   policy/fees.cpp \
   policy/policy.cpp \
@@ -2449,6 +2458,7 @@ libbitcoin_server_a_SOURCES = \
   txmempool.cpp \
   ui_interface.cpp \
   validation.cpp \
+  validation_reorg.cpp \
   validationinterface.cpp \
   versionbits.cpp \
   $(BITCOIN_CORE_H)
@@ -2581,13 +2591,15 @@ lightningcashrd_SOURCES = bitcoind.cpp $(am__append_3)
 lightningcashrd_CPPFLAGS = $(AM_CPPFLAGS) $(BITCOIN_INCLUDES)
 lightningcashrd_CXXFLAGS = $(AM_CXXFLAGS) $(PIE_FLAGS)
 lightningcashrd_LDFLAGS = $(RELDFLAGS) $(AM_LDFLAGS) $(LIBTOOL_APP_LDFLAGS)
+@ENABLE_HWCRC32_FALSE@LIBLEVELDB_SSE42_LA = 
+@ENABLE_HWCRC32_TRUE@LIBLEVELDB_SSE42_LA = $(LIBLEVELDB_SSE42)
 lightningcashrd_LDADD = $(LIBBITCOIN_SERVER) $(LIBBITCOIN_COMMON) \
 	$(LIBUNIVALUE) $(LIBBITCOIN_UTIL) $(LIBBITCOIN_WALLET) \
 	$(LIBBITCOIN_ZMQ) $(LIBBITCOIN_CONSENSUS) $(LIBBITCOIN_CRYPTO) \
-	$(LIBLEVELDB) $(LIBLEVELDB_SSE42) $(LIBMEMENV) $(LIBSECP256K1) \
-	$(BOOST_LIBS) $(BDB_LIBS) $(SSL_LIBS) $(CRYPTO_LIBS) \
-	$(MINIUPNPC_LIBS) $(EVENT_PTHREADS_LIBS) $(EVENT_LIBS) \
-	$(ZMQ_LIBS)
+	$(LIBLEVELDB) $(LIBLEVELDB_SSE42_LA) $(LIBMEMENV) \
+	$(LIBSECP256K1) $(BOOST_LIBS) $(BDB_LIBS) $(SSL_LIBS) \
+	$(CRYPTO_LIBS) $(MINIUPNPC_LIBS) $(EVENT_PTHREADS_LIBS) \
+	$(EVENT_LIBS) $(ZMQ_LIBS)
 
 # bitcoin-cli binary #
 lightningcashr_cli_SOURCES = bitcoin-cli.cpp $(am__append_4)
@@ -2636,13 +2648,15 @@ EXTRA_DIST = $(CTAES_DIST)
 @EMBEDDED_LEVELDB_TRUE@LIBLEVELDB_INT = leveldb/libleveldb.a
 @EMBEDDED_LEVELDB_TRUE@LIBMEMENV_INT = leveldb/libmemenv.a
 @EMBEDDED_LEVELDB_TRUE@LIBLEVELDB_SSE42_INT = leveldb/libleveldb_sse42.a
-@EMBEDDED_LEVELDB_TRUE@LIBLEVELDB_SSE42 = $(LIBLEVELDB_SSE42_INT)
+@EMBEDDED_LEVELDB_TRUE@@ENABLE_HWCRC32_TRUE@LIBLEVELDB_SSE42 = $(LIBLEVELDB_SSE42_INT)
 @EMBEDDED_LEVELDB_TRUE@LEVELDB_CPPFLAGS_INT = -I$(srcdir)/leveldb \
 @EMBEDDED_LEVELDB_TRUE@	$(LEVELDB_TARGET_FLAGS) \
 @EMBEDDED_LEVELDB_TRUE@	-DLEVELDB_ATOMIC_PRESENT \
-@EMBEDDED_LEVELDB_TRUE@	-D__STDC_LIMIT_MACROS $(am__append_11) \
-@EMBEDDED_LEVELDB_TRUE@	$(am__append_12)
-@EMBEDDED_LEVELDB_TRUE@leveldb_libleveldb_a_CPPFLAGS = $(AM_CPPFLAGS) $(LEVELDB_CPPFLAGS_INT) $(LEVELDB_CPPFLAGS)
+@EMBEDDED_LEVELDB_TRUE@	-D__STDC_LIMIT_MACROS $(am__append_12) \
+@EMBEDDED_LEVELDB_TRUE@	$(am__append_13)
+@EMBEDDED_LEVELDB_TRUE@leveldb_libleveldb_a_CPPFLAGS = $(AM_CPPFLAGS) \
+@EMBEDDED_LEVELDB_TRUE@	$(LEVELDB_CPPFLAGS_INT) \
+@EMBEDDED_LEVELDB_TRUE@	$(LEVELDB_CPPFLAGS) $(am__append_14)
 @EMBEDDED_LEVELDB_TRUE@leveldb_libleveldb_a_CXXFLAGS = $(AM_CXXFLAGS) $(PIE_FLAGS)
 @EMBEDDED_LEVELDB_TRUE@leveldb_libleveldb_a_SOURCES =  \
 @EMBEDDED_LEVELDB_TRUE@	leveldb/port/atomic_pointer.h \
@@ -2736,20 +2750,18 @@ EXTRA_DIST = $(CTAES_DIST)
 @EMBEDDED_LEVELDB_TRUE@	leveldb/util/histogram.cc \
 @EMBEDDED_LEVELDB_TRUE@	leveldb/util/logging.cc \
 @EMBEDDED_LEVELDB_TRUE@	leveldb/util/options.cc \
-@EMBEDDED_LEVELDB_TRUE@	leveldb/util/status.cc $(am__append_13) \
-@EMBEDDED_LEVELDB_TRUE@	$(am__append_14)
+@EMBEDDED_LEVELDB_TRUE@	leveldb/util/status.cc $(am__append_15) \
+@EMBEDDED_LEVELDB_TRUE@	$(am__append_16)
 @EMBEDDED_LEVELDB_TRUE@leveldb_libmemenv_a_CPPFLAGS = $(leveldb_libleveldb_a_CPPFLAGS)
 @EMBEDDED_LEVELDB_TRUE@leveldb_libmemenv_a_CXXFLAGS = $(leveldb_libleveldb_a_CXXFLAGS)
 @EMBEDDED_LEVELDB_TRUE@leveldb_libmemenv_a_SOURCES =  \
 @EMBEDDED_LEVELDB_TRUE@	leveldb/helpers/memenv/memenv.cc \
 @EMBEDDED_LEVELDB_TRUE@	leveldb/helpers/memenv/memenv.h
-@EMBEDDED_LEVELDB_TRUE@leveldb_libleveldb_sse42_a_CPPFLAGS =  \
-@EMBEDDED_LEVELDB_TRUE@	$(leveldb_libleveldb_a_CPPFLAGS) \
-@EMBEDDED_LEVELDB_TRUE@	$(am__append_15)
-@EMBEDDED_LEVELDB_TRUE@leveldb_libleveldb_sse42_a_CXXFLAGS =  \
-@EMBEDDED_LEVELDB_TRUE@	$(leveldb_libleveldb_a_CXXFLAGS) \
-@EMBEDDED_LEVELDB_TRUE@	$(am__append_16)
-@EMBEDDED_LEVELDB_TRUE@leveldb_libleveldb_sse42_a_SOURCES = leveldb/port/port_posix_sse.cc
+@EMBEDDED_LEVELDB_TRUE@@ENABLE_HWCRC32_TRUE@leveldb_libleveldb_sse42_a_CPPFLAGS = $(leveldb_libleveldb_a_CPPFLAGS) \
+@EMBEDDED_LEVELDB_TRUE@@ENABLE_HWCRC32_TRUE@	-DLEVELDB_PLATFORM_POSIX_SSE
+@EMBEDDED_LEVELDB_TRUE@@ENABLE_HWCRC32_TRUE@leveldb_libleveldb_sse42_a_CXXFLAGS = $(leveldb_libleveldb_a_CXXFLAGS) \
+@EMBEDDED_LEVELDB_TRUE@@ENABLE_HWCRC32_TRUE@	$(SSE42_CXXFLAGS)
+@EMBEDDED_LEVELDB_TRUE@@ENABLE_HWCRC32_TRUE@leveldb_libleveldb_sse42_a_SOURCES = leveldb/port/port_posix_sse.cc
 @ENABLE_TESTS_TRUE@TEST_SRCDIR = test
 @ENABLE_TESTS_TRUE@TEST_BINARY = test/test_lightningcashr$(EXEEXT)
 @ENABLE_TESTS_TRUE@JSON_TEST_FILES = \
@@ -4480,6 +4492,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libbitcoin_server_a-miner.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libbitcoin_server_a-net.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libbitcoin_server_a-net_processing.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libbitcoin_server_a-net_processing_reorg.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libbitcoin_server_a-noui.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libbitcoin_server_a-pow.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libbitcoin_server_a-rest.Po@am__quote@ # am--include-marker
@@ -4489,6 +4502,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libbitcoin_server_a-txmempool.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libbitcoin_server_a-ui_interface.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libbitcoin_server_a-validation.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libbitcoin_server_a-validation_reorg.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libbitcoin_server_a-validationinterface.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libbitcoin_server_a-versionbits.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libbitcoin_util_a-chainparamsbase.Po@am__quote@ # am--include-marker
@@ -6315,6 +6329,20 @@ libbitcoin_server_a-net_processing.obj: net_processing.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libbitcoin_server_a_CPPFLAGS) $(CPPFLAGS) $(libbitcoin_server_a_CXXFLAGS) $(CXXFLAGS) -c -o libbitcoin_server_a-net_processing.obj `if test -f 'net_processing.cpp'; then $(CYGPATH_W) 'net_processing.cpp'; else $(CYGPATH_W) '$(srcdir)/net_processing.cpp'; fi`
 
+libbitcoin_server_a-net_processing_reorg.o: net_processing_reorg.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libbitcoin_server_a_CPPFLAGS) $(CPPFLAGS) $(libbitcoin_server_a_CXXFLAGS) $(CXXFLAGS) -MT libbitcoin_server_a-net_processing_reorg.o -MD -MP -MF $(DEPDIR)/libbitcoin_server_a-net_processing_reorg.Tpo -c -o libbitcoin_server_a-net_processing_reorg.o `test -f 'net_processing_reorg.cpp' || echo '$(srcdir)/'`net_processing_reorg.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libbitcoin_server_a-net_processing_reorg.Tpo $(DEPDIR)/libbitcoin_server_a-net_processing_reorg.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='net_processing_reorg.cpp' object='libbitcoin_server_a-net_processing_reorg.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libbitcoin_server_a_CPPFLAGS) $(CPPFLAGS) $(libbitcoin_server_a_CXXFLAGS) $(CXXFLAGS) -c -o libbitcoin_server_a-net_processing_reorg.o `test -f 'net_processing_reorg.cpp' || echo '$(srcdir)/'`net_processing_reorg.cpp
+
+libbitcoin_server_a-net_processing_reorg.obj: net_processing_reorg.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libbitcoin_server_a_CPPFLAGS) $(CPPFLAGS) $(libbitcoin_server_a_CXXFLAGS) $(CXXFLAGS) -MT libbitcoin_server_a-net_processing_reorg.obj -MD -MP -MF $(DEPDIR)/libbitcoin_server_a-net_processing_reorg.Tpo -c -o libbitcoin_server_a-net_processing_reorg.obj `if test -f 'net_processing_reorg.cpp'; then $(CYGPATH_W) 'net_processing_reorg.cpp'; else $(CYGPATH_W) '$(srcdir)/net_processing_reorg.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libbitcoin_server_a-net_processing_reorg.Tpo $(DEPDIR)/libbitcoin_server_a-net_processing_reorg.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='net_processing_reorg.cpp' object='libbitcoin_server_a-net_processing_reorg.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libbitcoin_server_a_CPPFLAGS) $(CPPFLAGS) $(libbitcoin_server_a_CXXFLAGS) $(CXXFLAGS) -c -o libbitcoin_server_a-net_processing_reorg.obj `if test -f 'net_processing_reorg.cpp'; then $(CYGPATH_W) 'net_processing_reorg.cpp'; else $(CYGPATH_W) '$(srcdir)/net_processing_reorg.cpp'; fi`
+
 libbitcoin_server_a-noui.o: noui.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libbitcoin_server_a_CPPFLAGS) $(CPPFLAGS) $(libbitcoin_server_a_CXXFLAGS) $(CXXFLAGS) -MT libbitcoin_server_a-noui.o -MD -MP -MF $(DEPDIR)/libbitcoin_server_a-noui.Tpo -c -o libbitcoin_server_a-noui.o `test -f 'noui.cpp' || echo '$(srcdir)/'`noui.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libbitcoin_server_a-noui.Tpo $(DEPDIR)/libbitcoin_server_a-noui.Po
@@ -6608,6 +6636,20 @@ libbitcoin_server_a-validation.obj: validation.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='validation.cpp' object='libbitcoin_server_a-validation.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libbitcoin_server_a_CPPFLAGS) $(CPPFLAGS) $(libbitcoin_server_a_CXXFLAGS) $(CXXFLAGS) -c -o libbitcoin_server_a-validation.obj `if test -f 'validation.cpp'; then $(CYGPATH_W) 'validation.cpp'; else $(CYGPATH_W) '$(srcdir)/validation.cpp'; fi`
+
+libbitcoin_server_a-validation_reorg.o: validation_reorg.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libbitcoin_server_a_CPPFLAGS) $(CPPFLAGS) $(libbitcoin_server_a_CXXFLAGS) $(CXXFLAGS) -MT libbitcoin_server_a-validation_reorg.o -MD -MP -MF $(DEPDIR)/libbitcoin_server_a-validation_reorg.Tpo -c -o libbitcoin_server_a-validation_reorg.o `test -f 'validation_reorg.cpp' || echo '$(srcdir)/'`validation_reorg.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libbitcoin_server_a-validation_reorg.Tpo $(DEPDIR)/libbitcoin_server_a-validation_reorg.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='validation_reorg.cpp' object='libbitcoin_server_a-validation_reorg.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libbitcoin_server_a_CPPFLAGS) $(CPPFLAGS) $(libbitcoin_server_a_CXXFLAGS) $(CXXFLAGS) -c -o libbitcoin_server_a-validation_reorg.o `test -f 'validation_reorg.cpp' || echo '$(srcdir)/'`validation_reorg.cpp
+
+libbitcoin_server_a-validation_reorg.obj: validation_reorg.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libbitcoin_server_a_CPPFLAGS) $(CPPFLAGS) $(libbitcoin_server_a_CXXFLAGS) $(CXXFLAGS) -MT libbitcoin_server_a-validation_reorg.obj -MD -MP -MF $(DEPDIR)/libbitcoin_server_a-validation_reorg.Tpo -c -o libbitcoin_server_a-validation_reorg.obj `if test -f 'validation_reorg.cpp'; then $(CYGPATH_W) 'validation_reorg.cpp'; else $(CYGPATH_W) '$(srcdir)/validation_reorg.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libbitcoin_server_a-validation_reorg.Tpo $(DEPDIR)/libbitcoin_server_a-validation_reorg.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='validation_reorg.cpp' object='libbitcoin_server_a-validation_reorg.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libbitcoin_server_a_CPPFLAGS) $(CPPFLAGS) $(libbitcoin_server_a_CXXFLAGS) $(CXXFLAGS) -c -o libbitcoin_server_a-validation_reorg.obj `if test -f 'validation_reorg.cpp'; then $(CYGPATH_W) 'validation_reorg.cpp'; else $(CYGPATH_W) '$(srcdir)/validation_reorg.cpp'; fi`
 
 libbitcoin_server_a-validationinterface.o: validationinterface.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libbitcoin_server_a_CPPFLAGS) $(CPPFLAGS) $(libbitcoin_server_a_CXXFLAGS) $(CXXFLAGS) -MT libbitcoin_server_a-validationinterface.o -MD -MP -MF $(DEPDIR)/libbitcoin_server_a-validationinterface.Tpo -c -o libbitcoin_server_a-validationinterface.o `test -f 'validationinterface.cpp' || echo '$(srcdir)/'`validationinterface.cpp
@@ -10669,6 +10711,7 @@ distclean: distclean-recursive
 	-rm -f ./$(DEPDIR)/libbitcoin_server_a-miner.Po
 	-rm -f ./$(DEPDIR)/libbitcoin_server_a-net.Po
 	-rm -f ./$(DEPDIR)/libbitcoin_server_a-net_processing.Po
+	-rm -f ./$(DEPDIR)/libbitcoin_server_a-net_processing_reorg.Po
 	-rm -f ./$(DEPDIR)/libbitcoin_server_a-noui.Po
 	-rm -f ./$(DEPDIR)/libbitcoin_server_a-pow.Po
 	-rm -f ./$(DEPDIR)/libbitcoin_server_a-rest.Po
@@ -10678,6 +10721,7 @@ distclean: distclean-recursive
 	-rm -f ./$(DEPDIR)/libbitcoin_server_a-txmempool.Po
 	-rm -f ./$(DEPDIR)/libbitcoin_server_a-ui_interface.Po
 	-rm -f ./$(DEPDIR)/libbitcoin_server_a-validation.Po
+	-rm -f ./$(DEPDIR)/libbitcoin_server_a-validation_reorg.Po
 	-rm -f ./$(DEPDIR)/libbitcoin_server_a-validationinterface.Po
 	-rm -f ./$(DEPDIR)/libbitcoin_server_a-versionbits.Po
 	-rm -f ./$(DEPDIR)/libbitcoin_util_a-chainparamsbase.Po
@@ -11099,6 +11143,7 @@ maintainer-clean: maintainer-clean-recursive
 	-rm -f ./$(DEPDIR)/libbitcoin_server_a-miner.Po
 	-rm -f ./$(DEPDIR)/libbitcoin_server_a-net.Po
 	-rm -f ./$(DEPDIR)/libbitcoin_server_a-net_processing.Po
+	-rm -f ./$(DEPDIR)/libbitcoin_server_a-net_processing_reorg.Po
 	-rm -f ./$(DEPDIR)/libbitcoin_server_a-noui.Po
 	-rm -f ./$(DEPDIR)/libbitcoin_server_a-pow.Po
 	-rm -f ./$(DEPDIR)/libbitcoin_server_a-rest.Po
@@ -11108,6 +11153,7 @@ maintainer-clean: maintainer-clean-recursive
 	-rm -f ./$(DEPDIR)/libbitcoin_server_a-txmempool.Po
 	-rm -f ./$(DEPDIR)/libbitcoin_server_a-ui_interface.Po
 	-rm -f ./$(DEPDIR)/libbitcoin_server_a-validation.Po
+	-rm -f ./$(DEPDIR)/libbitcoin_server_a-validation_reorg.Po
 	-rm -f ./$(DEPDIR)/libbitcoin_server_a-validationinterface.Po
 	-rm -f ./$(DEPDIR)/libbitcoin_server_a-versionbits.Po
 	-rm -f ./$(DEPDIR)/libbitcoin_util_a-chainparamsbase.Po

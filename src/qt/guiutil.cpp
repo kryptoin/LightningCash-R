@@ -192,11 +192,9 @@ bool parseBitcoinURI(const QUrl &uri, SendCoinsRecipient *out) {
 }
 
 bool parseBitcoinURI(QString uri, SendCoinsRecipient *out) {
-    if(uri.startsWith("lightningcashr:
-
+    if(uri.startsWith("lightningcashr://"))
     {
-    uri.replace(0, 15, "lightningcashr:");    
-
+    uri.replace(0, 17, "lightningcashr:");    
     }
     QUrl uriInstance(uri);
     return parseBitcoinURI(uriInstance, out);

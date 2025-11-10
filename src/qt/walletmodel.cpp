@@ -39,6 +39,8 @@
 #include <QSet>
 #include <QTimer>
 
+using namespace boost::placeholders;
+
 #include <policy/policy.h>
 
 WalletModel::WalletModel(const PlatformStyle *platformStyle, CWallet *_wallet,
