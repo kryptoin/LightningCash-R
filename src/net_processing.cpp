@@ -1742,6 +1742,7 @@ bool static ProcessMessage(CNode *pfrom, const std::string &strCommand,
 
     uint32_t nFetchFlags = GetFetchFlags(pfrom);
 
+    uint256 hash_to_request;
     for (CInv &inv : vInv) {
       if (interruptMsgProc)
         return true;
@@ -1758,13 +1759,7 @@ bool static ProcessMessage(CNode *pfrom, const std::string &strCommand,
         UpdateBlockAvailability(pfrom->GetId(), inv.hash);
         if (!fAlreadyHave && !fImporting && !fReindex &&
             !mapBlocksInFlight.count(inv.hash)) {
-          connman->PushMessage(
-              pfrom, msgMaker.Make(NetMsgType::GETHEADERS,
-                                   chainActive.GetLocator(pindexBestHeader),
-                                   inv.hash));
-          LogPrint(BCLog::NET, "getheaders (%d) %s to peer=%d\n",
-                   pindexBestHeader->nHeight, inv.hash.ToString(),
-                   pfrom->GetId());
+            hash_to_request = inv.hash;
         }
       } else {
         pfrom->AddInventoryKnown(inv);
@@ -1780,6 +1775,16 @@ bool static ProcessMessage(CNode *pfrom, const std::string &strCommand,
       }
 
       GetMainSignals().Inventory(inv.hash);
+    }
+
+    if (!hash_to_request.IsNull()) {
+        connman->PushMessage(
+            pfrom, msgMaker.Make(NetMsgType::GETHEADERS,
+                                 chainActive.GetLocator(pindexBestHeader),
+                                 hash_to_request));
+        LogPrint(BCLog::NET, "getheaders (%d) %s to peer=%d\n",
+                 pindexBestHeader->nHeight, hash_to_request.ToString(),
+                 pfrom->GetId());
     }
   }
 
