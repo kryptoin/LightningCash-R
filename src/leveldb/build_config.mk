@@ -10,5 +10,5 @@ PLATFORM_CXXFLAGS=-std=c++0x  -DOS_MACOSX -DLEVELDB_PLATFORM_POSIX -DLEVELDB_ATO
 PLATFORM_SSEFLAGS=-msse4.2 -DLEVELDB_PLATFORM_POSIX_SSE
 PLATFORM_SHARED_CFLAGS=-fPIC
 PLATFORM_SHARED_EXT=dylib
-PLATFORM_SHARED_LDFLAGS=-dynamiclib -install_name /opt/crypto/sources/lncr/lncr-current-qt/src/leveldb/
+PLATFORM_SHARED_LDFLAGS=-dynamiclib -install_name /Users/gw/Desktop/lncr-current-qt-anti/src/leveldb/
 PLATFORM_SHARED_VERSIONED=true
