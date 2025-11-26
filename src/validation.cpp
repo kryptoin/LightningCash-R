@@ -1828,24 +1828,26 @@ bool CChainState::ConnectBlock(const CBlock &block, CValidationState &state,
   return true;
 }
 
-// Check if a reorg would exceed the anchor depth and require additional validation
-static bool MaybeGateDeepReorg(const CBlockIndex* currentTip, 
-                              const CBlockIndex* candidateTip,
-                              int anchor_depth,
-                              bool allow_override) {
-    AssertLockHeld(cs_main);
-    
-    // Find the fork point
-    const CBlockIndex* pindexFork = chainActive.FindFork(candidateTip);
-    int detachDepth = currentTip->nHeight - pindexFork->nHeight;
-    
-    if (detachDepth > anchor_depth && !allow_override) {
-        int chainwork_diff = (int)(candidateTip->nChainWork - currentTip->nChainWork).GetLow64();
-        LogPrintf("Reorg protection: deep reorg attempted (depth=%d, work_diff=%d). Override required.\n", 
-                  detachDepth, chainwork_diff);
-        return false; // Gate the reorg
-    }
-    return true;
+// Check if a reorg would exceed the anchor depth and require additional
+// validation
+static bool MaybeGateDeepReorg(const CBlockIndex *currentTip,
+                               const CBlockIndex *candidateTip,
+                               int anchor_depth, bool allow_override) {
+  AssertLockHeld(cs_main);
+
+  // Find the fork point
+  const CBlockIndex *pindexFork = chainActive.FindFork(candidateTip);
+  int detachDepth = currentTip->nHeight - pindexFork->nHeight;
+
+  if (detachDepth > anchor_depth && !allow_override) {
+    int chainwork_diff =
+        (int)(candidateTip->nChainWork - currentTip->nChainWork).GetLow64();
+    LogPrintf("Reorg protection: deep reorg attempted (depth=%d, "
+              "work_diff=%d). Override required.\n",
+              detachDepth, chainwork_diff);
+    return false; // Gate the reorg
+  }
+  return true;
 }
 
 bool static FlushStateToDisk(const CChainParams &chainparams,
@@ -2294,31 +2296,33 @@ void CChainState::PruneBlockIndexCandidates() {
   assert(!setBlockIndexCandidates.empty());
 }
 
-// Check if a reorg would exceed the anchor depth and require additional validation
-static bool MaybeGateDeepReorg(const CBlockIndex* currentTip,
-                              const CBlockIndex* pindexFork,
-                              const CBlockIndex* candidateTip,
-                              int anchor_depth,
-                              bool allow_override) {
-    AssertLockHeld(cs_main);
+// Check if a reorg would exceed the anchor depth and require additional
+// validation
+static bool MaybeGateDeepReorg(const CBlockIndex *currentTip,
+                               const CBlockIndex *pindexFork,
+                               const CBlockIndex *candidateTip,
+                               int anchor_depth, bool allow_override) {
+  AssertLockHeld(cs_main);
 
-    if (IsInitialBlockDownload() || fReindex) {
-        return true;
-    }
-
-    if (currentTip == nullptr || pindexFork == nullptr) {
-        return true;
-    }
-
-    int detachDepth = currentTip->nHeight - pindexFork->nHeight;
-
-    if (detachDepth > anchor_depth && !allow_override) {
-        arith_uint256 chainwork_diff = candidateTip->nChainWork - currentTip->nChainWork;
-        LogPrintf("Reorg protection: deep reorg attempted (depth=%d, work_diff=%s). Override required.\n",
-                  detachDepth, chainwork_diff.ToString());
-        return false; // Gate the reorg
-    }
+  if (IsInitialBlockDownload() || fReindex) {
     return true;
+  }
+
+  if (currentTip == nullptr || pindexFork == nullptr) {
+    return true;
+  }
+
+  int detachDepth = currentTip->nHeight - pindexFork->nHeight;
+
+  if (detachDepth > anchor_depth && !allow_override) {
+    arith_uint256 chainwork_diff =
+        candidateTip->nChainWork - currentTip->nChainWork;
+    LogPrintf("Reorg protection: deep reorg attempted (depth=%d, "
+              "work_diff=%s). Override required.\n",
+              detachDepth, chainwork_diff.ToString());
+    return false; // Gate the reorg
+  }
+  return true;
 }
 
 bool CChainState::ActivateBestChainStep(
@@ -2329,7 +2333,8 @@ bool CChainState::ActivateBestChainStep(
   const CBlockIndex *pindexOldTip = chainActive.Tip();
   const CBlockIndex *pindexFork = chainActive.FindFork(pindexMostWork);
 
-  if (!MaybeGateDeepReorg(pindexOldTip, pindexFork, pindexMostWork, 72, false)) {
+  if (!MaybeGateDeepReorg(pindexOldTip, pindexFork, pindexMostWork, 72,
+                          false)) {
     return state.Error(strprintf(
         "Deep reorg rejected: new chain length %d, common ancestor height %d",
         pindexMostWork->nHeight, pindexFork->nHeight));
@@ -3105,12 +3110,12 @@ static bool ContextualCheckBlockHeader(const CBlockHeader &block,
   const Consensus::Params &consensusParams = params.GetConsensus();
   if (block.IsHiveMined(consensusParams)) {
     if (block.nBits != GetNextHiveWorkRequired(pindexPrev, consensusParams))
-      return state.DoS(100, false, REJECT_INVALID, "bad-hive-diffbits", false,
-                       "incorrect hive difficulty in block");
+      return state.Invalid(false, REJECT_INVALID, "bad-hive-diffbits",
+                           "incorrect hive difficulty in block");
   } else {
     if (block.nBits != GetNextWorkRequired(pindexPrev, &block, consensusParams))
-      return state.DoS(100, false, REJECT_INVALID, "bad-diffbits", false,
-                       "incorrect pow difficulty in block");
+      return state.Invalid(false, REJECT_INVALID, "bad-diffbits",
+                           "incorrect pow difficulty in block");
   }
 
   if (fCheckpointsEnabled) {

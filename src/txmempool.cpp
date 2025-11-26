@@ -317,6 +317,7 @@ void CTxMemPool::AddTransactionsUpdated(unsigned int n) {
 
 bool CTxMemPool::addUnchecked(const uint256 &hash, const CTxMemPoolEntry &entry,
                               setEntries &setAncestors, bool validFeeEstimate) {
+  metrics.recordAdd();
   NotifyEntryAdded(entry.GetSharedTx());
 
   LOCK(cs);
@@ -362,6 +363,8 @@ bool CTxMemPool::addUnchecked(const uint256 &hash, const CTxMemPoolEntry &entry,
 }
 
 void CTxMemPool::removeUnchecked(txiter it, MemPoolRemovalReason reason) {
+  metrics.recordRemove();
+  descendantCache.erase(it);
   NotifyEntryRemoved(it->GetSharedTx(), reason);
   const uint256 hash = it->GetTx().GetHash();
   for (const CTxIn &txin : it->GetTx().vin)
@@ -407,6 +410,21 @@ void CTxMemPool::CalculateDescendants(txiter entryit,
       }
     }
   }
+}
+
+void CTxMemPool::CalculateDescendantsCached(txiter entryit,
+                                            setEntries &setDescendants) {
+  // Check cache first
+  auto cacheIt = descendantCache.find(entryit);
+  if (cacheIt != descendantCache.end() &&
+      cacheIt->second.timestamp > lastCacheInvalidation) {
+    setDescendants = cacheIt->second.descendants;
+    return;
+  }
+
+  // Use original calculation but cache result
+  CalculateDescendants(entryit, setDescendants);
+  descendantCache[entryit] = {setDescendants, GetTime()};
 }
 
 void CTxMemPool::removeRecursive(const CTransaction &origTx,
@@ -761,18 +779,26 @@ std::vector<TxMempoolInfo> CTxMemPool::infoAll() const {
 }
 
 CTransactionRef CTxMemPool::get(const uint256 &hash) const {
+  int64_t start = GetTimeMicros();
   LOCK(cs);
   indexed_transaction_set::const_iterator i = mapTx.find(hash);
-  if (i == mapTx.end())
+  if (i == mapTx.end()) {
+    metrics.recordQuery((GetTimeMicros() - start) / 1000);
     return nullptr;
+  }
+  metrics.recordQuery((GetTimeMicros() - start) / 1000);
   return i->GetSharedTx();
 }
 
 TxMempoolInfo CTxMemPool::info(const uint256 &hash) const {
+  int64_t start = GetTimeMicros();
   LOCK(cs);
   indexed_transaction_set::const_iterator i = mapTx.find(hash);
-  if (i == mapTx.end())
+  if (i == mapTx.end()) {
+    metrics.recordQuery((GetTimeMicros() - start) / 1000);
     return TxMempoolInfo();
+  }
+  metrics.recordQuery((GetTimeMicros() - start) / 1000);
   return GetInfo(i);
 }
 

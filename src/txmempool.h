@@ -21,11 +21,28 @@
 #include <random.h>
 #include <sync.h>
 
+#include <atomic>
 #include <boost/multi_index/hashed_index.hpp>
 #include <boost/multi_index/ordered_index.hpp>
 #include <boost/multi_index/sequenced_index.hpp>
 #include <boost/multi_index_container.hpp>
+#include <boost/optional.hpp>
 #include <boost/signals2/signal.hpp>
+
+struct MempoolMetrics {
+  std::atomic<uint64_t> totalAdds{0};
+  std::atomic<uint64_t> totalRemoves{0};
+  std::atomic<uint64_t> totalQueries{0};
+  std::atomic<uint64_t> avgProcessingTime{0};
+
+  void recordAdd() { totalAdds.fetch_add(1); }
+  void recordRemove() { totalRemoves.fetch_add(1); }
+  void recordQuery(uint64_t timeMs) {
+    totalQueries.fetch_add(1);
+    uint64_t current = avgProcessingTime.load();
+    avgProcessingTime.store((current + timeMs) / 2);
+  }
+};
 
 class CBlockIndex;
 
@@ -113,6 +130,31 @@ public:
   int64_t GetSigOpCostWithAncestors() const { return nSigOpCostWithAncestors; }
 
   mutable size_t vTxHashesIdx;
+
+private:
+  mutable boost::optional<CFeeRate> cachedFeeRate;
+  mutable boost::optional<CFeeRate> cachedAncestorFeeRate;
+
+public:
+  CFeeRate GetFeeRate() const {
+    if (!cachedFeeRate) {
+      cachedFeeRate = CFeeRate(nFee, GetTxSize());
+    }
+    return *cachedFeeRate;
+  }
+
+  CFeeRate GetAncestorFeeRate() const {
+    if (!cachedAncestorFeeRate) {
+      cachedAncestorFeeRate =
+          CFeeRate(nModFeesWithAncestors, nSizeWithAncestors);
+    }
+    return *cachedAncestorFeeRate;
+  }
+
+  void invalidateCache() {
+    cachedFeeRate = boost::none;
+    cachedAncestorFeeRate = boost::none;
+  }
 };
 
 struct update_descendant_state {
@@ -361,6 +403,14 @@ public:
   };
   typedef std::set<txiter, CompareIteratorByHash> setEntries;
 
+  struct DescendantCacheEntry {
+    setEntries descendants;
+    int64_t timestamp;
+  };
+  mutable std::map<txiter, DescendantCacheEntry, CompareIteratorByHash>
+      descendantCache;
+  int64_t lastCacheInvalidation = 0;
+
   const setEntries &GetMemPoolParents(txiter entry) const;
   const setEntries &GetMemPoolChildren(txiter entry) const;
 
@@ -435,6 +485,7 @@ public:
       std::string &errString, bool fSearchForParents = true) const;
 
   void CalculateDescendants(txiter it, setEntries &setDescendants);
+  void CalculateDescendantsCached(txiter entryit, setEntries &setDescendants);
 
   CFeeRate GetMinFee(size_t sizelimit) const;
 
@@ -470,6 +521,12 @@ public:
   boost::signals2::signal<void(CTransactionRef)> NotifyEntryAdded;
   boost::signals2::signal<void(CTransactionRef, MemPoolRemovalReason)>
       NotifyEntryRemoved;
+
+private:
+  mutable MempoolMetrics metrics;
+
+public:
+  const MempoolMetrics &getMetrics() const { return metrics; }
 
 private:
   void UpdateForDescendants(txiter updateIt, cacheMap &cachedDescendants,
