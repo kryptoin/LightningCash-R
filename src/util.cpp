@@ -846,14 +846,14 @@ std::string CopyrightHolders(const std::string &strPrefix) {
           .find("Bitcoin Core") == std::string::npos) {
     std::string strYear = strPrefix;
     strYear.replace(strYear.find("2011"), sizeof("2011") - 1, "2019");
-    strCopyrightHolders += "\n" + strYear + "merlin (LightningCash)";
+    strCopyrightHolders += "\n©2023 merlin (LightningCash)";
   }
 
   if (strprintf(COPYRIGHT_HOLDERS, COPYRIGHT_HOLDERS_SUBSTITUTION)
           .find("Bitcoin Core") == std::string::npos) {
     std::string strYear = strPrefix;
     strYear.replace(strYear.find("2011"), sizeof("2011") - 1, "2018");
-    strCopyrightHolders += "\n" + strYear + "The LitecoinCash devs";
+    strCopyrightHolders += "\n" + strYear + "The Litecoin Cash developers";
   }
 
   if (strprintf(COPYRIGHT_HOLDERS, COPYRIGHT_HOLDERS_SUBSTITUTION)

@@ -222,6 +222,7 @@ def getFrameworks(binaryPath, verbose):
     libraries = []
     for line in otoolLines:
         line = line.replace("@loader_path", os.path.dirname(binaryPath))
+        line = line.replace("@rpath", os.path.dirname(binaryPath))
         info = FrameworkInfo.fromOtoolLibraryLine(line.strip())
         if info is not None:
             if verbose >= 3:
@@ -800,6 +801,8 @@ if config.dmg is not None:
         if verbose >= 2:
             print("+ Applying fancy settings +")
         
+        time.sleep(5)
+        
         if "background_picture" in fancy:
             bg_path = os.path.join(disk_root, ".background", os.path.basename(fancy["background_picture"]))
             os.mkdir(os.path.dirname(bg_path))
@@ -876,7 +879,7 @@ if config.dmg is not None:
 
         if verbose >= 2:
             print("+ Finalizing .dmg disk image +")
-            time.sleep(5)
+            time.sleep(10)
         
         try:
             runHDIUtil("convert", dmg_name + ".temp", format="UDBZ", o=dmg_name + ".dmg", ov=True)
