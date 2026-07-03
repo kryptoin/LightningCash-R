@@ -1,4 +1,5 @@
-<img src="https://i.ibb.co/4ZK5Q9Rt/bitcoin256.png" alt="bitcoin256" border="0"></a><br /><a target='_blank' href='https://imgbb.com/'></a><br />
+<img src="https://i.ibb.co/4ZK5Q9Rt/bitcoin256.png" alt="bitcoin256" border="0"></a><br />
+<a target='_blank' href='https://imgbb.com/'></a><br />
 
 LightningCash Reborn !!
 LNCR
@@ -7,7 +8,7 @@ LNCR
 ===========================================
 LightningCashr Core new release version : 2.0.2
 
-README.md Updated on November 7th 2025
+README.md Updated on July 3rd 2026
 
 What is LightningCashr ?
 ----------------------
@@ -42,7 +43,9 @@ LightningCashr Characteristics
 ( With the addition of modified Dash's DarkGravityWave v3 algorithm, that changes difficulty every block, and progressively lowers difficulty if long stale tips happens. Tested and fully working !!) ---> check DarkGravity V3 (https://github.com/dashpay/dash/blob/master/src/pow.cpp#L82) (By Evan Duffield)
  <evan@dash.org>
 
-And modifications from LighningCashDev made here :        https://github.com/MerlinMagic2018/LightningCash-R/blob/master/src/pow.cpp#L110
+And modifications from LighningCashDev made here :        
+
+https://github.com/MerlinMagic2018/LightningCash-R/blob/master/src/pow.cpp#L110
 
 ( Difficulty adjusted every block and possibly in CURRENT block if a long network stale tip happens !! This protects LightningCashr from high hash variations and " high hash attacks " , that happens frequently for new coins and kills them by making the mining difficulty too high for the " normal " network's hash rate. )
 
@@ -101,8 +104,3 @@ Translations
 ------------
 
 Any translation corrections or expansions are welcomed as GitHub pull requests.
-
-Exchanges
----------
-
-https://flexex.io/market/LNCR_USDT

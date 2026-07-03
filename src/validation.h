@@ -133,6 +133,13 @@ static const bool DEFAULT_ENABLE_REPLACEMENT = false;
 
 static const bool DEFAULT_FEEFILTER = true;
 
+/** Default for -introspectionhardening, controls stale fork detection and deep
+ * reorg gating */
+static const bool DEFAULT_ENABLE_INTROSPECTION_HARDENING = true;
+
+/** Default anchor depth for deep reorg gating */
+static const int DEFAULT_ANCHOR_DEPTH = 6;
+
 static const unsigned int MAX_BLOCKS_TO_ANNOUNCE = 8;
 
 static const int MAX_UNCONNECTING_HEADERS = 10;

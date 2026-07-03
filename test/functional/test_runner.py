@@ -36,14 +36,14 @@ ALL_TESTS = [
 def run_test(test_file, verbose=False):
     """Run a single test file."""
     test_path = Path(__file__).parent / test_file
-    
+
     if not test_path.exists():
         print(f"{RED}✗{RESET} Test file not found: {test_file}")
         return False
-    
+
     print(f"{BLUE}Running:{RESET} {test_file}...", flush=True)
     start_time = time.time()
-    
+
     try:
         # Run the test
         result = subprocess.run(
@@ -52,9 +52,9 @@ def run_test(test_file, verbose=False):
             text=True,
             timeout=600  # 10 minute timeout per test
         )
-        
+
         elapsed = time.time() - start_time
-        
+
         if result.returncode == 0:
             print(f"{GREEN}✓ PASSED{RESET} {test_file} ({elapsed:.1f}s)")
             return True
@@ -65,7 +65,7 @@ def run_test(test_file, verbose=False):
             if not verbose and result.stderr:
                 print(f"  stderr: {result.stderr[:200]}")
             return False
-            
+
     except subprocess.TimeoutExpired:
         print(f"{RED}✗ TIMEOUT{RESET} {test_file}")
         return False
@@ -82,10 +82,10 @@ def main():
 Examples:
   Run all tests:
     python3 test_runner.py
-    
+
   Run specific test:
     python3 test_runner.py example_test
-    
+
   Run with verbose output:
     python3 test_runner.py -v
         """
@@ -105,16 +105,16 @@ Examples:
         action='store_true',
         help='List all available tests'
     )
-    
+
     args = parser.parse_args()
-    
+
     # List tests if requested
     if args.list:
         print("Available tests:")
         for test in ALL_TESTS:
             print(f"  - {test[:-3]}")  # Remove .py extension
         return 0
-    
+
     # Determine which tests to run
     if args.tests:
         # Run specific tests
@@ -123,37 +123,37 @@ Examples:
             # Add .py if not present
             if not test_name.endswith('.py'):
                 test_name = test_name + '.py'
-            
+
             if test_name in ALL_TESTS:
                 tests_to_run.append(test_name)
             else:
                 print(f"{YELLOW}Warning:{RESET} Test not found: {test_name}")
-        
+
         if not tests_to_run:
             print(f"{RED}Error:{RESET} No valid tests specified")
             return 1
     else:
         # Run all tests
         tests_to_run = ALL_TESTS
-    
+
     # Run the tests
     print(f"\n{BLUE}LightningCashr Functional Test Runner{RESET}")
     print(f"Running {len(tests_to_run)} test(s)...\n")
-    
+
     passed = 0
     failed = 0
-    
+
     start_time = time.time()
-    
+
     for test_file in tests_to_run:
         if run_test(test_file, args.verbose):
             passed += 1
         else:
             failed += 1
         print()  # Blank line between tests
-    
+
     total_time = time.time() - start_time
-    
+
     # Print summary
     print("=" * 60)
     print(f"Test Results:")
@@ -162,7 +162,7 @@ Examples:
         print(f"  {RED}Failed:{RESET} {failed}")
     print(f"  Total time: {total_time:.1f}s")
     print("=" * 60)
-    
+
     # Return exit code
     if failed > 0:
         return 1

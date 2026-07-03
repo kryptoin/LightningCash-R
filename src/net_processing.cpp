@@ -168,6 +168,34 @@ struct CNodeState {
 
   int64_t m_last_block_announcement;
 
+  // Introspection hardening: Track suspicious chain mapping behavior
+  int nIntrospectionScore;
+  int64_t nLastIntrospectionTime;
+  int nRecentHeaderRequests;
+  int64_t nHeaderRequestWindow;
+  int nStaleForkAnnouncements;
+  int64_t nLastStaleForkTime;
+
+  // Hardening: Rate limiting trackers
+  int64_t nLastInvTime;
+  int nInvCount;
+  int64_t nLastGetHeadersTime;
+  int nGetHeadersCount;
+  int64_t nLastMempoolReqTime;
+  int nOrphanCount;
+
+  // Phase 2 Hardening: Additional rate limiting
+  int64_t nLastAddrTime;
+  int nAddrCount;
+  int64_t nLastFilterLoadTime;
+  int nFilterLoadCount;
+  int64_t nLastRejectTime;
+  int nRejectCount;
+  int nNotFoundCount;
+  int64_t nLastNotFoundTime;
+  int nSendCmpctCount;
+  int nPongMismatchCount;
+
   CNodeState(CAddress addrIn, std::string addrNameIn)
       : address(addrIn), name(addrNameIn) {
     fCurrentlyConnected = false;
@@ -193,6 +221,31 @@ struct CNodeState {
     fSupportsDesiredCmpctVersion = false;
     m_chain_sync = {0, nullptr, false, false};
     m_last_block_announcement = 0;
+    // Initialize introspection hardening fields
+    nIntrospectionScore = 0;
+    nLastIntrospectionTime = 0;
+    nRecentHeaderRequests = 0;
+    nHeaderRequestWindow = GetTime();
+    nStaleForkAnnouncements = 0;
+    nLastStaleForkTime = 0;
+    // Initialize rate limiting trackers
+    nLastInvTime = 0;
+    nInvCount = 0;
+    nLastGetHeadersTime = 0;
+    nGetHeadersCount = 0;
+    nLastMempoolReqTime = 0;
+    nOrphanCount = 0;
+    // Initialize Phase 2 rate limiting
+    nLastAddrTime = 0;
+    nAddrCount = 0;
+    nLastFilterLoadTime = 0;
+    nFilterLoadCount = 0;
+    nLastRejectTime = 0;
+    nRejectCount = 0;
+    nNotFoundCount = 0;
+    nLastNotFoundTime = 0;
+    nSendCmpctCount = 0;
+    nPongMismatchCount = 0;
   }
 };
 
@@ -579,6 +632,14 @@ void AddToCompactExtraTransactions(const CTransactionRef &tx)
 
 bool AddOrphanTx(const CTransactionRef &tx, NodeId peer)
     EXCLUSIVE_LOCKS_REQUIRED(g_cs_orphans) {
+  // Hardening: Limit orphans per peer
+  CNodeState *state = State(peer);
+  if (state && state->nOrphanCount >= 100) {
+    LogPrint(BCLog::MEMPOOL,
+             "ignoring orphan tx from peer=%d (quota exceeded)\n", peer);
+    return false;
+  }
+
   const uint256 &hash = tx->GetHash();
   if (mapOrphanTransactions.count(hash))
     return false;
@@ -602,6 +663,8 @@ bool AddOrphanTx(const CTransactionRef &tx, NodeId peer)
   LogPrint(BCLog::MEMPOOL, "stored orphan tx %s (mapsz %u outsz %u)\n",
            hash.ToString(), mapOrphanTransactions.size(),
            mapOrphanTransactionsByPrev.size());
+  if (state)
+    state->nOrphanCount++;
   return true;
 }
 
@@ -609,6 +672,13 @@ int static EraseOrphanTx(uint256 hash) EXCLUSIVE_LOCKS_REQUIRED(g_cs_orphans) {
   std::map<uint256, COrphanTx>::iterator it = mapOrphanTransactions.find(hash);
   if (it == mapOrphanTransactions.end())
     return 0;
+
+  // Hardening: Decrement orphan count for the peer
+  NodeId peer = it->second.fromPeer;
+  CNodeState *state = State(peer);
+  if (state && state->nOrphanCount > 0)
+    state->nOrphanCount--;
+
   for (const CTxIn &txin : it->second.tx->vin) {
     auto itPrev = mapOrphanTransactionsByPrev.find(txin.prevout);
     if (itPrev == mapOrphanTransactionsByPrev.end())
@@ -662,13 +732,32 @@ unsigned int LimitOrphanTxSize(unsigned int nMaxOrphans) {
       LogPrint(BCLog::MEMPOOL, "Erased %d orphan tx due to expiration\n",
                nErased);
   }
+  // Phase 2 Hardening: Evict orphans from misbehaving peers first
   while (mapOrphanTransactions.size() > nMaxOrphans) {
-    uint256 randomhash = GetRandHash();
-    std::map<uint256, COrphanTx>::iterator it =
-        mapOrphanTransactions.lower_bound(randomhash);
-    if (it == mapOrphanTransactions.end())
-      it = mapOrphanTransactions.begin();
-    EraseOrphanTx(it->first);
+    int nHighestMisbehavior = -1;
+    std::map<uint256, COrphanTx>::iterator itToErase =
+        mapOrphanTransactions.end();
+
+    // Find orphan from peer with highest misbehavior score
+    for (auto it = mapOrphanTransactions.begin();
+         it != mapOrphanTransactions.end(); ++it) {
+      CNodeState *peerState = State(it->second.fromPeer);
+      int peerMisbehavior = peerState ? peerState->nMisbehavior : 0;
+      if (peerMisbehavior > nHighestMisbehavior) {
+        nHighestMisbehavior = peerMisbehavior;
+        itToErase = it;
+      }
+    }
+
+    // Fallback to random if no misbehaving peer found
+    if (itToErase == mapOrphanTransactions.end() || nHighestMisbehavior == 0) {
+      uint256 randomhash = GetRandHash();
+      itToErase = mapOrphanTransactions.lower_bound(randomhash);
+      if (itToErase == mapOrphanTransactions.end())
+        itToErase = mapOrphanTransactions.begin();
+    }
+
+    EraseOrphanTx(itToErase->first);
     ++nEvicted;
   }
   return nEvicted;
@@ -1280,6 +1369,43 @@ bool static ProcessHeadersMessage(CNode *pfrom, CConnman *connman,
       nodestate->m_last_block_announcement = GetTime();
     }
 
+    // Introspection hardening: Detect stale fork announcements
+    // Peers repeatedly advertising old forks may be mapping the chain
+    if (gArgs.GetBoolArg("-introspectionhardening",
+                         DEFAULT_ENABLE_INTROSPECTION_HARDENING)) {
+      if (received_new_header && pindexLast) {
+        // Check if this is a stale fork (significantly behind our tip)
+        if (pindexLast->nChainWork < chainActive.Tip()->nChainWork) {
+          int nHeightDiff = chainActive.Height() - pindexLast->nHeight;
+
+          // Consider it stale if it's >6 blocks behind
+          if (nHeightDiff > 6) {
+            nodestate->nStaleForkAnnouncements++;
+            nodestate->nLastStaleForkTime = GetTime();
+
+            // Increase introspection score for stale fork announcements
+            nodestate->nIntrospectionScore += 5;
+
+            LogPrint(BCLog::NET,
+                     "Peer %d announced stale fork: height %d vs our %d "
+                     "(stale count: %d, introspection score: %d)\n",
+                     pfrom->GetId(), pindexLast->nHeight, chainActive.Height(),
+                     nodestate->nStaleForkAnnouncements,
+                     nodestate->nIntrospectionScore);
+
+            // Disconnect if too many stale forks announced
+            if (nodestate->nStaleForkAnnouncements > 3) {
+              LogPrintf(
+                  "WARNING: Disconnecting peer %d for repeated stale fork "
+                  "announcements (%d times) - possible chain mapping\n",
+                  pfrom->GetId(), nodestate->nStaleForkAnnouncements);
+              pfrom->fDisconnect = true;
+            }
+          }
+        }
+      }
+    }
+
     if (nCount == MAX_HEADERS_RESULTS) {
       LogPrint(BCLog::NET,
                "more getheaders (%d) to end to peer=%d (startheight:%d)\n",
@@ -1759,7 +1885,7 @@ bool static ProcessMessage(CNode *pfrom, const std::string &strCommand,
         UpdateBlockAvailability(pfrom->GetId(), inv.hash);
         if (!fAlreadyHave && !fImporting && !fReindex &&
             !mapBlocksInFlight.count(inv.hash)) {
-            hash_to_request = inv.hash;
+          hash_to_request = inv.hash;
         }
       } else {
         pfrom->AddInventoryKnown(inv);
@@ -1778,13 +1904,13 @@ bool static ProcessMessage(CNode *pfrom, const std::string &strCommand,
     }
 
     if (!hash_to_request.IsNull()) {
-        connman->PushMessage(
-            pfrom, msgMaker.Make(NetMsgType::GETHEADERS,
-                                 chainActive.GetLocator(pindexBestHeader),
-                                 hash_to_request));
-        LogPrint(BCLog::NET, "getheaders (%d) %s to peer=%d\n",
-                 pindexBestHeader->nHeight, hash_to_request.ToString(),
-                 pfrom->GetId());
+      connman->PushMessage(
+          pfrom, msgMaker.Make(NetMsgType::GETHEADERS,
+                               chainActive.GetLocator(pindexBestHeader),
+                               hash_to_request));
+      LogPrint(BCLog::NET, "getheaders (%d) %s to peer=%d\n",
+               pindexBestHeader->nHeight, hash_to_request.ToString(),
+               pfrom->GetId());
     }
   }
 

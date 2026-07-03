@@ -2098,6 +2098,9 @@ bool CChainState::DisconnectTip(CValidationState &state,
 
   UpdateTip(pindexDelete->pprev, chainparams);
 
+  // Hardening: Invalidate mempool descendant cache after block disconnect
+  mempool.InvalidateDescendantCache();
+
   GetMainSignals().BlockDisconnected(pblock);
   return true;
 }
@@ -2223,6 +2226,9 @@ bool CChainState::ConnectTip(CValidationState &state,
   chainActive.SetTip(pindexNew);
   UpdateTip(pindexNew, chainparams);
 
+  // Hardening: Invalidate mempool descendant cache after block connect
+  mempool.InvalidateDescendantCache();
+
   int64_t nTime6 = GetTimeMicros();
   nTimePostConnect += nTime6 - nTime5;
   nTimeTotal += nTime6 - nTime1;
@@ -2297,12 +2303,19 @@ void CChainState::PruneBlockIndexCandidates() {
 }
 
 // Check if a reorg would exceed the anchor depth and require additional
-// validation
+// validation. This is controlled by -introspectionhardening flag.
 static bool MaybeGateDeepReorg(const CBlockIndex *currentTip,
                                const CBlockIndex *pindexFork,
-                               const CBlockIndex *candidateTip,
-                               int anchor_depth, bool allow_override) {
+                               const CBlockIndex *candidateTip) {
   AssertLockHeld(cs_main);
+
+  // Check if introspection hardening is enabled
+  bool fEnableHardening = gArgs.GetBoolArg(
+      "-introspectionhardening", DEFAULT_ENABLE_INTROSPECTION_HARDENING);
+
+  if (!fEnableHardening) {
+    return true; // Feature disabled
+  }
 
   if (IsInitialBlockDownload() || fReindex) {
     return true;
@@ -2313,13 +2326,30 @@ static bool MaybeGateDeepReorg(const CBlockIndex *currentTip,
   }
 
   int detachDepth = currentTip->nHeight - pindexFork->nHeight;
+  int anchor_depth = gArgs.GetArg("-anchordepth", DEFAULT_ANCHOR_DEPTH);
 
-  if (detachDepth > anchor_depth && !allow_override) {
+  if (detachDepth > anchor_depth) {
     arith_uint256 chainwork_diff =
         candidateTip->nChainWork - currentTip->nChainWork;
-    LogPrintf("Reorg protection: deep reorg attempted (depth=%d, "
-              "work_diff=%s). Override required.\n",
-              detachDepth, chainwork_diff.ToString());
+    LogPrintf("WARNING: Deep reorg attempt detected and gated by policy\n"
+              "  Reorg depth: %d blocks (anchor depth: %d)\n"
+              "  Current tip: %s (height %d)\n"
+              "  Fork point: %s (height %d)\n"
+              "  Candidate tip: %s (height %d)\n"
+              "  Chainwork delta: %s\n"
+              "  Use -allowdeepreorg=1 to override this policy protection\n",
+              detachDepth, anchor_depth, currentTip->GetBlockHash().ToString(),
+              currentTip->nHeight, pindexFork->GetBlockHash().ToString(),
+              pindexFork->nHeight, candidateTip->GetBlockHash().ToString(),
+              candidateTip->nHeight, chainwork_diff.ToString());
+
+    // Check if operator has explicitly allowed deep reorgs
+    bool fAllowDeepReorg = gArgs.GetBoolArg("-allowdeepreorg", false);
+    if (fAllowDeepReorg) {
+      LogPrintf("  Deep reorg allowed by -allowdeepreorg flag\n");
+      return true;
+    }
+
     return false; // Gate the reorg
   }
   return true;
@@ -2333,11 +2363,11 @@ bool CChainState::ActivateBestChainStep(
   const CBlockIndex *pindexOldTip = chainActive.Tip();
   const CBlockIndex *pindexFork = chainActive.FindFork(pindexMostWork);
 
-  if (!MaybeGateDeepReorg(pindexOldTip, pindexFork, pindexMostWork, 72,
-                          false)) {
-    return state.Error(strprintf(
-        "Deep reorg rejected: new chain length %d, common ancestor height %d",
-        pindexMostWork->nHeight, pindexFork->nHeight));
+  // Check reorg depth policy before proceeding with disconnection
+  if (!MaybeGateDeepReorg(pindexOldTip, pindexFork, pindexMostWork)) {
+    // Deep reorg gated by policy - treat as if no better chain exists
+    // This prevents the reorg without marking blocks as invalid
+    return true;
   }
 
   bool fBlocksDisconnected = false;

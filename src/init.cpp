@@ -403,6 +403,19 @@ std::string HelpMessage(HelpMessageMode mode) {
       "-bantime=<n>", strprintf(_("Number of seconds to keep misbehaving peers "
                                   "from reconnecting (default: %u)"),
                                 DEFAULT_MISBEHAVING_BANTIME));
+  strUsage += HelpMessageOpt(
+      "-introspectionhardening",
+      strprintf(_("Enable introspection hardening to detect and penalize "
+                  "peers announcing stale forks or deep reorgs (default: %u)"),
+                DEFAULT_ENABLE_INTROSPECTION_HARDENING));
+  strUsage += HelpMessageOpt(
+      "-anchordepth=<n>",
+      strprintf(_("Maximum reorg depth before policy protection triggers "
+                  "(default: %d)"),
+                DEFAULT_ANCHOR_DEPTH));
+  strUsage += HelpMessageOpt(
+      "-allowdeepreorg",
+      _("Allow deep reorganizations that exceed anchor depth (default: 0)"));
   strUsage += HelpMessageOpt("-bind=<addr>",
                              _("Bind to given address and always listen on it. "
                                "Use [host]:port notation for IPv6"));

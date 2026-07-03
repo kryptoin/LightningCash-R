@@ -20,6 +20,7 @@
 #include <primitives/transaction.h>
 #include <random.h>
 #include <sync.h>
+#include <util.h>
 
 #include <atomic>
 #include <boost/multi_index/hashed_index.hpp>
@@ -486,6 +487,14 @@ public:
 
   void CalculateDescendants(txiter it, setEntries &setDescendants);
   void CalculateDescendantsCached(txiter entryit, setEntries &setDescendants);
+
+  /** Invalidate the descendant cache - should be called when blocks are
+   * connected/disconnected */
+  void InvalidateDescendantCache() {
+    LOCK(cs);
+    lastCacheInvalidation = GetTime();
+    descendantCache.clear();
+  }
 
   CFeeRate GetMinFee(size_t sizelimit) const;
 
