@@ -6,7 +6,7 @@ LNCR
 
 # LightningCashr Core integration/staging tree
 ===========================================
-LightningCashr Core new release version : 2.0.2
+LightningCashr Core new release version : 2.0.3
 
 README.md Updated on July 3rd 2026
 
@@ -21,7 +21,7 @@ A snapshot of the old LightningCash's chain has been made on September 20th 2023
 Compiled binary releases are available here on Github.
 Whitepapers will be available soon.
 
-Current supported versions : 2.0.0 - 2.0.1 - 2.0.2
+Current supported versions : 2.0.0 - 2.0.1 - 2.0.2 - 2.03
 
 LightningCashr Core is the full node software that makes up the backbone of the LightningCashr p2p network.
 

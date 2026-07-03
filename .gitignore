@@ -137,8 +137,8 @@ src/.vscode/
 
 # Custom scripts (adjust as needed)
 just*.sh
-# build-osx-qt-m1.sh
-# cleanup.sh
+build-osx-qt-m1.sh
+cleanup.sh
 
 # Contrib scripts that were deleted but might be regenerated
 contrib/devtools/split-debug.sh
